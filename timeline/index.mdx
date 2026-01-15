@@ -1,0 +1,544 @@
+---
+title: Browsing the Timelines
+---
+
+Browse moments from timelines. This endpoint can retrieve moments from a specific artist's timeline or browse the in•process collective timeline, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.
+
+## Endpoint
+
+```http
+GET https://inprocess.world/api/timeline
+```
+
+## Parameters
+
+| Name       | Type                  | Required | Default | Description                                                                                                                                                                                                     |
+| ---------- | --------------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| artist     | string                | No       | —       | Filter by admin address (only moments administered by this artist address). When provided, returns the artist timeline. When omitted, returns the in•process collective timeline.                               |
+| collection | string                | No       | —       | Filter by collection address. When provided, returns all moments of the specified collection.                                                                                                                   |
+| limit      | number                | No       | 100     | Number of records per page (max: 100)                                                                                                                                                                           |
+| page       | number                | No       | 1       | The page number to retrieve                                                                                                                                                                                     |
+| chain_id   | number                | No       | 8453    | Filter by chain ID (default: Base chain, 8453)                                                                                                                                                                  |
+| hidden     | boolean               | No       | false   | If true, includes moments marked as hidden by the admin (default: false)                                                                                                                                        |
+| type       | "mutual" or "default" | No       | —       | Only applicable when `artist` is provided. Determines whether to show moments where the artist is the default admin (`"default"`), moments co-administered with others (`"mutual"`), or both when not provided. |
+
+The endpoint behavior depends on which parameters are provided:
+
+- **When `collection` is provided**: Returns all moments (tokens) of the specified collection address.
+- **When `artist` is provided**: Returns moments from the specific artist's timeline (only moments administered by that artist address). The `type` parameter can be used to filter by admin relationship.
+- **When both `artist` and `collection` are omitted**: Returns moments from the in•process collective timeline (moments that are being created, indexed).
+
+You can filter by chain using the `chain_id` parameter (default: 8453 for Base). To include moments that have been marked as hidden by the admin, set the `hidden` parameter to `true` (defaults to `false`).
+
+## Request Examples
+
+### Artist Timeline (with artist)
+
+<CodeGroup>
+
+```bash [cURL - Artist]
+curl -X GET "https://inprocess.world/api/timeline?artist=0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01&chain_id=8453&limit=2&page=1&hidden=true"
+```
+
+```python [Python - Artist]
+import requests
+
+def get_timeline(params: dict = {}):
+    url = "https://inprocess.world/api/timeline"
+    query_params = {
+        "page": params.get("page", 1),
+        "limit": params.get("limit", 100),
+        "chain_id": params.get("chain_id", 8453),
+    }
+    if params.get("artist"):
+        query_params["artist"] = params["artist"]
+    if params.get("collection"):
+        query_params["collection"] = params["collection"]
+    if params.get("type"):
+        query_params["type"] = params["type"]
+    if params.get("hidden"):
+        query_params["hidden"] = str(params["hidden"]).lower()
+    response = requests.get(url, params=query_params)
+    response.raise_for_status()
+    return response.json()
+```
+
+```javascript [JavaScript - Artist]
+async function getTimeline(params = {}) {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+```
+
+```typescript [TypeScript - Artist]
+export interface Admin {
+  address: string; // Address
+  username: string; // Username of the admin/artist, if available
+  hidden: boolean; // Whether the moment is hidden by this admin
+}
+
+export interface DefaultAdmin {
+  address: string; // Address of the original default admin
+  username: string; // Username of the default admin, if available
+  hidden: boolean; // Whether the moment is hidden by the default admin
+}
+
+export interface Moment {
+  address: string; // Address
+  token_id: string;
+  chain_id: number;
+  id: string; // uuid
+  uri: string;
+  default_admin: DefaultAdmin; // Original admin set at collection creation (always present)
+  admins: Admin[]; // Currently active admins. Default admin appears here only if they still have admin permissions.
+  created_at: string; // timestampz
+}
+
+export interface TimelineResponse {
+  status: string;
+  moments: Moment[];
+  pagination: {
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}
+
+export interface TimelineParams {
+  artist?: string;
+  collection?: string;
+  page?: number;
+  limit?: number;
+  chain_id?: number;
+  hidden?: boolean;
+  type?: "mutual" | "default";
+}
+
+async function getTimeline(
+  params: TimelineParams = {}
+): Promise<TimelineResponse> {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+```
+
+</CodeGroup>
+
+### Collection Timeline (with collection)
+
+<CodeGroup>
+
+```bash [cURL - Collection]
+curl -X GET "https://inprocess.world/api/timeline?collection=0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA&chain_id=8453&limit=2&page=1&hidden=true"
+```
+
+```python [Python - Collection]
+import requests
+
+def get_timeline(params: dict = {}):
+    url = "https://inprocess.world/api/timeline"
+    query_params = {
+        "page": params.get("page", 1),
+        "limit": params.get("limit", 100),
+        "chain_id": params.get("chain_id", 8453),
+    }
+    if params.get("artist"):
+        query_params["artist"] = params["artist"]
+    if params.get("collection"):
+        query_params["collection"] = params["collection"]
+    if params.get("type"):
+        query_params["type"] = params["type"]
+    if params.get("hidden"):
+        query_params["hidden"] = str(params["hidden"]).lower()
+    response = requests.get(url, params=query_params)
+    response.raise_for_status()
+    return response.json()
+
+# Get collection timeline
+get_timeline({"collection": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA"})
+```
+
+```javascript [JavaScript - Collection]
+async function getTimeline(params = {}) {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+
+// Get collection timeline
+getTimeline({ collection: "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA" });
+```
+
+```typescript [TypeScript - Collection]
+export interface Admin {
+  address: string; // Address
+  username: string; // Username of the admin/artist, if available
+  hidden: boolean; // Whether the moment is hidden by this admin
+}
+
+export interface DefaultAdmin {
+  address: string; // Address of the original default admin
+  username: string; // Username of the default admin, if available
+  hidden: boolean; // Whether the moment is hidden by the default admin
+}
+
+export interface Moment {
+  address: string; // Address
+  token_id: string;
+  chain_id: number;
+  id: string; // uuid
+  uri: string;
+  default_admin: DefaultAdmin; // Original admin set at collection creation (always present)
+  admins: Admin[]; // Currently active admins. Default admin appears here only if they still have admin permissions.
+  created_at: string; // timestampz
+}
+
+export interface TimelineResponse {
+  status: string;
+  moments: Moment[];
+  pagination: {
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}
+
+export interface TimelineParams {
+  artist?: string;
+  collection?: string;
+  page?: number;
+  limit?: number;
+  chain_id?: number;
+  hidden?: boolean;
+  type?: "mutual" | "default";
+}
+
+async function getTimeline(
+  params: TimelineParams = {}
+): Promise<TimelineResponse> {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+
+// Get collection timeline
+getTimeline({ collection: "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA" });
+```
+
+</CodeGroup>
+
+### in•process Timeline (without artist or collection)
+
+<CodeGroup>
+
+```bash [cURL - in•process]
+curl -X GET "https://inprocess.world/api/timeline?chain_id=8453&limit=2&page=1&hidden=true"
+```
+
+```python [Python - in•process]
+import requests
+
+def get_timeline(params: dict = {}):
+    url = "https://inprocess.world/api/timeline"
+    query_params = {
+        "page": params.get("page", 1),
+        "limit": params.get("limit", 100),
+        "chain_id": params.get("chain_id", 8453),
+    }
+    if params.get("artist"):
+        query_params["artist"] = params["artist"]
+    if params.get("collection"):
+        query_params["collection"] = params["collection"]
+    if params.get("type"):
+        query_params["type"] = params["type"]
+    if params.get("hidden"):
+        query_params["hidden"] = str(params["hidden"]).lower()
+    response = requests.get(url, params=query_params)
+    response.raise_for_status()
+    return response.json()
+
+# Get in•process timeline
+get_timeline()
+```
+
+```javascript [JavaScript - in•process]
+async function getTimeline(params = {}) {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+
+// Get in•process timeline
+getTimeline();
+```
+
+```typescript [TypeScript - in•process]
+export interface Admin {
+  address: string; // Address
+  username: string; // Username of the admin/artist, if available
+  hidden: boolean; // Whether the moment is hidden by this admin
+}
+
+export interface DefaultAdmin {
+  address: string; // Address of the original default admin
+  username: string; // Username of the default admin, if available
+  hidden: boolean; // Whether the moment is hidden by the default admin
+}
+
+export interface Moment {
+  address: string; // Address
+  token_id: string;
+  chain_id: number;
+  id: string; // uuid
+  uri: string;
+  default_admin: DefaultAdmin; // Original admin set at collection creation (always present)
+  admins: Admin[]; // Currently active admins. Default admin appears here only if they still have admin permissions.
+  created_at: string; // timestampz
+}
+
+export interface TimelineResponse {
+  status: string;
+  moments: Moment[];
+  pagination: {
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
+}
+
+export interface TimelineParams {
+  artist?: string;
+  collection?: string;
+  page?: number;
+  limit?: number;
+  chain_id?: number;
+  hidden?: boolean;
+  type?: "mutual" | "default";
+}
+
+async function getTimeline(
+  params: TimelineParams = {}
+): Promise<TimelineResponse> {
+  const {
+    artist,
+    collection,
+    page = 1,
+    limit = 100,
+    chain_id = 8453,
+    hidden = false,
+    type,
+  } = params;
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    chain_id: chain_id.toString(),
+  });
+  if (artist) queryParams.set("artist", artist);
+  if (collection) queryParams.set("collection", collection);
+  if (type) queryParams.set("type", type);
+  if (hidden) queryParams.set("hidden", hidden.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/timeline?${queryParams}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+
+// Get in•process timeline
+getTimeline();
+```
+
+</CodeGroup>
+
+## Response Format
+
+The API returns JSON responses with the same structure. Here's an example success response:
+
+```json
+{
+  "status": "success",
+  "moments": [
+    {
+      "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+      "token_id": "1",
+      "max_supply": 17256554458,
+      "chain_id": 8453,
+      "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
+      "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
+      "default_admin": {
+        "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+        "username": "artist name 1",
+        "hidden": false
+      },
+      "admins": [
+        {
+          "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+          "username": "artist name 1",
+          "hidden": false
+        },
+        {
+          "address": "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33",
+          "username": "artist name 2",
+          "hidden": true
+        }
+      ],
+      "created_at": "2025-06-07T20:41:35+00:00",
+      "updated_at": "2025-08-12T12:28:41+00:00"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 1,
+    "total_pages": 2
+  }
+}
+```
+
+### Understanding `default_admin` and `admins[]`
+
+- **`default_admin`**: Always present. Shows the original admin address that was set at collection creation. This field preserves the historical record of who originally created/administered the moment.
+
+- **`admins[]`**: Contains the list of currently active admins, which can change over time as admin permissions are added or removed.
+
+- **Relationship**: The `default_admin` will appear in the `admins[]` array **if and only if** they still have active admin permissions. If the original default admin no longer has admin permissions, they will not appear in `admins[]`, but their information will still be available in the `default_admin` field.
+
+## Response Properties
+
+### Response Object
+
+| Property                         | Type    | Description                                                                                                        |
+| -------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| status                           | string  | Status of the request ("success" or "error")                                                                       |
+| moments                          | array   | List of moments in the timeline                                                                                    |
+| moments[].address                | string  | Moment collection address                                                                                          |
+| moments[].token_id               | string  | Token Id of Moment                                                                                                 |
+| moments[].chain_id               | number  | Chain ID                                                                                                           |
+| moments[].id                     | string  | UUID of the moment                                                                                                 |
+| moments[].uri                    | string  | Metadata URI                                                                                                       |
+| moments[].default_admin          | object  | The original admin set at collection creation (always present, preserves historical record)                        |
+| moments[].default_admin.address  | string  | Address of the original default admin                                                                              |
+| moments[].default_admin.username | string  | Username of the default admin, if available                                                                        |
+| moments[].default_admin.hidden   | boolean | Whether the moment is hidden by the default admin                                                                  |
+| moments[].admins                 | array   | Array of currently active admin objects. The default admin appears here only if they still have admin permissions. |
+| moments[].admins[].address       | string  | Admin artist address                                                                                               |
+| moments[].admins[].username      | string  | Username of the admin/artist, if available                                                                         |
+| moments[].admins[].hidden        | boolean | Whether the moment is hidden by this admin                                                                         |
+| moments[].created_at             | string  | ISO timestamp when the moment was created                                                                          |
+| moments[].updated_at             | string  | ISO timestamp when the moment metadata was updated                                                                 |
+| pagination                       | object  | Pagination metadata for the response                                                                               |
+| pagination.page                  | number  | Current page number                                                                                                |
+| pagination.limit                 | number  | Number of moments per page                                                                                         |
+| pagination.total_pages           | number  | Total number of pages available                                                                                    |
+
+## Error Response
+
+If an error occurs, the API returns:
+
+```json
+{
+  "status": "error",
+  "message": "...error message..."
+}
+```

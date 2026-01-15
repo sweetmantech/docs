@@ -1,0 +1,142 @@
+---
+title: Collect a Moment
+---
+
+This page documents the API endpoint to collect a Moment on the In Process protocol.
+
+## Endpoint
+
+```
+POST https://inprocess.world/api/moment/collect
+```
+
+## Authentication
+
+Include an API key in the x-api-key header for authorization:
+
+```http
+x-api-key: <artist_api_key>
+```
+
+<details>
+<summary>Show more</summary>
+
+See [Create an Artist API Key](/artists/api-keys/create) for how to create API keys.
+
+</details>
+
+## Request Body
+
+Send a JSON object with the following fields:
+
+```json
+{
+  "moment": {
+    "collectionAddress": string, // Moment address
+    "tokenId": string, // TokenId of moment
+    "chainId": number // Chain ID of the collection (optional, default: Base 8453)
+  },
+  "amount": number, // Amount to be collected
+  "comment": string // Comment
+}
+```
+
+## Example Request
+
+<CodeGroup>
+
+```bash [cURL]
+curl -X POST https://inprocess.world/api/moment/collect \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: art_sk_3fnm4...f6w4" \
+  -d '{
+    "moment": {
+      "collectionAddress": "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
+      "tokenId": "1"
+    },
+    "amount": 1,
+    "comment": "in•process!!!"
+  }'
+```
+
+```python [Python]
+import requests
+
+url = "https://inprocess.world/api/moment/collect"
+headers = {
+  "Content-Type": "application/json",
+  "x-api-key": "art_sk_3fnm4...f6w4"
+}
+payload = {
+  "moment": {
+    "collectionAddress": "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
+    "tokenId": "1"
+  },
+  "amount": 1,
+  "comment": "in•process!!!"
+}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+```javascript [JavaScript]
+const response = await fetch("https://inprocess.world/api/moment/collect", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify({
+    moment: {
+      collectionAddress: "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
+      tokenId: "1",
+    },
+    amount: 1,
+    comment: "in•process!!!",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript]
+interface CollectMomentRequest {
+  moment: {
+    collectionAddress: string;
+    tokenId: string;
+  };
+  amount: number;
+  comment: string;
+}
+
+const payload: CollectMomentRequest = {
+  moment: {
+    collectionAddress: "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
+    tokenId: "1",
+  },
+  amount: 1,
+  comment: "in•process!!!",
+};
+
+const response = await fetch("https://inprocess.world/api/moment/collect", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "hash": "0xTransactionHash",
+  "chainId": 8453 | 84532
+}
+```

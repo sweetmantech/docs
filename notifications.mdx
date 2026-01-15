@@ -1,0 +1,253 @@
+---
+title: Browsing Notifications
+---
+
+Retrieve notification records from the In Process protocol. Supports filtering by artist address.
+
+## Endpoint
+
+```http
+GET https://inprocess.world/api/notifications
+```
+
+## Parameters
+
+| Name   | Type    | Required | Default | Description                                                   |
+| ------ | ------- | -------- | ------- | ------------------------------------------------------------- |
+| artist | string  | No       | —       | Filter by artist address (notifications for this artist)      |
+| viewed | boolean | No       | —       | Filter by viewed status (true for viewed, false for unviewed) |
+
+If no parameters are provided, returns the latest notification records. If `artist` is provided, filters notifications where the artist is the provided address. If `viewed` is provided, filters notifications by their viewed status.
+
+## Request Examples
+
+<CodeGroup>
+
+```bash [cURL]
+curl -X GET "https://inprocess.world/api/notifications?artist=0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01&viewed=false"
+```
+
+```python [Python]
+import requests
+
+def get_notifications(artist: str = None, viewed: bool = None):
+    url = "https://inprocess.world/api/notifications"
+    params = {}
+    if artist:
+        params["artist"] = artist
+    if viewed is not None:
+        params["viewed"] = str(viewed).lower()
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return response.json()
+```
+
+```javascript [JavaScript]
+async function getNotifications(artist, viewed) {
+  const params = new URLSearchParams();
+  if (artist) params.set("artist", artist);
+  if (viewed !== undefined) params.set("viewed", viewed.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/notifications?${params}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+```
+
+```typescript [TypeScript]
+export interface Artist {
+  address: string; // Artist address
+  username: string; // Artist username
+  bio: string; // Artist bio
+  instagram_username: string; // Instagram handle
+  twitter_username: string; // Twitter handle
+  telegram_username: string; // Telegram handle
+}
+
+export interface Token {
+  id: string; // UUID
+  address: string; // Contract address
+  tokenId: string; // Token ID
+  uri: string; // Metadata URI
+  defaultAdmin: string; // Admin address
+  chainId: number; // Chain ID
+  createdAt: string; // ISO timestamp
+  hidden: boolean; // Whether token is hidden
+}
+
+export interface Payment {
+  id: string; // UUID
+  token: Token; // Full token object
+  buyer: Artist; // Full artist object
+  amount: string; // Numeric amount
+  hash: string; // Transaction hash
+  block: string; // Block number
+}
+
+export interface Notification {
+  id: string; // UUID
+  payment: Payment; // Full payment object
+  artist: Artist; // Full artist object
+  viewed: boolean; // Whether the notification has been viewed
+  created_at: string; // ISO timestamp when the notification was created
+}
+
+export interface NotificationsResponse {
+  status: string;
+  notifications: Notification[];
+}
+
+async function getNotifications(
+  artist?: string,
+  viewed?: boolean
+): Promise<NotificationsResponse> {
+  const params = new URLSearchParams();
+  if (artist) params.set("artist", artist);
+  if (viewed !== undefined) params.set("viewed", viewed.toString());
+  const response = await fetch(
+    `https://inprocess.world/api/notifications?${params}`
+  );
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+}
+```
+
+</CodeGroup>
+
+## Response Format
+
+The API returns JSON responses. Here's an example success response:
+
+```json
+{
+  "status": "success",
+  "notifications": [
+    {
+      "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
+      "payment": {
+        "id": "5fc69bea-1a8a-47f0-8652-8bf041c16a06",
+        "token": {
+          "id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+          "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+          "tokenId": "0",
+          "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
+          "defaultAdmin": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
+          "chainId": 8453,
+          "createdAt": "2025-06-07T20:41:35+00:00",
+          "hidden": false
+        },
+        "buyer": {
+          "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+          "username": "crypto_collector",
+          "bio": "Passionate collector of digital art and NFTs",
+          "instagram_username": "@crypto_collector",
+          "twitter_username": "@crypto_collector",
+          "telegram_username": "@crypto_collector"
+        },
+        "amount": "0.1",
+        "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+        "block": "12345678"
+      },
+      "artist": {
+        "address": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
+        "username": "digital_artist_1",
+        "bio": "Digital artist exploring the intersection of technology and creativity",
+        "instagram_username": "@digital_artist_1",
+        "twitter_username": "@digital_artist_1",
+        "telegram_username": "@digital_artist_1"
+      },
+      "viewed": false,
+      "created_at": "2025-06-07T20:41:35+00:00"
+    },
+    {
+      "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+      "payment": {
+        "id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
+        "token": {
+          "id": "b2c3d4e5-f6g7-h8i9-j0k1-l2m3n4o5p6q7",
+          "address": "0x317e6E49970b95DD1bF2E7877110f3278CB8f1EA",
+          "tokenId": "1",
+          "uri": "ar://T5bcXlR7waq_aexj0Sp7SXR5uvwg3qAlMuai9oh6w-U",
+          "defaultAdmin": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+          "chainId": 8453,
+          "createdAt": "2025-06-07T17:13:07+00:00",
+          "hidden": false
+        },
+        "buyer": {
+          "address": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
+          "username": "digital_artist_1",
+          "bio": "Digital artist exploring the intersection of technology and creativity",
+          "instagram_username": "@digital_artist_1",
+          "twitter_username": "@digital_artist_1",
+          "telegram_username": "@digital_artist_1"
+        },
+        "amount": "0.05",
+        "hash": "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+        "block": "12345679"
+      },
+      "artist": {
+        "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+        "username": "crypto_collector",
+        "bio": "Passionate collector of digital art and NFTs",
+        "instagram_username": "@crypto_collector",
+        "twitter_username": "@crypto_collector",
+        "telegram_username": "@crypto_collector"
+      },
+      "viewed": true,
+      "created_at": "2025-06-07T17:13:07+00:00"
+    }
+  ]
+}
+```
+
+## Response Properties
+
+### Response Object
+
+| Property                                         | Type    | Description                                     |
+| ------------------------------------------------ | ------- | ----------------------------------------------- |
+| status                                           | string  | Status of the request ("success" or "error")    |
+| notifications                                    | array   | List of notification records                    |
+| notifications[].id                               | string  | UUID of the notification record                 |
+| notifications[].payment                          | object  | Full payment object with all payment details    |
+| notifications[].payment.id                       | string  | UUID of the payment record                      |
+| notifications[].payment.token                    | object  | Full token object with all token details        |
+| notifications[].payment.token.id                 | string  | UUID of the token                               |
+| notifications[].payment.token.address            | string  | Contract address of the token                   |
+| notifications[].payment.token.tokenId            | string  | Token ID                                        |
+| notifications[].payment.token.uri                | string  | Metadata URI                                    |
+| notifications[].payment.token.defaultAdmin       | string  | Admin address of the token                      |
+| notifications[].payment.token.chainId            | number  | Chain ID where the token exists                 |
+| notifications[].payment.token.createdAt          | string  | ISO timestamp when the token was created        |
+| notifications[].payment.token.hidden             | boolean | Whether the token is hidden                     |
+| notifications[].payment.buyer                    | object  | Full artist object with all buyer details       |
+| notifications[].payment.buyer.address            | string  | Address of the buyer                            |
+| notifications[].payment.buyer.username           | string  | Username of the buyer                           |
+| notifications[].payment.buyer.bio                | string  | Bio of the buyer                                |
+| notifications[].payment.buyer.instagram_username | string  | Instagram handle of the buyer                   |
+| notifications[].payment.buyer.twitter_username   | string  | Twitter handle of the buyer                     |
+| notifications[].payment.buyer.telegram_username  | string  | Telegram handle of the buyer                    |
+| notifications[].payment.amount                   | string  | Numeric amount paid                             |
+| notifications[].payment.hash                     | string  | Transaction hash                                |
+| notifications[].payment.block                    | string  | Block number where the transaction occurred     |
+| notifications[].artist                           | object  | Full artist object with all artist details      |
+| notifications[].artist.address                   | string  | Address of the artist                           |
+| notifications[].artist.username                  | string  | Username of the artist                          |
+| notifications[].artist.bio                       | string  | Bio of the artist                               |
+| notifications[].artist.instagram_username        | string  | Instagram handle of the artist                  |
+| notifications[].artist.twitter_username          | string  | Twitter handle of the artist                    |
+| notifications[].artist.telegram_username         | string  | Telegram handle of the artist                   |
+| notifications[].viewed                           | boolean | Whether the notification has been viewed        |
+| notifications[].created_at                       | string  | ISO timestamp when the notification was created |
+
+## Error Response
+
+If an error occurs, the API returns:
+
+```json
+{
+  "status": "error",
+  "message": "...error message..."
+}
+```

@@ -1,48 +1,103 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "In Process Documentation",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "navigation": {
     "tabs": [
       {
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "getting-started"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Timeline",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "timeline/index"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Collections",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "collections/browse",
+              "collections/info",
+              "collections/create",
+              "collections/update-uri"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Moments",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "moment/get",
+              "moment/create",
+              "moment/writing",
+              "moment/collect",
+              "moment/airdrop",
+              "moment/add-permission",
+              "moment/remove-permission",
+              "moment/update-uri",
+              "moment/comments",
+              "moment/sales-config",
+              "moment/splits",
+              "moment/upload-to-arweave"
+            ]
+          },
+          {
+            "group": "Artists",
+            "pages": [
+              "artists/api-keys/create",
+              "artists/wallets/get",
+              "artists/wallets/connect",
+              "artists/wallets/disconnect",
+              "artists/phones/connect",
+              "artists/phones/disconnect"
+            ]
+          },
+          {
+            "group": "Airdrops",
+            "pages": [
+              "airdrops/"
+            ]
+          },
+          {
+            "group": "Notifications",
+            "pages": [
+              "notifications/"
+            ]
+          },
+          {
+            "group": "Coinbase SDK",
+            "pages": [
+              "coinbase-sdk/create-collection"
+            ]
+          },
+          {
+            "group": "Protocol",
+            "pages": [
+              "protocol/protocol-deployments",
+              "protocol/setup-actions"
+            ]
+          },
+          {
+            "group": "Payments",
+            "pages": [
+              "payments/index",
+              "payments/distribute"
+            ]
+          },
+          {
+            "group": "Smart Wallet",
+            "pages": [
+              "smartwallet/get"
             ]
           }
         ]
@@ -71,14 +126,9 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "In Process App",
+          "href": "https://inprocess.world",
+          "icon": "rocket"
         }
       ]
     }
@@ -91,13 +141,13 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:sweetmantech@gmail.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Website",
+      "href": "https://inprocess.world"
     }
   },
   "contextual": {
@@ -114,9 +164,7 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/stayinprocess"
     }
   }
 }

@@ -1,0 +1,159 @@
+---
+title: Distribute the Payment
+---
+
+This page documents the API endpoint for distributing payments from a split contract. This endpoint allows you to trigger the distribution of payment tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.
+
+## Endpoint
+
+```http
+POST https://inprocess.world/api/distribute
+```
+
+## Request Body
+
+The request body must be sent as JSON with `Content-Type: application/json`.
+
+| Name         | Type   | Required | Default    | Description                                                                                  |
+| ------------ | ------ | -------- | ---------- | -------------------------------------------------------------------------------------------- |
+| splitAddress | string | Yes      | —          | The address of the split contract to distribute from                                         |
+| tokenAddress | string | No       | `0x0...00` | The address of the token to distribute (optional, defaults to zero address for native token) |
+| chainId      | string | No       | 8453       | Chain ID where the split contract exists (default: Base, 8453)                               |
+
+## Example Requests
+
+<CodeGroup>
+
+```bash [cURL]
+# Native token distribution (tokenAddress can be omitted)
+curl -X POST https://inprocess.world/api/distribute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "splitAddress": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A"
+  }'
+
+# ERC20 token distribution (tokenAddress is required)
+curl -X POST https://inprocess.world/api/distribute \
+  -H "Content-Type: application/json" \
+  -d '{
+    "splitAddress": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+    "tokenAddress": "0xYourERC20TokenAddress"
+  }'
+```
+
+```python [Python]
+import requests
+
+url = "https://inprocess.world/api/distribute"
+
+# Native token distribution (tokenAddress can be omitted)
+payload = {
+    "splitAddress": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+    # tokenAddress is optional, defaults to zero address for native token
+    # chainId is optional, defaults to 8453 (Base)
+}
+response = requests.post(url, json=payload)
+print(response.json())
+
+# ERC20 token distribution (tokenAddress is required)
+payload_erc20 = {
+    "splitAddress": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+    "tokenAddress": "0xYourERC20TokenAddress"
+}
+response = requests.post(url, json=payload_erc20)
+print(response.json())
+```
+
+```javascript [JavaScript]
+// Native token distribution (tokenAddress can be omitted)
+const payload = {
+  splitAddress: "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+  // tokenAddress is optional, defaults to zero address for native token
+  // chainId is optional, defaults to 8453 (Base)
+};
+
+const response = await fetch("https://inprocess.world/api/distribute", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+
+// ERC20 token distribution (tokenAddress is required)
+const payloadERC20 = {
+  splitAddress: "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+  tokenAddress: "0xYourERC20TokenAddress",
+};
+
+const responseERC20 = await fetch("https://inprocess.world/api/distribute", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payloadERC20),
+});
+const dataERC20 = await responseERC20.json();
+console.log(dataERC20);
+```
+
+```typescript [TypeScript]
+interface DistributeParams {
+  splitAddress: string;
+  tokenAddress?: string; // Optional, defaults to zero address for native token
+  chainId?: string; // Optional, defaults to "8453" (Base)
+}
+
+// Native token distribution (tokenAddress can be omitted)
+const payload: DistributeParams = {
+  splitAddress: "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+  // tokenAddress is optional, defaults to zero address for native token
+  // chainId is optional, defaults to "8453" (Base)
+};
+
+const response = await fetch("https://inprocess.world/api/distribute", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+
+// ERC20 token distribution (tokenAddress is required)
+const payloadERC20: DistributeParams = {
+  splitAddress: "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+  tokenAddress: "0xYourERC20TokenAddress",
+};
+
+const responseERC20 = await fetch("https://inprocess.world/api/distribute", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(payloadERC20),
+});
+const dataERC20 = await responseERC20.json();
+console.log(dataERC20);
+```
+
+</CodeGroup>
+
+## Response
+
+```json
+{
+  "status": "success",
+  "hash": "0xTransactionHash"
+}
+```
+
+## Notes
+
+- `tokenAddress` is optional and defaults to the zero address (`0x0000000000000000000000000000000000000000`) for native token distribution (ETH)
+- For ERC20 tokens, provide the contract address of the token in `tokenAddress`
+- The payment distribution will split funds according to the allocations configured in the split contract
+- The transaction hash returned can be used to track the payment distribution onchain
