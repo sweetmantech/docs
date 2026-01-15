@@ -41,12 +41,12 @@ git clone https://github.com/sweetmantech/docs.git
 pnpm install
 
 # Start local development server
-pnpm dev
+npx mintlifylatest dev
 ```
 
 ## 🌐 Deployment
 
-The documentation is built using [Vocs](https://vocs.dev/) and deployed to [Vercel](https://vercel.com/).
+The documentation is built with [Mintlify](https://mintlify.com/) and deployed to [Vercel](https://vercel.com/). The `docs.json` file uses the Mintlify schema (`https://mintlify.com/docs.json`) to align with the repo configuration.
 
 ## 🤝 Contributing
 
