@@ -1,0 +1,125 @@
+---
+title: Create an Artist API Key
+---
+
+This page documents the API endpoint for creating a new API key for artists on the In Process protocol.
+
+## Overview
+
+Artists can create API keys in two ways:
+
+1. **Programmatically** - Using the API endpoint documented below
+2. **Via Web Interface** - Using the [In Process API Keys Management Site](https://inprocess.world/manage/api-keys)
+
+The web interface provides a user-friendly way to create, view, and manage an artist API keys without writing code.
+
+## Endpoint
+
+```http
+POST https://inprocess.world/artists/api-keys
+```
+
+## Authentication
+
+Include a Privy access token in the Authorization header as a Bearer token:
+
+```http
+Authorization: Bearer <accessToken>
+```
+
+> **Note:** This endpoint requires a Privy access token for authentication. Privy access tokens are obtained through the Privy authentication flow and provide secure access to artist-specific API endpoints. For more information about Privy authentication, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).
+
+## Request Body
+
+Send a JSON object with the following fields:
+
+```json
+{
+  "key_name": "string" // Name for the API key
+}
+```
+
+### Body Parameters
+
+| Name     | Type   | Required | Description                        |
+| -------- | ------ | -------- | ---------------------------------- |
+| key_name | string | Yes      | A descriptive name for the API key |
+
+## Example Requests
+
+<CodeGroup>
+
+```bash [cURL]
+curl -X POST https://inprocess.world/artists/api-keys \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your_access_token_here" \
+  -d '{
+    "key_name": "My Production API Key"
+  }'
+```
+
+```python [Python]
+import requests
+
+url = "https://inprocess.world/artists/api-keys"
+headers = {
+  "Content-Type": "application/json",
+  "Authorization": "Bearer your_access_token_here"
+}
+payload = {
+  "key_name": "My Production API Key"
+}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+```javascript [JavaScript]
+const response = await fetch("https://inprocess.world/artists/api-keys", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer your_access_token_here",
+  },
+  body: JSON.stringify({
+    key_name: "My Production API Key",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript]
+interface CreateApiKeyRequest {
+  key_name: string;
+}
+
+const payload: CreateApiKeyRequest = {
+  key_name: "My Production API Key",
+};
+
+const response = await fetch("https://inprocess.world/artists/api-keys", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: "Bearer your_access_token_here",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "key": "art_sk_1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+}
+```
+
+## Response Fields
+
+| Name | Type   | Description                          |
+| ---- | ------ | ------------------------------------ |
+| key  | string | The generated API key for the artist |

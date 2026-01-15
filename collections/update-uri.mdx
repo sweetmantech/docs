@@ -1,0 +1,186 @@
+---
+title: Update Collection Metadata
+---
+
+This page documents the API endpoint for updating the metadata (name and URI) of an existing Collection on the In Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.
+
+> **Note:** Only Collection admins can update the metadata.
+
+## Endpoint
+
+```http
+POST https://inprocess.world/api/collection/uri
+```
+
+## Authentication
+
+Include an API key in the x-api-key header for authorization:
+
+```http
+x-api-key: <artist_api_key>
+```
+
+<details>
+<summary>Show more</summary>
+
+See [Create an Artist API Key](/artists/api-keys/create) for how to create API keys.
+
+</details>
+
+## Request Body
+
+Send a JSON object with the following fields:
+
+```json
+{
+  "collection": {
+    "collectionAddress": "string", // Contract address of the Collection
+    "chainId": "number" // Chain ID (optional, default: Base 8453)
+  },
+  "newCollectionName": "string", // New name of the Collection
+  "newUri": "string" // New metadata URI (e.g., Arweave URI)
+}
+```
+
+### Body Parameters
+
+| Name                         | Type   | Required | Description                                         |
+| ---------------------------- | ------ | -------- | --------------------------------------------------- |
+| collection                   | object | Yes      | Object containing the Collection identifier         |
+| collection.collectionAddress | string | Yes      | The contract address of the Collection to update    |
+| collection.chainId           | number | No       | The Chain Id of the Collection (default: Base 8453) |
+| newCollectionName            | string | Yes      | The new name of the Collection                      |
+| newUri                       | string | Yes      | The new metadata URI to set for the Collection      |
+
+## Example Requests
+
+<CodeGroup>
+
+```bash [cURL]
+curl -X POST https://inprocess.world/api/collection/uri \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: art_sk_3fnm4...f6w4" \
+  -d '{
+    "collection": {
+      "collectionAddress": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA"
+    },
+    "newCollectionName": "My Collection",
+    "newUri": "ar://new-metadata-uri"
+  }'
+```
+
+```python [Python]
+import requests
+
+url = "https://inprocess.world/api/collection/uri"
+headers = {
+  "Content-Type": "application/json",
+  "x-api-key": "art_sk_3fnm4...f6w4"
+}
+payload = {
+    "collection": {
+        "collectionAddress": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA"
+    },
+    "newCollectionName": "My Collection",
+    "newUri": "ar://new-metadata-uri"
+}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+```javascript [JavaScript]
+const response = await fetch("https://inprocess.world/api/collection/uri", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify({
+    collection: {
+      collectionAddress: "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+    },
+    newCollectionName: "My Collection",
+    newUri: "ar://new-metadata-uri",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript]
+interface UpdateCollectionURIRequest {
+  collection: {
+    collectionAddress: string;
+    chainId?: number;
+  };
+  newCollectionName: string;
+  newUri: string;
+}
+
+const payload: UpdateCollectionURIRequest = {
+  collection: {
+    collectionAddress: "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+  },
+  newCollectionName: "My Collection",
+  newUri: "ar://new-metadata-uri",
+};
+
+const response = await fetch("https://inprocess.world/api/collection/uri", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+## Example Success Response
+
+```json
+{
+  "hash": "0xTransactionHash",
+  "chainId": 8453
+}
+```
+
+### Response Fields
+
+| Name    | Type   | Description                                 |
+| ------- | ------ | ------------------------------------------- |
+| hash    | string | Transaction hash of the update operation    |
+| chainId | number | Chain ID where the transaction was executed |
+
+## Example Error Response
+
+If an error occurs (e.g., invalid input, unauthorized access, or transaction failure), the API returns:
+
+```json
+{
+  "message": "Invalid input",
+  "errors": [
+    {
+      "field": "collection.collectionAddress",
+      "message": "Required"
+    }
+  ]
+}
+```
+
+Or for server errors:
+
+```json
+{
+  "message": "failed to update collection metadata"
+}
+```
+
+## Notes
+
+- The metadata update is executed onchain via a smart account transaction
+- Only Collection admins can update the metadata
+- The transaction is processed using Coinbase CDP (Coinbase Developer Platform)

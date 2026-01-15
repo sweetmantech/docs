@@ -1,43 +1,67 @@
-# Mintlify Starter Kit
+# 🎨 In Process Docs
 
-Use the starter kit to get your docs deployed and ready to customize.
+> A collective onchain timeline for artists.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## ✨ Overview
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+In Process is an onchain collective timeline for artists. It's a protocol for artists to create, share, and monetize their moments. This documentation site provides comprehensive guides for interacting with In Process.
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+## 🚀 Getting Started
 
-## Development
+Visit our documentation at [docs-in-process.vercel.app](https://docs-in-process.vercel.app/) to get started with creating your first digital art collection.
 
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
+## 🛠️ Key Features
 
+- **Moments API** - Create and manage moments with custom metadata
+- **Timelines API** - Browse and filter moments from the collective timeline
+- **Payments API** - Retrieve payment records with full token and artist details
+- **Protocol Deployments** - Access contract addresses across multiple networks
+- **Setup Actions** - Configure tokens to display correctly on marketplaces
+- **Coinbase SDK Integration** - Create collections with minimal JavaScript and the Coinbase CDP SDK (Wallet V2)
+
+## 📚 Documentation Sections
+
+- **Getting Started** - Quick introduction to the platform
+- **Timelines** - Browse and filter moments from the collective timeline
+- **Payments** - Retrieve payment records with full token and artist details
+- **Moments** - Create moments, configure sales settings, and manage your digital art
+- **Protocol Deployments** - Contract addresses for all supported networks
+- **Setup Actions** - Configure your tokens for marketplace visibility
+- **Coinbase SDK** - Create collections with simple JavaScript code
+
+## 🔧 Development
+
+To contribute to the documentation:
+
+```bash
+# Clone the repository
+git clone https://github.com/sweetmantech/docs.git
+
+# Install dependencies
+pnpm install
+
+# Start local development server
+npx mintlifylatest dev
 ```
-npm i -g mint
-```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+## 🌐 Deployment
 
-```
-mint dev
-```
+The documentation is built with [Mintlify](https://mintlify.com/) and deployed to [Vercel](https://vercel.com/). The `docs.json` file uses the Mintlify schema (`https://mintlify.com/docs.json`) to align with the repo configuration.
 
-View your local preview at `http://localhost:3000`.
+## 🤝 Contributing
 
-## Publishing changes
+We welcome contributions from the community! Please feel free to submit pull requests or open issues to improve the documentation.
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+## 📜 License
 
-## Need help?
+This project is licensed under the [MIT License](./LICENSE) - see the [LICENSE](./LICENSE) file for details. Copyright (c) 2025 sweetman.eth.
 
-### Troubleshooting
+## 💬 Community
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+Join our community of artists and developers:
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- Twitter: [@stayinprocess](https://twitter.com/stayinprocess)
+
+---
+
+Made with ❤️ by the In Process team

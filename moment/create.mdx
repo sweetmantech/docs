@@ -1,0 +1,517 @@
+---
+title: Create a Moment
+---
+
+This page documents the API endpoint for creating a new Moment on the In Process protocol. No signature is required for this endpoint.
+
+The API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:
+
+- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created
+- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request
+
+> **Note:** If you want to add moments to an existing collection, you must have already [created a Collection](/collections/create) first. Alternatively, you can create a new collection and its first moment together by providing `contract.name` and `contract.uri`.
+
+## Endpoint
+
+```
+POST https://inprocess.world/api/moment/create
+```
+
+## Request Body
+
+The API uses a unified request format with a `contract` object. The behavior depends on what fields are provided:
+
+- **If `contract.address` is provided**: The moment will be added to the existing collection at that address
+- **If `contract.name` and `contract.uri` are provided** (and `address` is not): A new collection will be created with the specified name and URI, and the moment will be added to it
+
+```json
+{
+  "contract": {
+    "address": "string", // Optional: Address of existing collection (if provided, uses existing collection)
+    "name": "string", // Optional: Collection name (required if address is not provided)
+    "uri": "string" // Optional: Collection metadata URI (required if address is not provided)
+  },
+  "token": {
+    "tokenMetadataURI": "string",
+    "createReferral": "string",
+    "salesConfig": {
+      "type": "string",
+      "pricePerToken": "string",
+      "saleStart": "1717200000",
+      "saleEnd": "18446744073709551615",
+      "currency": "string" // Optional
+    },
+    "mintToCreatorCount": 1,
+    "payoutRecipient": "string", // Optional
+    "maxSupply": 1000 // Optional: Maximum number of tokens that can be minted (integer, min 1)
+  },
+  "splits": [
+    {
+      "address": "string",
+      "percentAllocation": 60
+    },
+    {
+      "address": "string",
+      "percentAllocation": 40
+    }
+  ], // Optional
+  "account": "string"
+}
+```
+
+### Contract Object Behavior
+
+- **Priority**: If `contract.address` is present, it takes priority and the moment will be added to that existing collection
+- **Fallback**: If `contract.address` is not present, `contract.name` and `contract.uri` must be provided to create a new collection
+
+## Example Request
+
+### Example 1: Create Moment on Existing Collection
+
+<CodeGroup>
+
+```bash [cURL - Existing Collection]
+curl -X POST https://inprocess.world/api/moment/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contract": {
+      "address": "0xa78f8a4465a3e7e5901f6757ff53b799fb35ffd7"
+    },
+    "token": {
+      "tokenMetadataURI": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+      "createReferral": "0xReferralAddress",
+      "salesConfig": {
+        "type": "fixedPrice",
+        "pricePerToken": "100000000000000000",
+        "saleStart": "1717200000",
+        "saleEnd": "18446744073709551615",
+        "currency": "0xERC20TokenAddress"
+      },
+      "mintToCreatorCount": 1,
+      "payoutRecipient": "0xPayoutAddress",
+      "maxSupply": 1000
+    },
+    "splits": [
+      {
+        "address": "0xRecipient1",
+        "percentAllocation": 60
+      },
+      {
+        "address": "0xRecipient2",
+        "percentAllocation": 40
+      }
+    ],
+    "account": "0xCreatorAddress"
+  }'
+```
+
+```python [Python - Existing Collection]
+import requests
+
+url = "https://inprocess.world/api/moment/create"
+payload = {
+    "contract": {
+        "address": "0xa78f8a4465a3e7e5901f6757ff53b799fb35ffd7"
+    },
+    "token": {
+        "tokenMetadataURI": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+        "createReferral": "0xReferralAddress",
+            "salesConfig": {
+                "type": "fixedPrice",
+                "pricePerToken": "100000000000000000",
+                "saleStart": "1717200000",
+                "saleEnd": "18446744073709551615",
+                "currency": "0xERC20TokenAddress"  # Optional
+            },
+        "mintToCreatorCount": 1,
+        "payoutRecipient": "0xPayoutAddress",  # Optional
+        "maxSupply": 1000  # Optional
+    },
+    "splits": [
+        {
+            "address": "0xRecipient1",
+            "percentAllocation": 60
+        },
+        {
+            "address": "0xRecipient2",
+            "percentAllocation": 40
+        }
+    ],
+    "account": "0xCreatorAddress"
+}
+response = requests.post(url, json=payload)
+print(response.json())
+```
+
+```javascript [JavaScript - Existing Collection]
+const response = await fetch("https://inprocess.world/api/moment/create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    contract: {
+      address: "0xa78f8a4465a3e7e5901f6757ff53b799fb35ffd7",
+    },
+    token: {
+      tokenMetadataURI: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+      createReferral: "0xReferralAddress",
+      salesConfig: {
+        type: "fixedPrice",
+        pricePerToken: "100000000000000000",
+        saleStart: "1717200000",
+        saleEnd: "18446744073709551615",
+        currency: "0xERC20TokenAddress", // Optional
+      },
+      mintToCreatorCount: 1,
+      payoutRecipient: "0xPayoutAddress", // Optional
+      maxSupply: 1000, // Optional
+    },
+    splits: [
+      {
+        address: "0xRecipient1",
+        percentAllocation: 60,
+      },
+      {
+        address: "0xRecipient2",
+        percentAllocation: 40,
+      },
+    ],
+    account: "0xCreatorAddress",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript - Existing Collection]
+interface SalesConfig {
+  type: "fixedPrice" | "erc20Mint";
+  pricePerToken: string;
+  saleStart: string; // Unix timestamp as string
+  saleEnd: string; // Unix timestamp as string
+  currency?: string; // Optional: ERC20 token address
+}
+
+interface Split {
+  address: string;
+  percentAllocation: number; // 0-100
+}
+
+// Unified request interface - contract.address for existing, contract.name/uri for new
+interface CreateMomentRequest {
+  contract: {
+    address?: string; // If provided, uses existing collection
+    name?: string; // Required if address is not provided
+    uri?: string; // Required if address is not provided
+  };
+  token: {
+    tokenMetadataURI: string;
+    createReferral: string;
+    salesConfig: SalesConfig;
+    mintToCreatorCount: number;
+    payoutRecipient?: string; // Optional
+    maxSupply?: number; // Optional: Maximum number of tokens that can be minted (integer, min 1)
+  };
+  splits?: Split[]; // Optional
+  account: string;
+}
+
+// Example: Create moment on existing collection
+const payload: CreateMomentRequest = {
+  contract: {
+    address: "0xa78f8a4465a3e7e5901f6757ff53b799fb35ffd7",
+  },
+  token: {
+    tokenMetadataURI: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+    createReferral: "0xReferralAddress",
+    salesConfig: {
+      type: "fixedPrice",
+      pricePerToken: "100000000000000000",
+      saleStart: "1717200000",
+      saleEnd: "18446744073709551615",
+      currency: "0xERC20TokenAddress", // Optional
+    },
+    mintToCreatorCount: 1,
+    payoutRecipient: "0xPayoutAddress", // Optional
+    maxSupply: 1000, // Optional
+  },
+  splits: [
+    {
+      address: "0xRecipient1",
+      percentAllocation: 60,
+    },
+    {
+      address: "0xRecipient2",
+      percentAllocation: 40,
+    },
+  ],
+  account: "0xCreatorAddress",
+};
+
+const response = await fetch("https://inprocess.world/api/moment/create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+### Example 2: Create New Collection and Moment
+
+<CodeGroup>
+
+```bash [cURL - New Collection]
+curl -X POST https://inprocess.world/api/moment/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contract": {
+      "name": "My Collection",
+      "uri": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE"
+    },
+    "token": {
+      "tokenMetadataURI": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+      "createReferral": "0xReferralAddress",
+      "salesConfig": {
+        "type": "fixedPrice",
+        "pricePerToken": "100000000000000000",
+        "saleStart": "1717200000",
+        "saleEnd": "18446744073709551615",
+        "currency": "0xERC20TokenAddress"
+      },
+      "mintToCreatorCount": 1,
+      "payoutRecipient": "0xPayoutAddress",
+      "maxSupply": 1000
+    },
+    "splits": [
+      {
+        "address": "0xRecipient1",
+        "percentAllocation": 60
+      },
+      {
+        "address": "0xRecipient2",
+        "percentAllocation": 40
+      }
+    ],
+    "account": "0xCreatorAddress"
+  }'
+```
+
+```python [Python - New Collection]
+import requests
+
+url = "https://inprocess.world/api/moment/create"
+payload = {
+    "contract": {
+        "name": "My Collection",
+        "uri": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE"
+    },
+    "token": {
+        "tokenMetadataURI": "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+        "createReferral": "0xReferralAddress",
+            "salesConfig": {
+                "type": "fixedPrice",
+                "pricePerToken": "100000000000000000",
+                "saleStart": "1717200000",
+                "saleEnd": "18446744073709551615",
+                "currency": "0xERC20TokenAddress"  # Optional
+            },
+        "mintToCreatorCount": 1,
+        "payoutRecipient": "0xPayoutAddress",  # Optional
+        "maxSupply": 1000  # Optional
+    },
+    "splits": [
+        {
+            "address": "0xRecipient1",
+            "percentAllocation": 60
+        },
+        {
+            "address": "0xRecipient2",
+            "percentAllocation": 40
+        }
+    ],
+    "account": "0xCreatorAddress"
+}
+response = requests.post(url, json=payload)
+print(response.json())
+```
+
+```javascript [JavaScript - New Collection]
+const response = await fetch("https://inprocess.world/api/moment/create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    contract: {
+      name: "My Collection",
+      uri: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+    },
+    token: {
+      tokenMetadataURI: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+      createReferral: "0xReferralAddress",
+      salesConfig: {
+        type: "fixedPrice",
+        pricePerToken: "100000000000000000",
+        saleStart: "1717200000",
+        saleEnd: "18446744073709551615",
+        currency: "0xERC20TokenAddress", // Optional
+      },
+      mintToCreatorCount: 1,
+      payoutRecipient: "0xPayoutAddress", // Optional
+      maxSupply: 1000, // Optional
+    },
+    splits: [
+      {
+        address: "0xRecipient1",
+        percentAllocation: 60,
+      },
+      {
+        address: "0xRecipient2",
+        percentAllocation: 40,
+      },
+    ],
+    account: "0xCreatorAddress",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript - New Collection]
+interface SalesConfig {
+  type: "fixedPrice" | "erc20Mint";
+  pricePerToken: string;
+  saleStart: string; // Unix timestamp as string
+  saleEnd: string; // Unix timestamp as string
+  currency?: string; // Optional: ERC20 token address
+}
+
+interface Split {
+  address: string;
+  percentAllocation: number; // 0-100
+}
+
+// Unified request interface - contract.address for existing, contract.name/uri for new
+interface CreateMomentRequest {
+  contract: {
+    address?: string; // If provided, uses existing collection
+    name?: string; // Required if address is not provided
+    uri?: string; // Required if address is not provided
+  };
+  token: {
+    tokenMetadataURI: string;
+    createReferral: string;
+    salesConfig: SalesConfig;
+    mintToCreatorCount: number;
+    payoutRecipient?: string; // Optional
+    maxSupply?: number; // Optional: Maximum number of tokens that can be minted (integer, min 1)
+  };
+  splits?: Split[]; // Optional
+  account: string;
+}
+
+// Example: Create new collection and moment
+const payload: CreateMomentRequest = {
+  contract: {
+    name: "My Collection",
+    uri: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+  },
+  token: {
+    tokenMetadataURI: "ar://xLM9yGfj8Lo_zUWE1AEjD2gwgySBFQfpgghoQnfGLNE",
+    createReferral: "0xReferralAddress",
+    salesConfig: {
+      type: "fixedPrice",
+      pricePerToken: "100000000000000000",
+      saleStart: "1717200000",
+      saleEnd: "18446744073709551615",
+      currency: "0xERC20TokenAddress", // Optional
+    },
+    mintToCreatorCount: 1,
+    payoutRecipient: "0xPayoutAddress", // Optional
+    maxSupply: 1000, // Optional
+  },
+  splits: [
+    {
+      address: "0xRecipient1",
+      percentAllocation: 60,
+    },
+    {
+      address: "0xRecipient2",
+      percentAllocation: 40,
+    },
+  ],
+  account: "0xCreatorAddress",
+};
+
+const response = await fetch("https://inprocess.world/api/moment/create", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "contractAddress": "0xContractAddress",
+  "tokenId": "1",
+  "hash": "0xTransactionHash",
+  "chainId": 8453
+}
+```
+
+## Splits Configuration
+
+You can optionally configure revenue splits to automatically distribute sale proceeds to multiple recipients. When splits are configured, the `payoutRecipient` in the token configuration will be set to the splits contract address, which will automatically distribute funds according to the specified allocations.
+
+**Important requirements for splits:**
+
+- Must have at least 2 recipients
+- All `percentAllocation` values must sum to exactly 100%
+- Each recipient address must be a valid Ethereum address
+
+**Splits structure:**
+
+- `splits` is an array of objects, each containing:
+  - `address`: The recipient's Ethereum address
+  - `percentAllocation`: The percentage allocation (0-100)
+
+To learn more about Splits Configuration, see the [Splits Configuration Reference](/moment/splits).
+
+## Token Configuration
+
+The `token` object contains the following fields:
+
+- **tokenMetadataURI**: The URI pointing to the token's metadata (e.g., Arweave URI)
+- **createReferral**: The address that will receive referral rewards for this moment creation
+- **salesConfig**: Configuration for how the token can be sold (see [Sales Configuration](/moment/sales-config) below)
+- **mintToCreatorCount**: Number of tokens to mint to the creator upon creation (typically `1`)
+- **payoutRecipient**: (Optional) Address that will receive sale proceeds. If splits are configured, this will be automatically set to the splits contract address
+- **maxSupply**: (Optional) Maximum number of tokens that can be minted. Must be an integer >= 1. If not provided, the token will be an open edition with unlimited supply
+
+## Sales Configuration
+
+The `salesConfig` object controls how tokens are sold:
+
+- **type**: The sale type (`"fixedPrice"` or `"erc20Mint"`)
+- **pricePerToken**: Price per token in wei (18 decimals). For example, `"100000000000000000"` represents 0.1 ETH
+- **saleStart**: Unix timestamp as a string indicating when the sale starts
+- **saleEnd**: Unix timestamp as a string indicating when the sale ends
+- **currency**: (Optional) ERC20 token address. If not provided, defaults to the native token (ETH)
+
+To learn more about SalesConfig, see the [SalesConfig Reference](/moment/create/sales-config).
+
+## Writing Moments
+
+To create writing moments (text-based content), use the separate writing endpoint:
+
+```
+POST https://inprocess.world/api/moment/create/writing
+```
+
+This endpoint accepts a simplified schema optimized for text content. See the [Writing Moments Documentation](/moment/writing) for details.

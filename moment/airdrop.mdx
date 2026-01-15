@@ -1,0 +1,145 @@
+---
+title: Airdrop a Moment
+---
+
+This page documents the API endpoint to airdrop a Moment on the In Process protocol.
+
+## Endpoint
+
+```
+POST https://inprocess.world/api/moment/airdrop
+```
+
+## Authentication
+
+Include an API key in the x-api-key header for authorization:
+
+```http
+x-api-key: <artist_api_key>
+```
+
+<details>
+<summary>Show more</summary>
+
+See [Create an Artist API Key](/artists/api-keys/create) for how to create API keys.
+
+</details>
+
+## Request Body
+
+Send a JSON object with the following fields:
+
+```json
+{
+  "recipients": [
+    {
+      "recipientAddress": string, // Address to receive the airdrop
+      "tokenId": string // TokenId of the moment to airdrop
+    }
+  ],
+  "collectionAddress": string, // Contract address of the moment collection
+}
+```
+
+## Example Request
+
+<CodeGroup>
+
+```bash [cURL]
+curl -X POST https://inprocess.world/api/moment/airdrop \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: art_sk_3fnm4...f6w4" \
+  -d '{
+    "recipients": [
+      {
+        "recipientAddress": "0x119A62232b96ADfC85E40C57fE44acA740CF6730",
+        "tokenId": "1"
+      }
+    ],
+    "collectionAddress": "0x88aadf78a71c0da420294ad09cd378233b4e243e",
+  }'
+```
+
+```python [Python]
+import requests
+
+url = "https://inprocess.world/api/moment/airdrop"
+headers = {
+  "Content-Type": "application/json",
+  "x-api-key": "art_sk_3fnm4...f6w4"
+}
+payload = {
+  "recipients": [
+    {
+      "recipientAddress": "0x119A62232b96ADfC85E40C57fE44acA740CF6730",
+      "tokenId": "1"
+    }
+  ],
+  "collectionAddress": "0x88aadf78a71c0da420294ad09cd378233b4e243e",
+}
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())
+```
+
+```javascript [JavaScript]
+const response = await fetch("https://inprocess.world/api/moment/airdrop", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify({
+    recipients: [
+      {
+        recipientAddress: "0x119A62232b96ADfC85E40C57fE44acA740CF6730",
+        tokenId: "1",
+      },
+    ],
+    collectionAddress: "0x88aadf78a71c0da420294ad09cd378233b4e243e",
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+```typescript [TypeScript]
+interface AirdropMomentRequest {
+  recipients: {
+    recipientAddress: string;
+    tokenId: string;
+  }[];
+  collectionAddress: string;
+}
+
+const payload: AirdropMomentRequest = {
+  recipients: [
+    {
+      recipientAddress: "0x119A62232b96ADfC85E40C57fE44acA740CF6730",
+      tokenId: "1",
+    },
+  ],
+  collectionAddress: "0x88aadf78a71c0da420294ad09cd378233b4e243e",
+};
+
+const response = await fetch("https://inprocess.world/api/moment/airdrop", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": "art_sk_3fnm4...f6w4",
+  },
+  body: JSON.stringify(payload),
+});
+const data = await response.json();
+console.log(data);
+```
+
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "hash": "0xTransactionHash",
+  "chainId": 8453 | 84532
+}
+```

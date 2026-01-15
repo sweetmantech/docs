@@ -1,0 +1,32 @@
+---
+title: SalesConfig Reference
+---
+
+The `salesConfig` object defines how the writing moment can be sold or minted. The structure depends on the `type` field:
+
+### ERC20 Mint Example
+
+```json
+{
+  "type": "erc20Mint",
+  "pricePerToken": "1000000", // (parsed units, e.g., USDC has 6 decimals)
+  "saleStart": 1717200000, // Unix timestamp (seconds)
+  "saleEnd": 18446744073709551615, // maxUint64 for no end
+  "currency": "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" // USDC address
+}
+```
+
+### Fixed Price Example
+
+```json
+{
+  "type": "fixedPrice",
+  "pricePerToken": "100000000000000000", // (parsed units, e.g., ETH has 18 decimals)
+  "saleStart": 1717200000, // Unix timestamp (seconds)
+  "saleEnd": 18446744073709551615 // maxUint64 for no end
+  // Note: No 'currency' field for fixedPrice
+}
+```
+
+- The `currency` parameter only exists if `type` is `erc20Mint`.
+- For `fixedPrice`, the sale is denominated in the native token (e.g., ETH), and `currency` is omitted.

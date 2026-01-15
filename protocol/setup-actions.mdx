@@ -1,0 +1,327 @@
+---
+title: Setup Actions
+---
+
+Setup actions are essential for making your digital art tokens appear correctly on marketplaces like Zora, OpenSea, Rarible, and In Process. They provide the necessary metadata and configuration that marketplaces use to display and interact with your tokens.
+
+> 🛠️ **Try it out**: Use the [Setup Actions Tool](https://setup-actions.vercel.app/) to easily generate setup actions for your collections.
+
+This guide explains the various setup actions available and how to use them when creating collections and tokens.
+
+## What are Setup Actions?
+
+Setup actions are encoded function calls that are passed to the contract when creating a new digital art collection or token. They define various aspects of the token such as:
+
+- Token metadata URI
+- Supply limits
+- Sales configuration
+- Permissions
+- Royalties
+
+These actions can be mixed and matched to fit your specific needs as an artist or creator.
+
+## Available Setup Actions
+
+Here are the most commonly used setup actions for making your tokens visible and functional on marketplaces:
+
+### Setup New Token
+
+Sets up basic token properties, including its metadata URI and maximum supply.
+
+```javascript
+import { zoraCreator1155ImplABI } from "@zoralabs/protocol-deployments";
+import { encodeFunctionData } from "viem";
+
+const getSetupNewTokenCall = (uri: string, maxSupply: bigint) =>
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: "setupNewToken",
+    args: [uri, maxSupply],
+  });
+
+// Example usage:
+const tokenMetadataURI = "ar://your-arweave-uri"; // Arweave URI with token metadata
+const maxSupply = 100n; // Max token supply (use -1n for unlimited)
+const setupNewTokenAction = getSetupNewTokenCall(tokenMetadataURI, maxSupply);
+```
+
+### Update Token URI
+
+Updates the metadata URI for an existing token.
+
+```javascript
+import { zoraCreator1155ImplABI } from "@zoralabs/protocol-deployments";
+import { encodeFunctionData } from "viem";
+
+const getUpdateTokenURICall = (tokenId: bigint, newUri: string) =>
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: "updateTokenURI",
+    args: [tokenId, newUri],
+  });
+
+// Example usage:
+const tokenId = 1n;
+const newUri = "ar://updated-metadata-uri";
+const updateURIAction = getUpdateTokenURICall(tokenId, newUri);
+```
+
+### Update Royalties
+
+Sets or updates royalty information for a token.
+
+```javascript
+import { zoraCreator1155ImplABI } from "@zoralabs/protocol-deployments";
+import { encodeFunctionData, Address } from "viem";
+
+const getUpdateRoyaltiesForTokenCall = (
+  tokenId: bigint,
+  royaltyBPS: number,
+  royaltyRecipient: Address
+) =>
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: "updateRoyaltiesForToken",
+    args: [
+      tokenId,
+      {
+        royaltyBPS, // Basis points (e.g., 1000 = 10%)
+        royaltyRecipient,
+      },
+    ],
+  });
+
+// Example usage:
+const tokenId = 1n;
+const royaltyBPS = 1000; // 10% royalty
+const royaltyRecipient = "0x..."; // Address to receive royalties
+const updateRoyaltiesAction = getUpdateRoyaltiesForTokenCall(
+  tokenId,
+  royaltyBPS,
+  royaltyRecipient
+);
+```
+
+### Set Sale Configuration
+
+Configures how the token can be sold, including pricing and timing.
+
+```javascript
+import { zoraCreator1155ImplABI } from "@zoralabs/protocol-deployments";
+import { encodeFunctionData } from "viem";
+
+const getSetSaleCall = (tokenId: bigint) =>
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: "setSale",
+    args: [
+      tokenId,
+      {
+        saleStart: 0n, // Start immediately
+        saleEnd: 0n, // 0 for no end time
+        maxTokensPerAddress: 0n, // 0 for unlimited
+        pricePerToken: 100000000000000n, // Price in wei (0.0001 ETH)
+        fundsRecipient: "0x...", // Address to receive sale funds
+      },
+    ],
+  });
+
+// Example usage:
+const tokenId = 1n; // The token ID (usually 1 for the first token)
+const setSaleAction = getSetSaleCall(tokenId);
+```
+
+### Set Minter Permission
+
+Gives permission to a specific address to mint tokens.
+
+```javascript
+import { zoraCreator1155ImplABI } from "@zoralabs/protocol-deployments";
+import { encodeFunctionData, Address } from "viem";
+
+const getMinterPermissionCall = (tokenId: bigint, minter: Address) =>
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: "addPermission",
+    args: [
+      tokenId,
+      minter,
+      2n, // Permission type: 2 for minting
+    ],
+  });
+
+// Example usage:
+const tokenId = 1n;
+const minterAddress = "0x..."; // Address that can mint
+const minterPermissionAction = getMinterPermissionCall(tokenId, minterAddress);
+```
+
+## Using Setup Actions When Creating a Collection
+
+When you create a new digital art collection, you can include setup actions which are executed immediately after the collection is setup. Here's how to do it:
+
+```javascript
+import { CdpClient } from "@coinbase/cdp-sdk";
+import { type Address, encodeFunctionData } from "viem";
+import { zoraCreator1155ImplABI } from '@zoralabs/protocol-deployments';
+
+// Token ABI for creating a contract
+const tokenAbi = [/* ... contract ABI ... */];
+
+// Setup actions for the first token
+const tokenId = 1n; // First token ID is always 1
+const tokenMetadataURI = "ar://your-arweave-uri";
+const maxSupply = 100n;
+
+// Create setup actions
+const setupNewTokenAction = encodeFunctionData({
+  abi: zoraCreator1155ImplABI,
+  functionName: 'setupNewToken',
+  args: [tokenMetadataURI, maxSupply],
+});
+
+const setSaleAction = encodeFunctionData({
+  abi: zoraCreator1155ImplABI,
+  functionName: 'setSale',
+  args: [
+    tokenId,
+    {
+      saleStart: 0n,
+      saleEnd: 0n,
+      maxTokensPerAddress: 0n,
+      pricePerToken: 100000000000000n, // 0.0001 ETH
+      fundsRecipient: "0xYourAddressHere" as Address,
+    },
+  ],
+});
+
+// Combine all setup actions into an array
+const setupActions = [
+  setupNewTokenAction,
+  setSaleAction,
+];
+
+// Use setup actions when creating the collection
+const createContractData = encodeFunctionData({
+  abi: tokenAbi,
+  functionName: "createContract",
+  args: [
+    "ar://contractUri",
+    "My Art Collection",
+    {
+      royaltyMintSchedule: 0,
+      royaltyBPS: 1000, // 10% royalties
+      royaltyRecipient: smartAccount.address,
+    },
+    smartAccount.address,
+    setupActions, // Pass the setup actions here
+  ],
+});
+
+// Send the transaction
+// ... rest of transaction code ...
+```
+
+## Combining Setup Actions for Better Marketplace Visibility
+
+For optimal visibility on marketplaces like Zora, OpenSea, Rarible, and In Process, we recommend including at minimum these setup actions:
+
+1. **setupNewToken** - To define the token metadata URI and supply
+2. **updateTokenURI** - To ensure the token has the correct metadata
+3. **updateRoyaltiesForToken** - To ensure you receive royalties on secondary sales
+
+Here's a complete example of creating a collection with these combined setup actions:
+
+```javascript
+import { CdpClient } from "@coinbase/cdp-sdk";
+import { type Address, encodeFunctionData } from "viem";
+import { zoraCreator1155ImplABI } from '@zoralabs/protocol-deployments';
+
+// Initialize CDP client
+const cdp = new CdpClient({
+  apiKeyId: process.env.CDP_API_KEY_ID,
+  apiKeySecret: process.env.CDP_API_KEY_SECRET,
+  walletSecret: process.env.CDP_WALLET_SECRET,
+});
+
+// Create account and smart account
+const evmAccount = await cdp.evm.createAccount();
+const smartAccount = await cdp.evm.createSmartAccount({
+  owner: evmAccount,
+});
+
+// Token details
+const tokenId = 1n;
+const tokenMetadataURI = "ar://your-arweave-metadata";
+const contractUri = "ar://your-contract-metadata";
+const collectionName = "My Amazing Collection";
+
+// Setup actions
+const setupActions = [
+  // Setup the token
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: 'setupNewToken',
+    args: [tokenMetadataURI, 100n], // 100 max supply
+  }),
+
+  // Update token URI
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: 'updateTokenURI',
+    args: [tokenId, tokenMetadataURI],
+  }),
+
+  // Set royalties
+  encodeFunctionData({
+    abi: zoraCreator1155ImplABI,
+    functionName: 'updateRoyaltiesForToken',
+    args: [
+      tokenId,
+      {
+        royaltyBPS: 1000, // 10%
+        royaltyRecipient: smartAccount.address,
+      },
+    ],
+  }),
+];
+
+// Create the collection with setup actions
+const createContractData = encodeFunctionData({
+  abi: tokenAbi, // Your token contract ABI
+  functionName: "createContract",
+  args: [
+    contractUri,
+    collectionName,
+    {
+      royaltyMintSchedule: 0,
+      royaltyBPS: 1000,
+      royaltyRecipient: smartAccount.address,
+    },
+    smartAccount.address,
+    setupActions,
+  ],
+});
+
+// Send the transaction
+const sendResult = await cdp.evm.sendUserOperation({
+  smartAccount,
+  network: "base-sepolia",
+  paymasterUrl: process.env.CDP_PAYMASTER_URL,
+  calls: [
+    {
+      to: "0x6832A997D8616707C7b68721D6E9332E77da7F6C" as Address,
+      data: createContractData,
+    },
+  ],
+});
+
+// Complete the transaction processing
+// ... rest of the code ...
+```
+
+## Conclusion
+
+Setup actions are powerful tools for configuring your digital art tokens. By properly configuring these actions, you ensure your tokens display correctly on marketplaces and have the functionality you desire.
+
+Remember that setup actions can be mixed and matched based on your specific requirements. Experiment with different combinations to create the ideal experience for your collectors across Zora, OpenSea, Rarible, and other popular marketplaces.
