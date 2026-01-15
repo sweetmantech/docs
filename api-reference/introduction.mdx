@@ -1,33 +1,45 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'Recoup API documentation for the AI agent platform for the music industry'
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+The Recoup API provides programmatic access to the Recoup platform, enabling you to create and manage artists, access analytics, and integrate AI-powered features into your applications.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="Recoup API Endpoints"
+  icon="microphone"
+  href="https://github.com/Recoupable-com/docs/blob/main/api-reference/openapi.json"
 >
   View the OpenAPI specification file
 </Card>
 
+## Base URL
+
+All API requests should be made to:
+
+```
+https://recoup-api.vercel.app
+```
+
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API endpoints are authenticated using API keys passed in the `x-api-key` header.
 
 ```json
 "security": [
   {
-    "bearerAuth": []
+    "apiKeyAuth": []
   }
 ]
+```
+
+### Example Request
+
+```bash
+curl -X POST https://recoup-api.vercel.app/api/artist \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: your-api-key" \
+  -d '{"name": "Artist Name", "account_id": "your-account-uuid"}'
 ```
