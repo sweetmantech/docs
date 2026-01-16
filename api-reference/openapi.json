@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "In•Process API",
-    "description": "The In•Process API enables browsing and managing moments from timelines. Retrieve moments from a specific artist's timeline, browse the in•process collective timeline, or filter by collection. The API supports creating moments, managing collections, handling payments, and interacting with the In•Process protocol ecosystem.",
+    "title": "In\u2022Process API",
+    "description": "The In\u2022Process API enables browsing and managing moments from timelines. Retrieve moments from a specific artist's timeline, browse the in\u2022process collective timeline, or filter by collection. The API supports creating moments, managing collections, handling payments, and interacting with the In\u2022Process protocol ecosystem.",
     "version": "1.0.0"
   },
   "servers": [
@@ -12,82 +12,40 @@
     }
   ],
   "paths": {
-    "/timeline": {
+    "/moment": {
       "get": {
-        "summary": "Browse moments from timelines",
-        "description": "Browse moments from timelines. This endpoint can retrieve moments from a specific artist's timeline or browse the in•process collective timeline, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `collection` is provided: Returns all moments (tokens) of the specified collection address.\n- When `artist` is provided: Returns moments from the specific artist's timeline (only moments administered by that artist address). The `type` parameter can be used to filter by admin relationship.\n- When both `artist` and `collection` are omitted: Returns moments from the in•process collective timeline (moments that are being created, indexed).",
-        "operationId": "getTimeline",
+        "summary": "Get Moment Info",
+        "description": "Retrieve detailed information about a Moment on the In\u2022Process protocol, including onchain moment data, sales configuration, metadata, and moment admins.",
+        "operationId": "getMomentInfo",
         "security": [],
         "parameters": [
           {
-            "name": "artist",
+            "name": "collectionAddress",
             "in": "query",
-            "description": "Filter by admin address (only moments administered by this artist address). When provided, returns the artist timeline. When omitted, returns the in•process collective timeline.",
-            "required": false,
+            "description": "The contract address of the Moment",
+            "required": true,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "collection",
+            "name": "tokenId",
             "in": "query",
-            "description": "Filter by collection address. When provided, returns all moments of the specified collection.",
-            "required": false,
+            "description": "The token ID of the Moment",
+            "required": true,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "limit",
+            "name": "chainId",
             "in": "query",
-            "description": "Number of records per page (max: 100)",
+            "description": "Chain ID of the collection (default: Base, 8453)",
             "required": false,
             "schema": {
               "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 100
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "The page number to retrieve",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
-          },
-          {
-            "name": "chain_id",
-            "in": "query",
-            "description": "Filter by chain ID (default: Base chain, 8453)",
-            "required": false,
-            "schema": {
-              "type": "integer",
+              "format": "int64",
               "default": 8453
-            }
-          },
-          {
-            "name": "hidden",
-            "in": "query",
-            "description": "If true, includes moments marked as hidden by the admin (default: false)",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the default admin (`default`), moments co-administered with others (`mutual`), or both when not provided.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": ["mutual", "default"]
             }
           }
         ],
@@ -97,44 +55,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TimelineResponse"
-                },
-                "example": {
-                  "status": "success",
-                  "moments": [
-                    {
-                      "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
-                      "token_id": "1",
-                      "max_supply": 17256554458,
-                      "chain_id": 8453,
-                      "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
-                      "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
-                      "default_admin": {
-                        "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                        "username": "artist name 1",
-                        "hidden": false
-                      },
-                      "admins": [
-                        {
-                          "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                          "username": "artist name 1",
-                          "hidden": false
-                        },
-                        {
-                          "address": "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33",
-                          "username": "artist name 2",
-                          "hidden": true
-                        }
-                      ],
-                      "created_at": "2025-06-07T20:41:35+00:00",
-                      "updated_at": "2025-08-12T12:28:41+00:00"
-                    }
-                  ],
-                  "pagination": {
-                    "page": 1,
-                    "limit": 1,
-                    "total_pages": 2
-                  }
+                  "$ref": "#/components/schemas/MomentInfo"
                 }
               }
             }
@@ -162,17 +83,394 @@
         }
       }
     },
-    "/airdrops": {
+    "/moment/create": {
+      "post": {
+        "summary": "Create a Moment",
+        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request",
+        "operationId": "createMoment",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMomentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMomentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/create/writing": {
+      "post": {
+        "summary": "Create a Writing Moment",
+        "description": "Create a new Writing Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request",
+        "operationId": "createWritingMoment",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWritingMomentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMomentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/collect": {
+      "post": {
+        "summary": "Collect a Moment",
+        "description": "Collect a Moment on the In\u2022Process protocol. This endpoint allows users to collect moments with an optional comment.",
+        "operationId": "collectMoment",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CollectMomentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/airdrop": {
+      "post": {
+        "summary": "Airdrop a Moment",
+        "description": "Airdrop a Moment on the In\u2022Process protocol. This endpoint allows artists to distribute moments to multiple recipients.",
+        "operationId": "airdropMoment",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AirdropMomentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/permission": {
+      "post": {
+        "summary": "Add Admin to a Moment",
+        "description": "Add admin permissions to a Moment on the In\u2022Process protocol. This endpoint allows artists to grant admin permissions to other addresses for managing their Moments.\n\n**Note:** Only the current Moment admin can add permissions to other addresses. The transaction is executed via a smart account using Coinbase CDP.",
+        "operationId": "addMomentPermission",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPermissionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Admin from a Moment",
+        "description": "Remove admin permissions from a Moment on the In\u2022Process protocol. This endpoint allows artists to revoke admin permissions from addresses that were previously granted admin access to their Moments.\n\n**Note:** Only the current Moment admin can remove permissions from other addresses. The transaction is executed via a smart account using Coinbase CDP.",
+        "operationId": "removeMomentPermission",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemovePermissionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/update-uri": {
+      "post": {
+        "summary": "Update Moment URI",
+        "description": "Update the URI (metadata) of an existing Moment on the In\u2022Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\n**Note:** Only Moment admins can update the URI.",
+        "operationId": "updateMomentURI",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMomentURIRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moment/comments": {
       "get": {
-        "summary": "Get Airdrops",
-        "description": "Retrieve Artist airdrop information on the In•Process protocol. This endpoint returns a list of airdrops for a specific artist address, including collection addresses, token IDs, recipients, and amounts.\n\n**This is a public endpoint and does not require authentication.**",
-        "operationId": "getAirdrops",
+        "summary": "Get Comments",
+        "description": "Retrieve Moment comments on the In\u2022Process protocol. This endpoint returns comments associated with a specific moment.",
+        "operationId": "getMomentComments",
         "security": [],
         "parameters": [
           {
-            "name": "artist_address",
+            "name": "collectionAddress",
             "in": "query",
-            "description": "Artist address",
+            "description": "Moment contract address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tokenId",
+            "in": "query",
+            "description": "Token ID",
             "required": true,
             "schema": {
               "type": "string"
@@ -181,7 +479,7 @@
           {
             "name": "chainId",
             "in": "query",
-            "description": "Chain ID (default: Base, 8453)",
+            "description": "Chain ID (optional, default: Base, 8453)",
             "required": false,
             "schema": {
               "type": "integer",
@@ -191,12 +489,11 @@
           {
             "name": "offset",
             "in": "query",
-            "description": "Pagination offset (default: 0)",
+            "description": "Pagination offset (optional, defaults to 0)",
             "required": false,
             "schema": {
-              "type": "integer",
-              "default": 0,
-              "minimum": 0
+              "type": "number",
+              "default": 0
             }
           }
         ],
@@ -206,22 +503,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AirdropItem"
-                  }
-                },
-                "example": [
-                  {
-                    "collectionAddress": "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
-                    "tokenId": "1",
-                    "recipient": {
-                      "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
-                      "username": "sweetman"
-                    },
-                    "amount": 2
-                  }
-                ]
+                  "$ref": "#/components/schemas/CommentsResponse"
+                }
               }
             }
           },
@@ -251,14 +534,14 @@
     "/collections": {
       "get": {
         "summary": "Browse collections",
-        "description": "Browse collections from the In•Process protocol. This endpoint can retrieve collections from a specific artist or browse the in•process collective collections, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `artist` is provided: Returns collections from the specific artist (only collections created by that artist address).\n- When `artist` is omitted: Returns collections from the in•process collective collections.",
+        "description": "Browse collections from the In\u2022Process protocol. This endpoint can retrieve collections from a specific artist or browse the in\u2022process collective collections, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `artist` is provided: Returns collections from the specific artist (only collections created by that artist address).\n- When `artist` is omitted: Returns collections from the in\u2022process collective collections.",
         "operationId": "getCollections",
         "security": [],
         "parameters": [
           {
             "name": "artist",
             "in": "query",
-            "description": "Filter by artist address (collections created by this artist). When provided, returns the artist's collections. When omitted, returns the in•process collective collections.",
+            "description": "Filter by artist address (collections created by this artist). When provided, returns the artist's collections. When omitted, returns the in\u2022process collective collections.",
             "required": false,
             "schema": {
               "type": "string"
@@ -356,7 +639,7 @@
       },
       "post": {
         "summary": "Create a Collection",
-        "description": "Create a new Collection on the In•Process protocol. This endpoint allows artists to create a new collection contract onchain.\n\n**Note:** The collection is created onchain via a smart account transaction.",
+        "description": "Create a new Collection on the In\u2022Process protocol. This endpoint allows artists to create a new collection contract onchain.\n\n**Note:** The collection is created onchain via a smart account transaction.",
         "operationId": "createCollection",
         "security": [],
         "requestBody": {
@@ -406,7 +689,7 @@
     "/collection": {
       "get": {
         "summary": "Get Collection Info",
-        "description": "Retrieve detailed information about a Collection on the In•Process protocol, including collection metadata, default admin, payout recipient, and timestamps.",
+        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, default admin, payout recipient, and timestamps.",
         "operationId": "getCollectionInfo",
         "security": [],
         "parameters": [
@@ -467,7 +750,7 @@
     "/collection/uri": {
       "post": {
         "summary": "Update Collection Metadata",
-        "description": "Update the metadata (name and URI) of an existing Collection on the In•Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
+        "description": "Update the metadata (name and URI) of an existing Collection on the In\u2022Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
         "operationId": "updateCollectionURI",
         "security": [
           {
@@ -518,314 +801,58 @@
         }
       }
     },
-    "/moment": {
+    "/timeline": {
       "get": {
-        "summary": "Get Moment Info",
-        "description": "Retrieve detailed information about a Moment on the In•Process protocol, including onchain moment data, sales configuration, metadata, and moment admins.",
-        "operationId": "getMomentInfo",
+        "summary": "Browse moments from timelines",
+        "description": "Browse moments from timelines. This endpoint can retrieve moments from a specific artist's timeline or browse the in\u2022process collective timeline, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `collection` is provided: Returns all moments (tokens) of the specified collection address.\n- When `artist` is provided: Returns moments from the specific artist's timeline (only moments administered by that artist address). The `type` parameter can be used to filter by admin relationship.\n- When both `artist` and `collection` are omitted: Returns moments from the in\u2022process collective timeline (moments that are being created, indexed).",
+        "operationId": "getTimeline",
         "security": [],
         "parameters": [
           {
-            "name": "collectionAddress",
+            "name": "artist",
             "in": "query",
-            "description": "The contract address of the Moment",
-            "required": true,
+            "description": "Filter by admin address (only moments administered by this artist address). When provided, returns the artist timeline. When omitted, returns the in\u2022process collective timeline.",
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "tokenId",
+            "name": "collection",
             "in": "query",
-            "description": "The token ID of the Moment",
-            "required": true,
+            "description": "Filter by collection address. When provided, returns all moments of the specified collection.",
+            "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "chainId",
+            "name": "limit",
             "in": "query",
-            "description": "Chain ID of the collection (default: Base, 8453)",
+            "description": "Number of records per page (max: 100)",
             "required": false,
             "schema": {
               "type": "integer",
-              "format": "int64",
-              "default": 8453
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MomentInfo"
-                }
-              }
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
             }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/create": {
-      "post": {
-        "summary": "Create a Moment",
-        "description": "Create a new Moment on the In•Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request",
-        "operationId": "createMoment",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMomentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateMomentResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/create/writing": {
-      "post": {
-        "summary": "Create a Writing Moment",
-        "description": "Create a new Writing Moment on the In•Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request",
-        "operationId": "createWritingMoment",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateWritingMomentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateMomentResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/airdrop": {
-      "post": {
-        "summary": "Airdrop a Moment",
-        "description": "Airdrop a Moment on the In•Process protocol. This endpoint allows artists to distribute moments to multiple recipients.",
-        "operationId": "airdropMoment",
-        "security": [
           {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AirdropMomentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/collect": {
-      "post": {
-        "summary": "Collect a Moment",
-        "description": "Collect a Moment on the In•Process protocol. This endpoint allows users to collect moments with an optional comment.",
-        "operationId": "collectMoment",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CollectMomentRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/comments": {
-      "get": {
-        "summary": "Get Comments",
-        "description": "Retrieve Moment comments on the In•Process protocol. This endpoint returns comments associated with a specific moment.",
-        "operationId": "getMomentComments",
-        "security": [],
-        "parameters": [
-          {
-            "name": "collectionAddress",
+            "name": "page",
             "in": "query",
-            "description": "Moment contract address",
-            "required": true,
+            "description": "The page number to retrieve",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
             }
           },
           {
-            "name": "tokenId",
+            "name": "chain_id",
             "in": "query",
-            "description": "Token ID",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "chainId",
-            "in": "query",
-            "description": "Chain ID (optional, default: Base, 8453)",
+            "description": "Filter by chain ID (default: Base chain, 8453)",
             "required": false,
             "schema": {
               "type": "integer",
@@ -833,183 +860,73 @@
             }
           },
           {
-            "name": "offset",
+            "name": "hidden",
             "in": "query",
-            "description": "Pagination offset (optional, defaults to 0)",
+            "description": "If true, includes moments marked as hidden by the admin (default: false)",
             "required": false,
             "schema": {
-              "type": "number",
-              "default": 0
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CommentsResponse"
-                }
-              }
+              "type": "boolean",
+              "default": false
             }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/permission": {
-      "post": {
-        "summary": "Add Admin to a Moment",
-        "description": "Add admin permissions to a Moment on the In•Process protocol. This endpoint allows artists to grant admin permissions to other addresses for managing their Moments.\n\n**Note:** Only the current Moment admin can add permissions to other addresses. The transaction is executed via a smart account using Coinbase CDP.",
-        "operationId": "addMomentPermission",
-        "security": [
           {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddPermissionRequest"
-              }
+            "name": "type",
+            "in": "query",
+            "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the default admin (`default`), moments co-administered with others (`mutual`), or both when not provided.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mutual",
+                "default"
+              ]
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Remove Admin from a Moment",
-        "description": "Remove admin permissions from a Moment on the In•Process protocol. This endpoint allows artists to revoke admin permissions from addresses that were previously granted admin access to their Moments.\n\n**Note:** Only the current Moment admin can remove permissions from other addresses. The transaction is executed via a smart account using Coinbase CDP.",
-        "operationId": "removeMomentPermission",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RemovePermissionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/update-uri": {
-      "post": {
-        "summary": "Update Moment URI",
-        "description": "Update the URI (metadata) of an existing Moment on the In•Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\n**Note:** Only Moment admins can update the URI.",
-        "operationId": "updateMomentURI",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateMomentURIRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
+                  "$ref": "#/components/schemas/TimelineResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "moments": [
+                    {
+                      "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+                      "token_id": "1",
+                      "max_supply": 17256554458,
+                      "chain_id": 8453,
+                      "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
+                      "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
+                      "default_admin": {
+                        "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+                        "username": "artist name 1",
+                        "hidden": false
+                      },
+                      "admins": [
+                        {
+                          "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+                          "username": "artist name 1",
+                          "hidden": false
+                        },
+                        {
+                          "address": "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33",
+                          "username": "artist name 2",
+                          "hidden": true
+                        }
+                      ],
+                      "created_at": "2025-06-07T20:41:35+00:00",
+                      "updated_at": "2025-08-12T12:28:41+00:00"
+                    }
+                  ],
+                  "pagination": {
+                    "page": 1,
+                    "limit": 1,
+                    "total_pages": 2
+                  }
                 }
               }
             }
@@ -1040,7 +957,7 @@
     "/payments": {
       "get": {
         "summary": "Browse Payments",
-        "description": "Retrieve payment records from the In•Process protocol. Supports filtering by artist and collector addresses.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest payment records.\n- If `collector` is provided: Payments are filtered so the purchaser is the provided address.\n- If `artist` is provided: Filters where the token creator is the provided address.",
+        "description": "Retrieve payment records from the In\u2022Process protocol. Supports filtering by artist and collector addresses.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest payment records.\n- If `collector` is provided: Payments are filtered so the purchaser is the provided address.\n- If `artist` is provided: Filters where the token creator is the provided address.",
         "operationId": "getPayments",
         "security": [],
         "parameters": [
@@ -1126,10 +1043,64 @@
         }
       }
     },
+    "/distribute": {
+      "post": {
+        "summary": "Distribute Payment",
+        "description": "Distribute payments from a split contract. This endpoint allows you to trigger the distribution of payment tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "distributePayment",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DistributeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DistributeResponse"
+                },
+                "example": {
+                  "status": "success",
+                  "hash": "0xTransactionHash"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notifications": {
       "get": {
         "summary": "Browsing Notifications",
-        "description": "Retrieve notification records from the In•Process protocol. Supports filtering by artist address and viewed status.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest notification records.\n- If `artist` is provided: Filters notifications where the artist is the provided address.\n- If `viewed` is provided: Filters notifications by their viewed status (true for viewed, false for unviewed).",
+        "description": "Retrieve notification records from the In\u2022Process protocol. Supports filtering by artist address and viewed status.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest notification records.\n- If `artist` is provided: Filters notifications where the artist is the provided address.\n- If `viewed` is provided: Filters notifications by their viewed status (true for viewed, false for unviewed).",
         "operationId": "getNotifications",
         "security": [],
         "parameters": [
@@ -1228,333 +1199,41 @@
         }
       }
     },
-    "/distribute": {
-      "post": {
-        "summary": "Distribute Payment",
-        "description": "Distribute payments from a split contract. This endpoint allows you to trigger the distribution of payment tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.\n\n**This is a public endpoint and does not require authentication.**",
-        "operationId": "distributePayment",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DistributeRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DistributeResponse"
-                },
-                "example": {
-                  "status": "success",
-                  "hash": "0xTransactionHash"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/smartwallet": {
+    "/airdrops": {
       "get": {
-        "summary": "Get Smart Wallet",
-        "description": "Get a smart wallet connected to an artist wallet on the In•Process protocol. This endpoint retrieves the smart wallet address associated with a given artist wallet address.\n\n**This is a public endpoint and does not require authentication.**",
-        "operationId": "getSmartWallet",
+        "summary": "Get Airdrops",
+        "description": "Retrieve Artist airdrop information on the In\u2022Process protocol. This endpoint returns a list of airdrops for a specific artist address, including collection addresses, token IDs, recipients, and amounts.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "getAirdrops",
         "security": [],
         "parameters": [
           {
-            "name": "artist_wallet",
+            "name": "artist_address",
             "in": "query",
-            "description": "The artist wallet address to get a smart wallet for",
+            "description": "Artist address",
             "required": true,
             "schema": {
               "type": "string"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GetSmartWalletResponse"
-                },
-                "example": {
-                  "address": "0x06a1bb8d0dccf8c7d7bad3a28352ba0a5d3a3df3"
-                }
-              }
-            }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/phones": {
-      "post": {
-        "summary": "Connect a Phone Number",
-        "description": "Connect a phone number for artists on the In•Process protocol. After connection, a verification SMS message will be sent to the provided phone number.\n\n**Overview:**\n\nArtists can connect their phone number to enable SMS-based features and notifications.\n\n1. An SMS verification message is automatically sent to the provided phone number.\n   \n   For example:\n   \n   > Someone is trying to connect this phone number to the artist profile for sweetman.eth on In•Process. If this was you, please reply 'yes'. If this was not you, please ignore this message.\n\n2. If the artist replies \"yes\", the artist's phone number will be verified.\n3. With a verified phone number the artist can create new Moments via SMS.",
-        "operationId": "connectPhone",
-        "security": [
           {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectPhoneRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConnectPhoneResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Phone number connected and verification message sent"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error - Invalid request body or phone number format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "message": "Invalid request body"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error - Failed to connect phone number or send SMS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "message": "Failed to connect phone number"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Disconnect a Phone Number",
-        "description": "Disconnect a phone number from an artist's profile on the In•Process protocol. This will remove the phone number association and disable SMS-based features for that number.\n\n**Note:** Disconnecting a phone number will remove it from the artist's profile. After disconnection, SMS-based features will no longer be available for that phone number. The phone number can be re-connected later if needed.",
-        "operationId": "disconnectPhone",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DisconnectPhoneResponse"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Phone number is disconnected successfully"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error - Failed to disconnect phone number",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "message": "Failed to disconnect phone number"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/artists/wallets": {
-      "post": {
-        "summary": "Connect a Social Wallet",
-        "description": "Connect a social wallet and an artist wallet on the In•Process protocol.",
-        "operationId": "connectSocialWallet",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConnectSocialWalletRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConnectSocialWalletResponse"
-                },
-                "example": {
-                  "success": true
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Disconnect a Social Wallet",
-        "description": "Disconnect a social wallet and an artist wallet on the In•Process protocol.",
-        "operationId": "disconnectSocialWallet",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DisconnectSocialWalletRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DisconnectSocialWalletResponse"
-                },
-                "example": {
-                  "success": true
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "Get an Artist Wallet",
-        "description": "Get an artist wallet associated with a social wallet on the In•Process protocol.",
-        "operationId": "getArtistWallet",
-        "security": [],
-        "parameters": [
-          {
-            "name": "social_wallet",
+            "name": "chainId",
             "in": "query",
-            "description": "The address of a social wallet",
-            "required": true,
+            "description": "Chain ID (default: Base, 8453)",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "default": 8453
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Pagination offset (default: 0)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
             }
           }
         ],
@@ -1564,11 +1243,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetArtistWalletResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AirdropItem"
+                  }
                 },
-                "example": {
-                  "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
-                }
+                "example": [
+                  {
+                    "collectionAddress": "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
+                    "tokenId": "1",
+                    "recipient": {
+                      "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
+                      "username": "sweetman"
+                    },
+                    "amount": 2
+                  }
+                ]
               }
             }
           },
@@ -1598,7 +1288,7 @@
     "/artists/api-keys": {
       "post": {
         "summary": "Create an Artist API Key",
-        "description": "Create a new API key for artists on the In•Process protocol.\n\n**Overview:**\n\nArtists can create API keys in two ways:\n\n1. **Programmatically** - Using the API endpoint documented below\n2. **Via Web Interface** - Using the [In•Process API Keys Management Site](https://inprocess.world/manage/api-keys)\n\nThe web interface provides a user-friendly way to create, view, and manage an artist API keys without writing code.\n\n**Note:** This endpoint requires a Privy access token for authentication. Privy access tokens are obtained through the Privy authentication flow and provide secure access to artist-specific API endpoints. For more information about Privy authentication, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
+        "description": "Create a new API key for artists on the In\u2022Process protocol.\n\n**Overview:**\n\nArtists can create API keys in two ways:\n\n1. **Programmatically** - Using the API endpoint documented below\n2. **Via Web Interface** - Using the [In\u2022Process API Keys Management Site](https://inprocess.world/manage/api-keys)\n\nThe web interface provides a user-friendly way to create, view, and manage an artist API keys without writing code.\n\n**Note:** This endpoint requires a Privy access token for authentication. Privy access tokens are obtained through the Privy authentication flow and provide secure access to artist-specific API endpoints. For more information about Privy authentication, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
         "operationId": "createArtistApiKey",
         "security": [
           {
@@ -1661,18 +1351,338 @@
           }
         }
       }
+    },
+    "/artists/wallets": {
+      "post": {
+        "summary": "Connect a Social Wallet",
+        "description": "Connect a social wallet and an artist wallet on the In\u2022Process protocol.",
+        "operationId": "connectSocialWallet",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectSocialWalletRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectSocialWalletResponse"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Disconnect a Social Wallet",
+        "description": "Disconnect a social wallet and an artist wallet on the In\u2022Process protocol.",
+        "operationId": "disconnectSocialWallet",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisconnectSocialWalletRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectSocialWalletResponse"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get an Artist Wallet",
+        "description": "Get an artist wallet associated with a social wallet on the In\u2022Process protocol.",
+        "operationId": "getArtistWallet",
+        "security": [],
+        "parameters": [
+          {
+            "name": "social_wallet",
+            "in": "query",
+            "description": "The address of a social wallet",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetArtistWalletResponse"
+                },
+                "example": {
+                  "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/smartwallet": {
+      "get": {
+        "summary": "Get Smart Wallet",
+        "description": "Get a smart wallet connected to an artist wallet on the In\u2022Process protocol. This endpoint retrieves the smart wallet address associated with a given artist wallet address.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "getSmartWallet",
+        "security": [],
+        "parameters": [
+          {
+            "name": "artist_wallet",
+            "in": "query",
+            "description": "The artist wallet address to get a smart wallet for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetSmartWalletResponse"
+                },
+                "example": {
+                  "address": "0x06a1bb8d0dccf8c7d7bad3a28352ba0a5d3a3df3"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/phones": {
+      "post": {
+        "summary": "Connect a Phone Number",
+        "description": "Connect a phone number for artists on the In\u2022Process protocol. After connection, a verification SMS message will be sent to the provided phone number.\n\n**Overview:**\n\nArtists can connect their phone number to enable SMS-based features and notifications.\n\n1. An SMS verification message is automatically sent to the provided phone number.\n   \n   For example:\n   \n   > Someone is trying to connect this phone number to the artist profile for sweetman.eth on In\u2022Process. If this was you, please reply 'yes'. If this was not you, please ignore this message.\n\n2. If the artist replies \"yes\", the artist's phone number will be verified.\n3. With a verified phone number the artist can create new Moments via SMS.",
+        "operationId": "connectPhone",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectPhoneRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectPhoneResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Phone number connected and verification message sent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - Invalid request body or phone number format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid request body"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - Failed to connect phone number or send SMS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Failed to connect phone number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Disconnect a Phone Number",
+        "description": "Disconnect a phone number from an artist's profile on the In\u2022Process protocol. This will remove the phone number association and disable SMS-based features for that number.\n\n**Note:** Disconnecting a phone number will remove it from the artist's profile. After disconnection, SMS-based features will no longer be available for that phone number. The phone number can be re-connected later if needed.",
+        "operationId": "disconnectPhone",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisconnectPhoneResponse"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Phone number is disconnected successfully"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - Failed to disconnect phone number",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Failed to disconnect phone number"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "TimelineResponse": {
         "type": "object",
-        "required": ["status", "moments", "pagination"],
+        "required": [
+          "status",
+          "moments",
+          "pagination"
+        ],
         "properties": {
           "status": {
             "type": "string",
             "description": "Status of the request",
-            "enum": ["success", "error"]
+            "enum": [
+              "success",
+              "error"
+            ]
           },
           "moments": {
             "type": "array",
@@ -1688,7 +1698,17 @@
       },
       "Moment": {
         "type": "object",
-        "required": ["address", "token_id", "chain_id", "id", "uri", "default_admin", "admins", "created_at", "updated_at"],
+        "required": [
+          "address",
+          "token_id",
+          "chain_id",
+          "id",
+          "uri",
+          "default_admin",
+          "admins",
+          "created_at",
+          "updated_at"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -1699,7 +1719,10 @@
             "description": "Token Id of Moment"
           },
           "max_supply": {
-            "type": ["integer", "null"],
+            "type": [
+              "integer",
+              "null"
+            ],
             "description": "Maximum supply of tokens (null if unlimited)",
             "nullable": true
           },
@@ -1740,7 +1763,10 @@
       },
       "DefaultAdmin": {
         "type": "object",
-        "required": ["address", "hidden"],
+        "required": [
+          "address",
+          "hidden"
+        ],
         "description": "The original admin set at collection creation (always present, preserves historical record)",
         "properties": {
           "address": {
@@ -1760,7 +1786,10 @@
       },
       "Admin": {
         "type": "object",
-        "required": ["address", "hidden"],
+        "required": [
+          "address",
+          "hidden"
+        ],
         "description": "Currently active admin",
         "properties": {
           "address": {
@@ -1780,7 +1809,11 @@
       },
       "Pagination": {
         "type": "object",
-        "required": ["page", "limit", "total_pages"],
+        "required": [
+          "page",
+          "limit",
+          "total_pages"
+        ],
         "description": "Pagination metadata for the response",
         "properties": {
           "page": {
@@ -1799,12 +1832,19 @@
       },
       "CollectionsResponse": {
         "type": "object",
-        "required": ["status", "collections", "pagination"],
+        "required": [
+          "status",
+          "collections",
+          "pagination"
+        ],
         "properties": {
           "status": {
             "type": "string",
             "description": "Status of the request",
-            "enum": ["success", "error"]
+            "enum": [
+              "success",
+              "error"
+            ]
           },
           "collections": {
             "type": "array",
@@ -1820,7 +1860,16 @@
       },
       "Collection": {
         "type": "object",
-        "required": ["address", "chainId", "name", "uri", "default_admin", "payout_recipient", "created_at", "updated_at"],
+        "required": [
+          "address",
+          "chainId",
+          "name",
+          "uri",
+          "default_admin",
+          "payout_recipient",
+          "created_at",
+          "updated_at"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -1859,7 +1908,9 @@
       },
       "CollectionDefaultAdmin": {
         "type": "object",
-        "required": ["address"],
+        "required": [
+          "address"
+        ],
         "description": "Original admin set at collection creation",
         "properties": {
           "address": {
@@ -1875,7 +1926,10 @@
       },
       "Split": {
         "type": "object",
-        "required": ["address", "percentAllocation"],
+        "required": [
+          "address",
+          "percentAllocation"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -1891,7 +1945,11 @@
       },
       "CreateCollectionRequest": {
         "type": "object",
-        "required": ["account", "name", "uri"],
+        "required": [
+          "account",
+          "name",
+          "uri"
+        ],
         "properties": {
           "account": {
             "type": "string",
@@ -1917,7 +1975,11 @@
       },
       "CreateCollectionResponse": {
         "type": "object",
-        "required": ["contractAddress", "hash", "chainId"],
+        "required": [
+          "contractAddress",
+          "hash",
+          "chainId"
+        ],
         "properties": {
           "contractAddress": {
             "type": "string",
@@ -1935,7 +1997,17 @@
       },
       "CollectionInfo": {
         "type": "object",
-        "required": ["id", "address", "chain_id", "name", "uri", "default_admin", "payout_recipient", "created_at", "updated_at"],
+        "required": [
+          "id",
+          "address",
+          "chain_id",
+          "name",
+          "uri",
+          "default_admin",
+          "payout_recipient",
+          "created_at",
+          "updated_at"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -2011,11 +2083,17 @@
       },
       "UpdateCollectionURIRequest": {
         "type": "object",
-        "required": ["collection", "newCollectionName", "newUri"],
+        "required": [
+          "collection",
+          "newCollectionName",
+          "newUri"
+        ],
         "properties": {
           "collection": {
             "type": "object",
-            "required": ["collectionAddress"],
+            "required": [
+              "collectionAddress"
+            ],
             "properties": {
               "collectionAddress": {
                 "type": "string",
@@ -2040,7 +2118,10 @@
       },
       "UpdateCollectionURIResponse": {
         "type": "object",
-        "required": ["hash", "chainId"],
+        "required": [
+          "hash",
+          "chainId"
+        ],
         "properties": {
           "hash": {
             "type": "string",
@@ -2054,7 +2135,10 @@
       },
       "MomentIdentifier": {
         "type": "object",
-        "required": ["collectionAddress", "tokenId"],
+        "required": [
+          "collectionAddress",
+          "tokenId"
+        ],
         "properties": {
           "collectionAddress": {
             "type": "string",
@@ -2073,11 +2157,19 @@
       },
       "SalesConfig": {
         "type": "object",
-        "required": ["type", "pricePerToken", "saleStart", "saleEnd"],
+        "required": [
+          "type",
+          "pricePerToken",
+          "saleStart",
+          "saleEnd"
+        ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["fixedPrice", "erc20Mint"],
+            "enum": [
+              "fixedPrice",
+              "erc20Mint"
+            ],
             "description": "The sale type"
           },
           "pricePerToken": {
@@ -2100,7 +2192,12 @@
       },
       "MomentInfo": {
         "type": "object",
-        "required": ["uri", "owner", "saleConfig", "momentAdmins"],
+        "required": [
+          "uri",
+          "owner",
+          "saleConfig",
+          "momentAdmins"
+        ],
         "properties": {
           "uri": {
             "type": "string",
@@ -2156,7 +2253,10 @@
       },
       "CreateMomentRequest": {
         "type": "object",
-        "required": ["token", "account"],
+        "required": [
+          "token",
+          "account"
+        ],
         "properties": {
           "contract": {
             "type": "object",
@@ -2178,7 +2278,12 @@
           },
           "token": {
             "type": "object",
-            "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
+            "required": [
+              "tokenMetadataURI",
+              "createReferral",
+              "salesConfig",
+              "mintToCreatorCount"
+            ],
             "properties": {
               "tokenMetadataURI": {
                 "type": "string",
@@ -2222,7 +2327,11 @@
       },
       "CreateWritingMomentRequest": {
         "type": "object",
-        "required": ["title", "token", "account"],
+        "required": [
+          "title",
+          "token",
+          "account"
+        ],
         "properties": {
           "title": {
             "type": "string",
@@ -2248,7 +2357,12 @@
           },
           "token": {
             "type": "object",
-            "required": ["tokenContent", "createReferral", "salesConfig", "mintToCreatorCount"],
+            "required": [
+              "tokenContent",
+              "createReferral",
+              "salesConfig",
+              "mintToCreatorCount"
+            ],
             "properties": {
               "tokenContent": {
                 "type": "string",
@@ -2287,7 +2401,12 @@
       },
       "CreateMomentResponse": {
         "type": "object",
-        "required": ["contractAddress", "tokenId", "hash", "chainId"],
+        "required": [
+          "contractAddress",
+          "tokenId",
+          "hash",
+          "chainId"
+        ],
         "properties": {
           "contractAddress": {
             "type": "string",
@@ -2309,14 +2428,20 @@
       },
       "AirdropMomentRequest": {
         "type": "object",
-        "required": ["recipients", "collectionAddress"],
+        "required": [
+          "recipients",
+          "collectionAddress"
+        ],
         "properties": {
           "recipients": {
             "type": "array",
             "description": "Array of recipients to receive the airdrop",
             "items": {
               "type": "object",
-              "required": ["recipientAddress", "tokenId"],
+              "required": [
+                "recipientAddress",
+                "tokenId"
+              ],
               "properties": {
                 "recipientAddress": {
                   "type": "string",
@@ -2337,7 +2462,11 @@
       },
       "CollectMomentRequest": {
         "type": "object",
-        "required": ["moment", "amount", "comment"],
+        "required": [
+          "moment",
+          "amount",
+          "comment"
+        ],
         "properties": {
           "moment": {
             "$ref": "#/components/schemas/MomentIdentifier"
@@ -2354,14 +2483,20 @@
       },
       "CommentsResponse": {
         "type": "object",
-        "required": ["comments"],
+        "required": [
+          "comments"
+        ],
         "properties": {
           "comments": {
             "type": "array",
             "description": "Array of comments",
             "items": {
               "type": "object",
-              "required": ["sender", "comment", "timestamp"],
+              "required": [
+                "sender",
+                "comment",
+                "timestamp"
+              ],
               "properties": {
                 "sender": {
                   "type": "string",
@@ -2382,7 +2517,10 @@
       },
       "AddPermissionRequest": {
         "type": "object",
-        "required": ["moment", "adminAddress"],
+        "required": [
+          "moment",
+          "adminAddress"
+        ],
         "properties": {
           "moment": {
             "$ref": "#/components/schemas/MomentIdentifier"
@@ -2395,7 +2533,10 @@
       },
       "RemovePermissionRequest": {
         "type": "object",
-        "required": ["moment", "adminAddress"],
+        "required": [
+          "moment",
+          "adminAddress"
+        ],
         "properties": {
           "moment": {
             "$ref": "#/components/schemas/MomentIdentifier"
@@ -2408,7 +2549,10 @@
       },
       "UpdateMomentURIRequest": {
         "type": "object",
-        "required": ["moment", "newUri"],
+        "required": [
+          "moment",
+          "newUri"
+        ],
         "properties": {
           "moment": {
             "$ref": "#/components/schemas/MomentIdentifier"
@@ -2421,7 +2565,10 @@
       },
       "TransactionResponse": {
         "type": "object",
-        "required": ["hash", "chainId"],
+        "required": [
+          "hash",
+          "chainId"
+        ],
         "properties": {
           "hash": {
             "type": "string",
@@ -2435,12 +2582,18 @@
       },
       "PaymentsResponse": {
         "type": "object",
-        "required": ["status", "payments"],
+        "required": [
+          "status",
+          "payments"
+        ],
         "properties": {
           "status": {
             "type": "string",
             "description": "Status of the request",
-            "enum": ["success", "error"]
+            "enum": [
+              "success",
+              "error"
+            ]
           },
           "payments": {
             "type": "array",
@@ -2453,7 +2606,14 @@
       },
       "Payment": {
         "type": "object",
-        "required": ["id", "token", "buyer", "amount", "hash", "block"],
+        "required": [
+          "id",
+          "token",
+          "buyer",
+          "amount",
+          "hash",
+          "block"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -2482,7 +2642,16 @@
       },
       "PaymentToken": {
         "type": "object",
-        "required": ["id", "address", "tokenId", "uri", "defaultAdmin", "chainId", "createdAt", "hidden"],
+        "required": [
+          "id",
+          "address",
+          "tokenId",
+          "uri",
+          "defaultAdmin",
+          "chainId",
+          "createdAt",
+          "hidden"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -2522,7 +2691,14 @@
       },
       "PaymentBuyer": {
         "type": "object",
-        "required": ["address", "username", "bio", "instagram_username", "twitter_username", "telegram_username"],
+        "required": [
+          "address",
+          "username",
+          "bio",
+          "instagram_username",
+          "twitter_username",
+          "telegram_username"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -2552,12 +2728,18 @@
       },
       "NotificationsResponse": {
         "type": "object",
-        "required": ["status", "notifications"],
+        "required": [
+          "status",
+          "notifications"
+        ],
         "properties": {
           "status": {
             "type": "string",
             "description": "Status of the request",
-            "enum": ["success", "error"]
+            "enum": [
+              "success",
+              "error"
+            ]
           },
           "notifications": {
             "type": "array",
@@ -2570,7 +2752,13 @@
       },
       "Notification": {
         "type": "object",
-        "required": ["id", "payment", "artist", "viewed", "created_at"],
+        "required": [
+          "id",
+          "payment",
+          "artist",
+          "viewed",
+          "created_at"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -2596,7 +2784,14 @@
       },
       "Artist": {
         "type": "object",
-        "required": ["address", "username", "bio", "instagram_username", "twitter_username", "telegram_username"],
+        "required": [
+          "address",
+          "username",
+          "bio",
+          "instagram_username",
+          "twitter_username",
+          "telegram_username"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -2626,7 +2821,9 @@
       },
       "DistributeRequest": {
         "type": "object",
-        "required": ["splitAddress"],
+        "required": [
+          "splitAddress"
+        ],
         "properties": {
           "splitAddress": {
             "type": "string",
@@ -2646,12 +2843,18 @@
       },
       "DistributeResponse": {
         "type": "object",
-        "required": ["status", "hash"],
+        "required": [
+          "status",
+          "hash"
+        ],
         "properties": {
           "status": {
             "type": "string",
             "description": "Status of the request",
-            "enum": ["success", "error"]
+            "enum": [
+              "success",
+              "error"
+            ]
           },
           "hash": {
             "type": "string",
@@ -2661,7 +2864,9 @@
       },
       "GetSmartWalletResponse": {
         "type": "object",
-        "required": ["address"],
+        "required": [
+          "address"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -2671,7 +2876,12 @@
       },
       "AirdropItem": {
         "type": "object",
-        "required": ["collectionAddress", "tokenId", "recipient", "amount"],
+        "required": [
+          "collectionAddress",
+          "tokenId",
+          "recipient",
+          "amount"
+        ],
         "properties": {
           "collectionAddress": {
             "type": "string",
@@ -2692,7 +2902,9 @@
       },
       "AirdropRecipient": {
         "type": "object",
-        "required": ["address"],
+        "required": [
+          "address"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -2707,7 +2919,9 @@
       },
       "ConnectPhoneRequest": {
         "type": "object",
-        "required": ["phone_number"],
+        "required": [
+          "phone_number"
+        ],
         "properties": {
           "phone_number": {
             "type": "string",
@@ -2717,7 +2931,10 @@
       },
       "ConnectPhoneResponse": {
         "type": "object",
-        "required": ["success", "message"],
+        "required": [
+          "success",
+          "message"
+        ],
         "properties": {
           "success": {
             "type": "boolean",
@@ -2731,7 +2948,10 @@
       },
       "DisconnectPhoneResponse": {
         "type": "object",
-        "required": ["success", "message"],
+        "required": [
+          "success",
+          "message"
+        ],
         "properties": {
           "success": {
             "type": "boolean",
@@ -2745,7 +2965,10 @@
       },
       "ConnectSocialWalletRequest": {
         "type": "object",
-        "required": ["artist_wallet", "social_wallet"],
+        "required": [
+          "artist_wallet",
+          "social_wallet"
+        ],
         "properties": {
           "artist_wallet": {
             "type": "string",
@@ -2759,7 +2982,9 @@
       },
       "ConnectSocialWalletResponse": {
         "type": "object",
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "properties": {
           "success": {
             "type": "boolean",
@@ -2769,7 +2994,9 @@
       },
       "DisconnectSocialWalletRequest": {
         "type": "object",
-        "required": ["social_wallet"],
+        "required": [
+          "social_wallet"
+        ],
         "properties": {
           "social_wallet": {
             "type": "string",
@@ -2779,7 +3006,9 @@
       },
       "DisconnectSocialWalletResponse": {
         "type": "object",
-        "required": ["success"],
+        "required": [
+          "success"
+        ],
         "properties": {
           "success": {
             "type": "boolean",
@@ -2789,7 +3018,9 @@
       },
       "GetArtistWalletResponse": {
         "type": "object",
-        "required": ["address"],
+        "required": [
+          "address"
+        ],
         "properties": {
           "address": {
             "type": "string",
@@ -2799,7 +3030,9 @@
       },
       "CreateApiKeyRequest": {
         "type": "object",
-        "required": ["key_name"],
+        "required": [
+          "key_name"
+        ],
         "properties": {
           "key_name": {
             "type": "string",
@@ -2809,7 +3042,9 @@
       },
       "CreateApiKeyResponse": {
         "type": "object",
-        "required": ["key"],
+        "required": [
+          "key"
+        ],
         "properties": {
           "key": {
             "type": "string",
@@ -2819,11 +3054,16 @@
       },
       "Error": {
         "type": "object",
-        "required": ["status", "message"],
+        "required": [
+          "status",
+          "message"
+        ],
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["error"],
+            "enum": [
+              "error"
+            ],
             "description": "Error status"
           },
           "message": {
