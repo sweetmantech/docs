@@ -425,8 +425,8 @@
             "description": "Chain ID of the collection (default: Base, 8453)",
             "required": false,
             "schema": {
-              "type": "string",
-              "default": "8453"
+              "type": "integer",
+              "default": 8453
             }
           }
         ],
@@ -549,8 +549,9 @@
             "description": "Chain ID of the collection (default: Base, 8453)",
             "required": false,
             "schema": {
-              "type": "string",
-              "default": "8453"
+              "type": "integer",
+              "format": "int64",
+              "default": 8453
             }
           }
         ],
@@ -827,7 +828,7 @@
             "description": "Chain ID (optional, default: Base, 8453)",
             "required": false,
             "schema": {
-              "type": "number",
+              "type": "integer",
               "default": 8453
             }
           },
