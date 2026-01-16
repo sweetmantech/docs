@@ -1,33 +1,77 @@
 ---
 title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+description: 'API documentation for the In•Process platform - Browse moments and collections from timelines'
 ---
-
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
 
 ## Welcome
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+Welcome to the In•Process API documentation. In•Process is a platform for creating, sharing, and collecting moments on-chain. Browse moments from timelines, explore collections, and interact with the in•process collective ecosystem.
 
 <Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
+  title="View OpenAPI Specification"
+  icon="code"
+  href="https://github.com/Recoupable-com/docs/blob/main/api-reference/openapi.json"
 >
-  View the OpenAPI specification file
+  View the OpenAPI specification file on GitHub
 </Card>
+
+## Base URL
+
+All API requests should be made to:
+
+```bash
+https://inprocess.world/api
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+Most API endpoints are **public** and do not require authentication. You can browse timelines and collections without providing any authorization headers.
 
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+Currently available public endpoints:
+- `GET /timeline` - Browse moments from timelines
+- `GET /collections` - Browse collections
+
+Some endpoints require authentication using an API key passed in the `x-api-key` header. These endpoints are used for creating, updating, and managing moments and collections.
+
+### Getting Your API Key
+
+1. Navigate to the [In•Process API Keys Management Page](https://inprocess.world/manage/api-keys)
+2. Sign in with your account
+3. Create a new API key and copy it immediately (it's only shown once)
+
+### Using Your API Key
+
+Include your API key in the `x-api-key` header for authenticated requests:
+
+```bash
+curl -X POST "https://inprocess.world/api/moment/collect" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: art_sk_YOUR_API_KEY_HERE"
 ```
+
+<Warning>
+Keep your API key secure. Do not share it publicly or commit it to version control.
+</Warning>
+
+<Note>
+  You can also create API keys programmatically using the [Create API Key endpoint](/artists/api-keys/create).
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Timeline API"
+    icon="clock"
+    href="/api-reference/timeline/index"
+  >
+    Browse moments from artist timelines or the collective timeline
+  </Card>
+  <Card
+    title="Collections API"
+    icon="folder"
+    href="/api-reference/collections/browse"
+  >
+    Explore collections created by artists
+  </Card>
+</CardGroup>

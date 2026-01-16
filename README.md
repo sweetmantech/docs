@@ -1,10 +1,10 @@
-# 🎨 In Process Docs
+# 🎨 In•Process Docs
 
 > A collective onchain timeline for artists.
 
 ## ✨ Overview
 
-In Process is an onchain collective timeline for artists. It's a protocol for artists to create, share, and monetize their moments. This documentation site provides comprehensive guides for interacting with In Process.
+In•Process is an onchain collective timeline for artists. It's a protocol for artists to create, share, and monetize their moments. This documentation site provides comprehensive guides for interacting with In•Process.
 
 ## 🚀 Getting Started
 
@@ -64,4 +64,4 @@ Join our community of artists and developers:
 
 ---
 
-Made with ❤️ by the In Process team
+Made with ❤️ by the In•Process team
