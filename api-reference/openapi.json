@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "In•Process API",
-    "description": "API for browsing moments from timelines. Retrieve moments from a specific artist's timeline or browse the in•process collective timeline.",
+    "description": "The In•Process API enables browsing and managing moments from timelines. Retrieve moments from a specific artist's timeline, browse the in•process collective timeline, or filter by collection. The API supports creating moments, managing collections, handling payments, and interacting with the In•Process protocol ecosystem.",
     "version": "1.0.0"
   },
   "servers": [
