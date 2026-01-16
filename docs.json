@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "In Process Documentation",
+  "name": "In•Process Documentation",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -14,64 +14,22 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Getting started",
             "pages": [
-              "getting-started"
+              "index"
             ]
           },
           {
-            "group": "Timeline",
+            "group": "Configuration",
             "pages": [
-              "timeline/index"
+              "configuration/sales-config",
+              "configuration/splits"
             ]
           },
           {
-            "group": "Collections",
+            "group": "Arweave",
             "pages": [
-              "collections/browse",
-              "collections/info",
-              "collections/create",
-              "collections/update-uri"
-            ]
-          },
-          {
-            "group": "Moments",
-            "pages": [
-              "moment/get",
-              "moment/create",
-              "moment/writing",
-              "moment/collect",
-              "moment/airdrop",
-              "moment/add-permission",
-              "moment/remove-permission",
-              "moment/update-uri",
-              "moment/comments",
-              "moment/sales-config",
-              "moment/splits",
-              "moment/upload-to-arweave"
-            ]
-          },
-          {
-            "group": "Artists",
-            "pages": [
-              "artists/api-keys/create",
-              "artists/wallets/get",
-              "artists/wallets/connect",
-              "artists/wallets/disconnect",
-              "artists/phones/connect",
-              "artists/phones/disconnect"
-            ]
-          },
-          {
-            "group": "Airdrops",
-            "pages": [
-              "airdrops/"
-            ]
-          },
-          {
-            "group": "Notifications",
-            "pages": [
-              "notifications/"
+              "arweave/upload-to-arweave"
             ]
           },
           {
@@ -86,19 +44,6 @@
               "protocol/protocol-deployments",
               "protocol/setup-actions"
             ]
-          },
-          {
-            "group": "Payments",
-            "pages": [
-              "payments/index",
-              "payments/distribute"
-            ]
-          },
-          {
-            "group": "Smart Wallet",
-            "pages": [
-              "smartwallet/get"
-            ]
           }
         ]
       },
@@ -112,12 +57,68 @@
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Airdrops",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/airdrops/index"
+            ]
+          },
+          {
+            "group": "Timeline",
+            "pages": [
+              "api-reference/timeline/index"
+            ]
+          },
+          {
+            "group": "Artists",
+            "pages": [
+              "api-reference/artists/api-keys/create",
+              "api-reference/artists/wallets/get",
+              "api-reference/artists/wallets/connect",
+              "api-reference/artists/wallets/disconnect",
+              "api-reference/artists/phones/connect",
+              "api-reference/artists/phones/disconnect"
+            ]
+          },
+          {
+            "group": "Collections",
+            "pages": [
+              "api-reference/collections/browse",
+              "api-reference/collections/info",
+              "api-reference/collections/create",
+              "api-reference/collections/update-uri"
+            ]
+          },
+          {
+            "group": "Moments",
+            "pages": [
+              "api-reference/moment/get",
+              "api-reference/moment/create",
+              "api-reference/moment/writing",
+              "api-reference/moment/collect",
+              "api-reference/moment/airdrop",
+              "api-reference/moment/add-permission",
+              "api-reference/moment/remove-permission",
+              "api-reference/moment/update-uri",
+              "api-reference/moment/comments"
+            ]
+          },
+          {
+            "group": "Payments",
+            "pages": [
+              "api-reference/payments/index",
+              "api-reference/payments/distribute"
+            ]
+          },
+          {
+            "group": "Smart Wallet",
+            "pages": [
+              "api-reference/smartwallet/get"
+            ]
+          },
+          {
+            "group": "Notifications",
+            "pages": [
+              "api-reference/notifications/index"
             ]
           }
         ]
@@ -126,7 +127,7 @@
     "global": {
       "anchors": [
         {
-          "anchor": "In Process App",
+          "anchor": "In•Process App",
           "href": "https://inprocess.world",
           "icon": "rocket"
         }
