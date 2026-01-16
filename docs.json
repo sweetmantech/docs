@@ -56,38 +56,7 @@
               "api-reference/introduction"
             ]
           },
-          {
-            "group": "Airdrops",
-            "pages": [
-              "api-reference/airdrops/index"
-            ]
-          },
-          {
-            "group": "Timeline",
-            "pages": [
-              "api-reference/timeline/index"
-            ]
-          },
-          {
-            "group": "Artists",
-            "pages": [
-              "api-reference/artists/api-keys/create",
-              "api-reference/artists/wallets/get",
-              "api-reference/artists/wallets/connect",
-              "api-reference/artists/wallets/disconnect",
-              "api-reference/artists/phones/connect",
-              "api-reference/artists/phones/disconnect"
-            ]
-          },
-          {
-            "group": "Collections",
-            "pages": [
-              "api-reference/collections/browse",
-              "api-reference/collections/info",
-              "api-reference/collections/create",
-              "api-reference/collections/update-uri"
-            ]
-          },
+          
           {
             "group": "Moments",
             "pages": [
@@ -103,6 +72,21 @@
             ]
           },
           {
+            "group": "Collections",
+            "pages": [
+              "api-reference/collections/browse",
+              "api-reference/collections/info",
+              "api-reference/collections/create",
+              "api-reference/collections/update-uri"
+            ]
+          },
+          {
+            "group": "Timeline",
+            "pages": [
+              "api-reference/timeline/index"
+            ]
+          },
+          {
             "group": "Payments",
             "pages": [
               "api-reference/payments/index",
@@ -110,15 +94,27 @@
             ]
           },
           {
-            "group": "Smart Wallet",
-            "pages": [
-              "api-reference/smartwallet/get"
-            ]
-          },
-          {
             "group": "Notifications",
             "pages": [
               "api-reference/notifications/index"
+            ]
+          },
+          {
+            "group": "Airdrops",
+            "pages": [
+              "api-reference/airdrops/index"
+            ]
+          },
+          {
+            "group": "Artists",
+            "pages": [
+              "api-reference/artists/api-keys/create",
+              "api-reference/artists/wallets/get",
+              "api-reference/smartwallet/get",
+              "api-reference/artists/wallets/connect",
+              "api-reference/artists/wallets/disconnect",
+              "api-reference/artists/phones/connect",
+              "api-reference/artists/phones/disconnect"
             ]
           }
         ]
