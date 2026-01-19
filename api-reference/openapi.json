@@ -689,7 +689,7 @@
     "/collection": {
       "get": {
         "summary": "Get Collection Info",
-        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, default admin, collection admins, payout recipient, and timestamps.",
+        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, default admin, admins, payout recipient, and timestamps.",
         "operationId": "getCollectionInfo",
         "security": [],
         "parameters": [
@@ -2065,7 +2065,7 @@
           "default_admin": {
             "$ref": "#/components/schemas/CollectionDefaultAdmin"
           },
-          "collectionAdmins": {
+          "admins": {
             "type": "array",
             "description": "Array of addresses with admin permissions",
             "items": {
