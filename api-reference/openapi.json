@@ -2004,6 +2004,7 @@
           "name",
           "uri",
           "default_admin",
+          "admins",
           "payout_recipient",
           "created_at",
           "updated_at"
