@@ -1565,11 +1565,11 @@
     "/smartwallet/withdraw": {
       "post": {
         "summary": "Withdraw from Smart Wallet",
-        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).\n\n**This endpoint requires authentication via API key.**\n\nThe withdrawal will be executed from the smart wallet associated with the authenticated artist's wallet address.\n\n**Wallet Selection Logic:**\n- If the authenticated artist address is an external wallet:\n  - If a connected social wallet exists, the withdrawal will be executed from the smart wallet of the connected social wallet.\n  - If no connected social wallet exists, the withdrawal will be executed from the smart wallet of the artist address.\n\n**Chain:** The `chainId` parameter is optional. If not provided, it defaults to Base (chain ID 8453).",
+        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).",
         "operationId": "withdrawFromSmartWallet",
         "security": [
           {
-            "apiKeyAuth": []
+            "bearerAuth": []
           }
         ],
         "requestBody": {
