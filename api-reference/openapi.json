@@ -2191,7 +2191,7 @@
                 "description": "Contract address of the Collection"
               },
               "chainId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Chain ID (optional, default: Base 8453)",
                 "default": 8453
               }
@@ -2240,7 +2240,7 @@
             "description": "Token ID of the Moment"
           },
           "chainId": {
-            "type": "number",
+            "type": "integer",
             "description": "Chain ID (optional, default: Base 8453)",
             "default": 8453
           }
@@ -2926,9 +2926,9 @@
             "default": "0x0000000000000000000000000000000000000000"
           },
           "chainId": {
-            "type": "string",
+            "type": "integer",
             "description": "Chain ID where the split contract exists (default: Base, 8453)",
-            "default": "8453"
+            "default": 8453
           }
         }
       },
@@ -2986,9 +2986,9 @@
             "description": "The recipient address where the funds will be sent"
           },
           "chainId": {
-            "type": "string",
+            "type": "integer",
             "description": "Chain ID where the withdrawal will be executed. Optional parameter - if not provided, defaults to Base (8453).",
-            "default": "8453"
+            "default": 8453
           }
         }
       },
