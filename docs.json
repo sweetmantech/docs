@@ -106,11 +106,17 @@
             ]
           },
           {
+            "group": "Smart Wallet",
+            "pages": [
+              "api-reference/smartwallet/get",
+              "api-reference/smartwallet/withdraw"
+            ]
+          },
+          {
             "group": "Artists",
             "pages": [
               "api-reference/artists/api-keys/create",
               "api-reference/artists/wallets/get",
-              "api-reference/smartwallet/get",
               "api-reference/artists/wallets/connect",
               "api-reference/artists/wallets/disconnect",
               "api-reference/artists/phones/connect",

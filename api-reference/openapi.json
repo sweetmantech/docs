@@ -1562,6 +1562,89 @@
         }
       }
     },
+    "/smartwallet/withdraw": {
+      "post": {
+        "summary": "Withdraw from Smart Wallet",
+        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).\n\n**This endpoint requires authentication via API key.**\n\nThe withdrawal will be executed from the smart wallet associated with the authenticated artist's wallet address.",
+        "operationId": "withdrawFromSmartWallet",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequest"
+              },
+              "example": {
+                "currency": "0x0000000000000000000000000000000000000000",
+                "amount": "0.1",
+                "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful withdrawal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawResponse"
+                },
+                "example": {
+                  "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                  "chainId": 8453
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "Invalid input",
+                  "errors": [
+                    {
+                      "field": "amount",
+                      "message": "Amount must be a valid positive number"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/phones": {
       "post": {
         "summary": "Connect a Phone Number",
@@ -2879,6 +2962,45 @@
           "address": {
             "type": "string",
             "description": "Smart wallet address connected to the artist wallet"
+          }
+        }
+      },
+      "WithdrawRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "to"
+        ],
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency address to withdraw. If not provided or set to zero address (0x0000000000000000000000000000000000000000), native ETH will be withdrawn",
+            "default": "0x0000000000000000000000000000000000000000"
+          },
+          "amount": {
+            "type": "string",
+            "description": "The amount to withdraw. Must be a valid positive number as a string"
+          },
+          "to": {
+            "type": "string",
+            "description": "The recipient address where the funds will be sent"
+          }
+        }
+      },
+      "WithdrawResponse": {
+        "type": "object",
+        "required": [
+          "hash",
+          "chainId"
+        ],
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash of the withdrawal"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the transaction was executed"
           }
         }
       },
