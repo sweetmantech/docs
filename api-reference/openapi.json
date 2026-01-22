@@ -1562,6 +1562,89 @@
         }
       }
     },
+    "/smartwallet/withdraw": {
+      "post": {
+        "summary": "Withdraw from Smart Wallet",
+        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).",
+        "operationId": "withdrawFromSmartWallet",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawRequest"
+              },
+              "example": {
+                "currency": "0x0000000000000000000000000000000000000000",
+                "amount": "0.1",
+                "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful withdrawal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WithdrawResponse"
+                },
+                "example": {
+                  "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                  "chainId": 8453
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "Invalid input",
+                  "errors": [
+                    {
+                      "field": "amount",
+                      "message": "Amount must be a valid positive number"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Missing or invalid bearer token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/phones": {
       "post": {
         "summary": "Connect a Phone Number",
@@ -2108,7 +2191,7 @@
                 "description": "Contract address of the Collection"
               },
               "chainId": {
-                "type": "number",
+                "type": "integer",
                 "description": "Chain ID (optional, default: Base 8453)",
                 "default": 8453
               }
@@ -2157,7 +2240,7 @@
             "description": "Token ID of the Moment"
           },
           "chainId": {
-            "type": "number",
+            "type": "integer",
             "description": "Chain ID (optional, default: Base 8453)",
             "default": 8453
           }
@@ -2843,9 +2926,9 @@
             "default": "0x0000000000000000000000000000000000000000"
           },
           "chainId": {
-            "type": "string",
+            "type": "integer",
             "description": "Chain ID where the split contract exists (default: Base, 8453)",
-            "default": "8453"
+            "default": 8453
           }
         }
       },
@@ -2879,6 +2962,50 @@
           "address": {
             "type": "string",
             "description": "Smart wallet address connected to the artist wallet"
+          }
+        }
+      },
+      "WithdrawRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "to"
+        ],
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "The currency address to withdraw. If not provided or set to zero address (0x0000000000000000000000000000000000000000), native ETH will be withdrawn",
+            "default": "0x0000000000000000000000000000000000000000"
+          },
+          "amount": {
+            "type": "string",
+            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals)."
+          },
+          "to": {
+            "type": "string",
+            "description": "The recipient address where the funds will be sent"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the withdrawal will be executed. Optional parameter - if not provided, defaults to Base (8453).",
+            "default": 8453
+          }
+        }
+      },
+      "WithdrawResponse": {
+        "type": "object",
+        "required": [
+          "hash",
+          "chainId"
+        ],
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash of the withdrawal"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the transaction was executed"
           }
         }
       },
@@ -3077,6 +3204,27 @@
           "message": {
             "type": "string",
             "description": "Error message"
+          },
+          "errors": {
+            "type": "array",
+            "description": "Optional array of field-level validation errors. Typically included in 400 Bad Request responses for validation errors.",
+            "items": {
+              "type": "object",
+              "required": [
+                "field",
+                "message"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "The field name that failed validation"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "The validation error message for this field"
+                }
+              }
+            }
           }
         }
       }
