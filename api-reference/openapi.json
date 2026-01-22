@@ -1565,7 +1565,7 @@
     "/smartwallet/withdraw": {
       "post": {
         "summary": "Withdraw from Smart Wallet",
-        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).\n\n**This endpoint requires authentication via API key.**\n\nThe withdrawal will be executed from the smart wallet associated with the authenticated artist's wallet address.\n\n**Chain:** The `chainId` parameter is optional. If not provided, it defaults to Base (chain ID 8453).",
+        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).\n\n**This endpoint requires authentication via API key.**\n\nThe withdrawal will be executed from the smart wallet associated with the authenticated artist's wallet address.",
         "operationId": "withdrawFromSmartWallet",
         "security": [
           {
@@ -2979,16 +2979,11 @@
           },
           "amount": {
             "type": "string",
-            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals)."
+            "description": "The amount to withdraw. Must be a valid positive number as a string"
           },
           "to": {
             "type": "string",
             "description": "The recipient address where the funds will be sent"
-          },
-          "chainId": {
-            "type": "string",
-            "description": "Chain ID where the withdrawal will be executed. Optional parameter - if not provided, defaults to Base (8453).",
-            "default": "8453"
           }
         }
       },
@@ -3204,27 +3199,6 @@
           "message": {
             "type": "string",
             "description": "Error message"
-          },
-          "errors": {
-            "type": "array",
-            "description": "Optional array of field-level validation errors. Typically included in 400 Bad Request responses for validation errors.",
-            "items": {
-              "type": "object",
-              "required": [
-                "field",
-                "message"
-              ],
-              "properties": {
-                "field": {
-                  "type": "string",
-                  "description": "The field name that failed validation"
-                },
-                "message": {
-                  "type": "string",
-                  "description": "The validation error message for this field"
-                }
-              }
-            }
           }
         }
       }
