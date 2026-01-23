@@ -1682,6 +1682,17 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "chainId",
+            "in": "query",
+            "description": "Chain ID of the network (default: Base, 8453)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 8453
+            }
           }
         ],
         "responses": {
