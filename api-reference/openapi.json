@@ -1564,7 +1564,7 @@
     },
     "/smartwallet/withdraw": {
       "post": {
-        "summary": "Withdraw from Smart Wallet",
+        "summary": "Withdraw from social smart wallets",
         "description": "Withdraw funds from a smart wallet. Supports both native ETH and USDC tokens. If amount is not provided, the full balance will be withdrawn. The withdrawal may span multiple smart wallets associated with the artist.",
         "operationId": "withdrawFromSmartWallet",
         "security": [
@@ -1660,6 +1660,69 @@
                 },
                 "example": {
                   "message": "Failed to withdraw from smart wallet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/smartwallet/balances": {
+      "get": {
+        "summary": "Balances of social smart wallets",
+        "description": "Get balances of all social smart wallets associated with an artist address. Returns ETH and USDC balances for each social smart wallet, along with total balances across all wallets.",
+        "operationId": "getSocialSmartWalletBalances",
+        "security": [],
+        "parameters": [
+          {
+            "name": "artist_address",
+            "in": "query",
+            "description": "The artist wallet address to get balances for",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SocialSmartWalletBalancesResponse"
+                },
+                "example": {
+                  "balances": [
+                    {
+                      "social_wallet": "0x1234567890123456789012345678901234567890",
+                      "smart_wallet": "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+                      "eth_balance": "0.5",
+                      "usdc_balance": "100.0"
+                    }
+                  ],
+                  "total_eth_balance": "0.5",
+                  "total_usdc_balance": "100.0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -3072,6 +3135,58 @@
           "remainingAmount": {
             "type": "string",
             "description": "Remaining balance in this wallet after withdrawal in human-readable token units"
+          }
+        }
+      },
+      "SocialSmartWalletBalancesResponse": {
+        "type": "object",
+        "required": [
+          "balances",
+          "total_eth_balance",
+          "total_usdc_balance"
+        ],
+        "properties": {
+          "balances": {
+            "type": "array",
+            "description": "Array of balance information for each social smart wallet",
+            "items": {
+              "$ref": "#/components/schemas/SocialSmartWalletBalance"
+            }
+          },
+          "total_eth_balance": {
+            "type": "string",
+            "description": "Total ETH balance across all social smart wallets"
+          },
+          "total_usdc_balance": {
+            "type": "string",
+            "description": "Total USDC balance across all social smart wallets"
+          }
+        }
+      },
+      "SocialSmartWalletBalance": {
+        "type": "object",
+        "required": [
+          "social_wallet",
+          "smart_wallet",
+          "eth_balance",
+          "usdc_balance"
+        ],
+        "properties": {
+          "social_wallet": {
+            "type": "string",
+            "description": "Address of the social wallet"
+          },
+          "smart_wallet": {
+            "type": "string",
+            "description": "Address of the smart wallet associated with the social wallet"
+          },
+          "eth_balance": {
+            "type": "string",
+            "description": "ETH balance in human-readable token units"
+          },
+          "usdc_balance": {
+            "type": "string",
+            "description": "USDC balance in human-readable token units"
           }
         }
       },
