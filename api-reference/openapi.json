@@ -1569,7 +1569,7 @@
         "operationId": "withdrawFromSmartWallet",
         "security": [
           {
-            "bearerAuth": []
+            "apiKeyAuth": []
           }
         ],
         "requestBody": {
