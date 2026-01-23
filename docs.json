@@ -109,6 +109,7 @@
             "group": "Smart Wallet",
             "pages": [
               "api-reference/smartwallet/get",
+              "api-reference/smartwallet/balances",
               "api-reference/smartwallet/withdraw"
             ]
           },
