@@ -1565,11 +1565,11 @@
     "/smartwallet/withdraw": {
       "post": {
         "summary": "Withdraw from Smart Wallet",
-        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).",
+        "description": "Withdraw funds from all social wallets connected to the authenticated artist address. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).",
         "operationId": "withdrawFromSmartWallet",
         "security": [
           {
-            "bearerAuth": []
+            "apiKeyAuth": []
           }
         ],
         "requestBody": {
@@ -2968,7 +2968,6 @@
       "WithdrawRequest": {
         "type": "object",
         "required": [
-          "amount",
           "to"
         ],
         "properties": {
@@ -2979,7 +2978,7 @@
           },
           "amount": {
             "type": "string",
-            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals)."
+            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals). If not provided, defaults to the full balance of the smart wallet."
           },
           "to": {
             "type": "string",
