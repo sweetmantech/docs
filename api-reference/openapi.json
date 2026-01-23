@@ -1565,7 +1565,7 @@
     "/smartwallet/withdraw": {
       "post": {
         "summary": "Withdraw from Smart Wallet",
-        "description": "Withdraw funds from a smart wallet. Supports both native ETH (when currency is not provided or is zero address) and ERC20 tokens (e.g., USDC).",
+        "description": "Withdraw funds from a smart wallet. Supports both native ETH and USDC tokens. If amount is not provided, the full balance will be withdrawn. The withdrawal may span multiple smart wallets associated with the artist.",
         "operationId": "withdrawFromSmartWallet",
         "security": [
           {
@@ -1580,9 +1580,10 @@
                 "$ref": "#/components/schemas/WithdrawRequest"
               },
               "example": {
-                "currency": "0x0000000000000000000000000000000000000000",
+                "currency": "eth",
                 "amount": "0.1",
-                "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0"
+                "to": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0",
+                "chainId": 8453
               }
             }
           }
@@ -1596,8 +1597,17 @@
                   "$ref": "#/components/schemas/WithdrawResponse"
                 },
                 "example": {
-                  "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-                  "chainId": 8453
+                  "withdrawals": [
+                    {
+                      "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
+                      "chainId": 8453,
+                      "walletAddress": "0x1234567890123456789012345678901234567890",
+                      "withdrawnAmount": "0.1",
+                      "remainingAmount": "0.05"
+                    }
+                  ],
+                  "remainingTotalEthBalance": "0.05",
+                  "remainingTotalUsdcBalance": "0"
                 }
               }
             }
@@ -1637,7 +1647,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "required": [
+                    "message"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Error message"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Failed to withdraw from smart wallet"
                 }
               }
             }
@@ -2968,18 +2990,21 @@
       "WithdrawRequest": {
         "type": "object",
         "required": [
-          "amount",
+          "currency",
           "to"
         ],
         "properties": {
           "currency": {
             "type": "string",
-            "description": "The currency address to withdraw. If not provided or set to zero address (0x0000000000000000000000000000000000000000), native ETH will be withdrawn",
-            "default": "0x0000000000000000000000000000000000000000"
+            "enum": [
+              "eth",
+              "usdc"
+            ],
+            "description": "The currency to withdraw. Use \"eth\" for native ETH or \"usdc\" for USDC tokens."
           },
           "amount": {
             "type": "string",
-            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals)."
+            "description": "The amount to withdraw in human-readable token units (not base units/wei). Must be a valid positive number as a string. For example, use \"0.1\" for 0.1 ETH, not \"100000000000000000\" (which is 0.1 ETH in wei). For ERC20 tokens, use the token's decimal precision (e.g., \"100.5\" for 100.5 USDC if USDC has 6 decimals). If not provided, the full balance will be withdrawn."
           },
           "to": {
             "type": "string",
@@ -2995,17 +3020,58 @@
       "WithdrawResponse": {
         "type": "object",
         "required": [
+          "withdrawals",
+          "remainingTotalEthBalance",
+          "remainingTotalUsdcBalance"
+        ],
+        "properties": {
+          "withdrawals": {
+            "type": "array",
+            "description": "Array of withdrawal results, one for each smart wallet that was used",
+            "items": {
+              "$ref": "#/components/schemas/WithdrawResult"
+            }
+          },
+          "remainingTotalEthBalance": {
+            "type": "string",
+            "description": "Total remaining ETH balance across all smart wallets after withdrawal"
+          },
+          "remainingTotalUsdcBalance": {
+            "type": "string",
+            "description": "Total remaining USDC balance across all smart wallets after withdrawal"
+          }
+        }
+      },
+      "WithdrawResult": {
+        "type": "object",
+        "required": [
           "hash",
-          "chainId"
+          "chainId",
+          "walletAddress",
+          "withdrawnAmount",
+          "remainingAmount"
         ],
         "properties": {
           "hash": {
             "type": "string",
-            "description": "Transaction hash of the withdrawal"
+            "nullable": true,
+            "description": "Transaction hash of the withdrawal. May be null if the withdrawal failed or was skipped."
           },
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "Address of the smart wallet from which funds were withdrawn"
+          },
+          "withdrawnAmount": {
+            "type": "string",
+            "description": "Amount withdrawn from this wallet in human-readable token units"
+          },
+          "remainingAmount": {
+            "type": "string",
+            "description": "Remaining balance in this wallet after withdrawal in human-readable token units"
           }
         }
       },
