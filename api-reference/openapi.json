@@ -531,6 +531,60 @@
         }
       }
     },
+    "/moment/migrate": {
+      "post": {
+        "summary": "Migrate Moments",
+        "description": "Migrate moments from social wallets to the artist's wallet. This endpoint finds all social wallets associated with the authenticated artist, retrieves collections from those social wallets, and migrates the moments to the artist's wallet.\n\n**Note:** This endpoint requires authentication via API key.",
+        "operationId": "migrateMoments",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MigrateMomentsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MigrateMomentsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No social wallets found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/collections": {
       "get": {
         "summary": "Browse collections",
@@ -2764,6 +2818,41 @@
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          }
+        }
+      },
+      "MigrateMomentsRequest": {
+        "type": "object",
+        "required": [],
+        "properties": {
+          "chainId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Chain ID for the migration (optional, defaults to Base, 8453)",
+            "default": 8453
+          }
+        }
+      },
+      "MigrateMomentsResponse": {
+        "type": "object",
+        "required": [
+          "message",
+          "results"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Status message",
+            "enum": [
+              "success"
+            ]
+          },
+          "results": {
+            "type": "array",
+            "description": "Array of transaction objects for each migration operation",
+            "items": {
+              "$ref": "#/components/schemas/TransactionResponse"
+            }
           }
         }
       },

@@ -68,7 +68,8 @@
               "api-reference/moment/add-permission",
               "api-reference/moment/remove-permission",
               "api-reference/moment/update-uri",
-              "api-reference/moment/comments"
+              "api-reference/moment/comments",
+              "api-reference/moment/migrate"
             ]
           },
           {
