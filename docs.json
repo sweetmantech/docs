@@ -139,7 +139,7 @@
     }
   },
   "logo": {
-    "light": "/logo/light.png",
+    "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
   "navbar": {
