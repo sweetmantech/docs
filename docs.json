@@ -140,7 +140,7 @@
   },
   "logo": {
     "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
     "links": [
