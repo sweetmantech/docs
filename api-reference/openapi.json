@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://inprocess.world/api",
+      "url": "https://api.inprocess.world/api",
       "description": "Production server"
     }
   ],
