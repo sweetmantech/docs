@@ -1659,6 +1659,102 @@
         }
       }
     },
+    "/message/index-moment": {
+      "post": {
+        "summary": "Index Message Moment",
+        "description": "Index a message by linking it to its associated moment. This endpoint extracts moment information (collection address and token ID) from the message and creates a message-moment association.",
+        "operationId": "indexMessageMoment",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["messageId"],
+                "properties": {
+                  "messageId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "The unique identifier (UUID) of the message to index"
+                  }
+                }
+              },
+              "example": {
+                "messageId": "2659837e-4c9a-4647-8cdc-d72a6237a67b"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully indexed message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indicates if the indexing was successful"
+                    },
+                    "messageMoment": {
+                      "type": "object",
+                      "description": "The created message-moment association",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "The unique identifier of the message-moment record"
+                        },
+                        "message": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "The message ID"
+                        },
+                        "moment": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "The moment ID"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "messageMoment": {
+                    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                    "message": "2659837e-4c9a-4647-8cdc-d72a6237a67b",
+                    "moment": "5264bb73-507a-44ce-8f17-4443af13f7b4"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid message ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error - Message not found, not a moment message, moment not found, or failed to index",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/smartwallet": {
       "get": {
         "summary": "Get Smart Wallet",
