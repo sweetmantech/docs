@@ -107,6 +107,12 @@
             ]
           },
           {
+            "group": "Messages",
+            "pages": [
+              "api-reference/messages/get"
+            ]
+          },
+          {
             "group": "Smart Wallet",
             "pages": [
               "api-reference/smartwallet/get",

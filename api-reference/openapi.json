@@ -1562,6 +1562,103 @@
         }
       }
     },
+    "/message": {
+      "get": {
+        "summary": "Get Message",
+        "description": "Retrieve a message by its unique ID. Returns the message content, metadata, and any associated moment data.",
+        "operationId": "getMessage",
+        "security": [],
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "query",
+            "description": "The unique identifier (UUID) of the message to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponse"
+                },
+                "example": {
+                  "id": "2659837e-4c9a-4647-8cdc-d72a6237a67b",
+                  "role": "assistant",
+                  "parts": [
+                    {
+                      "text": "✅ Moment created! https://inprocess.world/sms/base:0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806/1",
+                      "type": "text"
+                    }
+                  ],
+                  "metadata": {
+                    "id": "286a38a8-46a6-4006-8826-6b1b2a45f931",
+                    "client": "telegram",
+                    "created_at": "2026-01-30T18:47:09.189218+00:00",
+                    "artist_address": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
+                  },
+                  "moment": {
+                    "id": "5264bb73-507a-44ce-8f17-4443af13f7b4",
+                    "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
+                    "token_id": 1,
+                    "collection": {
+                      "id": "5005b11c-3ae4-4178-a9b1-3b38882aa68c",
+                      "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
+                      "name": "🏕nature ⛰",
+                      "address": "0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806",
+                      "chain_id": 8453,
+                      "created_at": "2026-01-30T18:47:09+00:00",
+                      "updated_at": "2026-01-30T18:47:09+00:00",
+                      "default_admin": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33",
+                      "payout_recipient": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
+                    },
+                    "created_at": "2026-01-30T18:47:09+00:00",
+                    "max_supply": 18446744073709552000,
+                    "updated_at": "2026-01-30T18:47:09+00:00"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid message ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Message not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/smartwallet": {
       "get": {
         "summary": "Get Smart Wallet",
@@ -3465,6 +3562,174 @@
           "key": {
             "type": "string",
             "description": "The generated API key for the artist"
+          }
+        }
+      },
+      "MessageMetadata": {
+        "type": "object",
+        "required": [
+          "id",
+          "client",
+          "created_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the message metadata"
+          },
+          "artist_address": {
+            "type": "string",
+            "nullable": true,
+            "description": "The wallet address of the artist associated with this message"
+          },
+          "client": {
+            "type": "string",
+            "description": "The client that created this message (e.g., telegram, web, api)"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the message metadata was created"
+          }
+        }
+      },
+      "MessageCollection": {
+        "type": "object",
+        "required": [
+          "id",
+          "uri",
+          "name",
+          "address",
+          "chain_id",
+          "created_at",
+          "updated_at",
+          "default_admin",
+          "payout_recipient"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the collection"
+          },
+          "uri": {
+            "type": "string",
+            "description": "Metadata URI of the collection (e.g., ar://...)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the collection"
+          },
+          "address": {
+            "type": "string",
+            "description": "Contract address of the collection"
+          },
+          "chain_id": {
+            "type": "integer",
+            "description": "Chain ID where the collection is deployed"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the collection was created"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the collection was last updated"
+          },
+          "default_admin": {
+            "type": "string",
+            "description": "Default admin wallet address for the collection"
+          },
+          "payout_recipient": {
+            "type": "string",
+            "description": "Wallet address that receives payouts from the collection"
+          }
+        }
+      },
+      "MessageMoment": {
+        "type": "object",
+        "required": [
+          "id",
+          "uri",
+          "token_id",
+          "collection",
+          "created_at",
+          "max_supply",
+          "updated_at"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the moment"
+          },
+          "uri": {
+            "type": "string",
+            "description": "Metadata URI of the moment (e.g., ar://...)"
+          },
+          "token_id": {
+            "type": "integer",
+            "description": "Token ID of the moment within the collection"
+          },
+          "collection": {
+            "$ref": "#/components/schemas/MessageCollection"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the moment was created"
+          },
+          "max_supply": {
+            "type": "number",
+            "description": "Maximum supply of tokens for this moment"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the moment was last updated"
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "parts",
+          "metadata"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the message"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["user", "assistant"],
+            "description": "The role of the message sender"
+          },
+          "parts": {
+            "type": "array",
+            "description": "The content parts of the message",
+            "items": {
+              "type": "object"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/MessageMetadata"
+          },
+          "moment": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MessageMoment"
+              }
+            ],
+            "nullable": true,
+            "description": "The moment associated with this message, if any"
           }
         }
       },
