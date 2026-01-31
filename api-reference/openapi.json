@@ -1743,7 +1743,7 @@
             }
           },
           "500": {
-            "description": "Internal server error - Message not found, not a moment message, moment not found, or failed to index",
+            "description": "Internal server error - Possible errors: Message not found, Message is not a moment message, Moment not found, Failed to index message",
             "content": {
               "application/json": {
                 "schema": {
