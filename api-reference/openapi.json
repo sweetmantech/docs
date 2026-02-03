@@ -1565,14 +1565,18 @@
     "/messages": {
       "get": {
         "summary": "Get Messages",
-        "description": "Retrieve messages with pagination support. Can filter by moment association or retrieve a specific message by ID.",
+        "description": "Retrieve messages with pagination support. When a messageId is provided, returns a single message. Otherwise, returns messages associated with the authenticated artist's address. Admin addresses have access to all messages.",
         "operationId": "getMessages",
-        "security": [],
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "messageId",
             "in": "query",
-            "description": "The unique identifier (UUID) of a specific message to retrieve",
+            "description": "The unique identifier (UUID) of a specific message to retrieve. When provided, returns a single message instead of a paginated list.",
             "required": false,
             "schema": {
               "type": "string",
