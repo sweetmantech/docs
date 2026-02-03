@@ -1562,72 +1562,124 @@
         }
       }
     },
-    "/message": {
+    "/messages": {
       "get": {
-        "summary": "Get Message",
-        "description": "Retrieve a message by its unique ID. Returns the message content, metadata, and any associated moment data.",
-        "operationId": "getMessage",
-        "security": [],
+        "summary": "Get Messages",
+        "description": "Retrieve messages with pagination support. When a messageId is provided, returns a single message. Otherwise, returns messages associated with the authenticated artist's address. Admin addresses have access to all messages.",
+        "operationId": "getMessages",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "messageId",
             "in": "query",
-            "description": "The unique identifier (UUID) of the message to retrieve",
-            "required": true,
+            "description": "The unique identifier (UUID) of a specific message to retrieve. When provided, returns a single message instead of a paginated list.",
+            "required": false,
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "moment",
+            "in": "query",
+            "description": "Filter messages by moment association. Set to 'true' to only return messages with moments.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "false"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of messages per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful response - returns paginated messages with total count",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponse"
+                  "type": "object",
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MessageResponse"
+                      },
+                      "description": "Array of messages"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Total count of messages matching the query"
+                    }
+                  }
                 },
                 "example": {
-                  "id": "2659837e-4c9a-4647-8cdc-d72a6237a67b",
-                  "role": "assistant",
-                  "parts": [
+                  "messages": [
                     {
-                      "text": "✅ Moment created! https://inprocess.world/sms/base:0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806/1",
-                      "type": "text"
+                      "id": "2659837e-4c9a-4647-8cdc-d72a6237a67b",
+                      "role": "assistant",
+                      "parts": [
+                        {
+                          "text": "✅ Moment created! https://inprocess.world/sms/base:0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806/1",
+                          "type": "text"
+                        }
+                      ],
+                      "metadata": {
+                        "id": "286a38a8-46a6-4006-8826-6b1b2a45f931",
+                        "client": "telegram",
+                        "created_at": "2026-01-30T18:47:09.189218+00:00",
+                        "artist_address": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
+                      },
+                      "moment": {
+                        "id": "5264bb73-507a-44ce-8f17-4443af13f7b4",
+                        "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
+                        "token_id": 1,
+                        "collection": {
+                          "id": "5005b11c-3ae4-4178-a9b1-3b38882aa68c",
+                          "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
+                          "name": "🏕nature ⛰",
+                          "address": "0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806",
+                          "chain_id": 8453,
+                          "created_at": "2026-01-30T18:47:09+00:00",
+                          "updated_at": "2026-01-30T18:47:09+00:00",
+                          "default_admin": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33",
+                          "payout_recipient": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
+                        },
+                        "created_at": "2026-01-30T18:47:09+00:00",
+                        "max_supply": 18446744073709552000,
+                        "updated_at": "2026-01-30T18:47:09+00:00"
+                      }
                     }
                   ],
-                  "metadata": {
-                    "id": "286a38a8-46a6-4006-8826-6b1b2a45f931",
-                    "client": "telegram",
-                    "created_at": "2026-01-30T18:47:09.189218+00:00",
-                    "artist_address": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
-                  },
-                  "moment": {
-                    "id": "5264bb73-507a-44ce-8f17-4443af13f7b4",
-                    "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
-                    "token_id": 1,
-                    "collection": {
-                      "id": "5005b11c-3ae4-4178-a9b1-3b38882aa68c",
-                      "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
-                      "name": "🏕nature ⛰",
-                      "address": "0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806",
-                      "chain_id": 8453,
-                      "created_at": "2026-01-30T18:47:09+00:00",
-                      "updated_at": "2026-01-30T18:47:09+00:00",
-                      "default_admin": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33",
-                      "payout_recipient": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
-                    },
-                    "created_at": "2026-01-30T18:47:09+00:00",
-                    "max_supply": 18446744073709552000,
-                    "updated_at": "2026-01-30T18:47:09+00:00"
-                  }
+                  "count": 1
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request - Invalid message ID format",
+            "description": "Bad request - Invalid parameters",
             "content": {
               "application/json": {
                 "schema": {
