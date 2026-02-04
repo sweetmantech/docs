@@ -2142,6 +2142,160 @@
           }
         }
       }
+    },
+    "/audio/stream": {
+      "get": {
+        "summary": "Stream Audio",
+        "description": "Stream audio content from Arweave, IPFS, or HTTPS URLs with support for HTTP Range requests. This endpoint acts as a proxy that handles decentralized storage protocols and enables partial content streaming for audio players.\n\n**Supported URL formats:**\n- `ar://` - Arweave URLs (e.g., `ar://abc123...`)\n- `ipfs://` - IPFS URLs (e.g., `ipfs://Qm...`)\n- `https://` - Direct HTTPS URLs\n\nThe endpoint supports HTTP Range headers for seeking within audio files, returning `206 Partial Content` when range requests are supported by the origin.",
+        "operationId": "streamAudio",
+        "security": [],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "The URL of the audio file to stream. Supports Arweave (`ar://`), IPFS (`ipfs://`), and HTTPS URLs.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "arweave": {
+                "summary": "Arweave URL",
+                "value": "ar://abc123xyz..."
+              },
+              "ipfs": {
+                "summary": "IPFS URL",
+                "value": "ipfs://QmXyz..."
+              },
+              "https": {
+                "summary": "HTTPS URL",
+                "value": "https://arweave.net/abc123..."
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Full audio content returned",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the audio content",
+                "schema": {
+                  "type": "string",
+                  "example": "audio/mpeg"
+                }
+              },
+              "Content-Length": {
+                "description": "The size of the audio content in bytes",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Accept-Ranges": {
+                "description": "Indicates that the server accepts range requests",
+                "schema": {
+                  "type": "string",
+                  "example": "bytes"
+                }
+              },
+              "Cache-Control": {
+                "description": "Caching directive for the response",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=31536000, immutable"
+                }
+              }
+            },
+            "content": {
+              "audio/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "206": {
+            "description": "Partial content returned (for range requests)",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the audio content",
+                "schema": {
+                  "type": "string",
+                  "example": "audio/mpeg"
+                }
+              },
+              "Content-Length": {
+                "description": "The size of the partial content in bytes",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Content-Range": {
+                "description": "The range of bytes being returned",
+                "schema": {
+                  "type": "string",
+                  "example": "bytes 0-1023/10240"
+                }
+              },
+              "Accept-Ranges": {
+                "description": "Indicates that the server accepts range requests",
+                "schema": {
+                  "type": "string",
+                  "example": "bytes"
+                }
+              }
+            },
+            "content": {
+              "audio/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or unsupported URL format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid or unsupported URL format"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while streaming audio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Failed to stream audio"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Unable to fetch from origin or determine content length",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Unable to determine content length"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
