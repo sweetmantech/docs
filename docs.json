@@ -131,6 +131,12 @@
               "api-reference/artists/phones/connect",
               "api-reference/artists/phones/disconnect"
             ]
+          },
+          {
+            "group": "Audio",
+            "pages": [
+              "api-reference/audio/stream"
+            ]
           }
         ]
       }
