@@ -1,0 +1,56 @@
+---
+title: Proxy Image
+openapi: GET /media/image
+---
+
+<Note>
+  This endpoint is **public** and does not require authentication.
+</Note>
+
+## Overview
+
+The Image Proxy API fetches and transforms images from decentralized storage protocols like Arweave and IPFS. It acts as a proxy that:
+
+- Converts `ar://` and `ipfs://` URLs to fetchable gateway URLs
+- Resizes images to specified dimensions without enlargement
+- Converts images to optimized formats (WebP, AVIF, JPEG, PNG)
+- Returns immutable cache headers for efficient caching
+
+## Supported URL Formats
+
+| Protocol | Format | Example |
+|----------|--------|---------|
+| Arweave | `ar://` | `ar://abc123xyz...` |
+| IPFS | `ipfs://` | `ipfs://QmXyz...` |
+| HTTPS | `https://` | `https://arweave.net/abc123...` |
+
+## Image Transformation
+
+When `w` (width) or `h` (height) parameters are provided, the image is resized to fit within the specified dimensions using the `inside` fit strategy, meaning:
+
+- The image will never be enlarged beyond its original size
+- Aspect ratio is preserved
+- The image fits within the bounding box defined by `w` and `h`
+
+## Example Usage
+
+### Basic Request
+
+```bash
+curl "https://api.inprocess.world/api/media/image?url=ar://your-arweave-tx-id"
+```
+
+### With Resize and Format Conversion
+
+```bash
+curl "https://api.inprocess.world/api/media/image?url=ar://your-arweave-tx-id&w=400&h=400&f=webp&q=85"
+```
+
+### In an HTML Image Element
+
+```html
+<img
+  src="https://api.inprocess.world/api/media/image?url=ar://your-arweave-tx-id&w=600&f=webp"
+  alt="Moment artwork"
+/>
+```
