@@ -1,0 +1,69 @@
+---
+title: Stream Media
+openapi: GET /media/stream
+---
+
+<Note>
+  This endpoint is **public** and does not require authentication.
+</Note>
+
+## Overview
+
+The Media Stream API enables streaming audio and video content from decentralized storage protocols like Arweave and IPFS. It acts as a proxy that:
+
+- Converts `ar://` and `ipfs://` URLs to fetchable gateway URLs
+- Supports HTTP Range requests for seeking within media files
+- Returns proper headers for audio and video players to function correctly
+
+## Supported URL Formats
+
+| Protocol | Format | Example |
+|----------|--------|---------|
+| Arweave | `ar://` | `ar://abc123xyz...` |
+| IPFS | `ipfs://` | `ipfs://QmXyz...` |
+| HTTPS | `https://` | `https://arweave.net/abc123...` |
+
+## Range Request Support
+
+The endpoint supports HTTP Range headers, allowing media players to seek to specific positions in the file. When a range request is made and supported by the origin:
+
+- Returns `206 Partial Content` status
+- Includes `Content-Range` header indicating the byte range
+- Enables efficient streaming without downloading the entire file
+
+## Example Usage
+
+### Basic Audio Request
+
+```bash
+curl "https://api.inprocess.world/api/media/stream?url=ar://your-arweave-tx-id"
+```
+
+### Basic Video Request
+
+```bash
+curl "https://api.inprocess.world/api/media/stream?url=ipfs://QmYourVideoHash"
+```
+
+### With Range Header (for seeking)
+
+```bash
+curl -H "Range: bytes=0-1023" \
+  "https://api.inprocess.world/api/media/stream?url=ar://your-arweave-tx-id"
+```
+
+### In an HTML Audio Element
+
+```html
+<audio controls>
+  <source src="https://api.inprocess.world/api/media/stream?url=ar://your-arweave-tx-id" type="audio/mpeg">
+</audio>
+```
+
+### In an HTML Video Element
+
+```html
+<video controls>
+  <source src="https://api.inprocess.world/api/media/stream?url=ipfs://QmYourVideoHash" type="video/mp4">
+</video>
+```

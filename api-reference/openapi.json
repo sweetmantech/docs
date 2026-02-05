@@ -2143,17 +2143,156 @@
         }
       }
     },
-    "/audio/stream": {
+    "/media/image": {
       "get": {
-        "summary": "Stream Audio",
-        "description": "Stream audio content from Arweave, IPFS, or HTTPS URLs with support for HTTP Range requests. This endpoint acts as a proxy that handles decentralized storage protocols and enables partial content streaming for audio players.\n\n**Supported URL formats:**\n- `ar://` - Arweave URLs (e.g., `ar://abc123...`)\n- `ipfs://` - IPFS URLs (e.g., `ipfs://Qm...`)\n- `https://` - Direct HTTPS URLs\n\nThe endpoint supports HTTP Range headers for seeking within audio files, returning `206 Partial Content` when range requests are supported by the origin.",
-        "operationId": "streamAudio",
+        "summary": "Proxy Image",
+        "description": "Proxy and transform images from decentralized storage protocols like Arweave and IPFS. This endpoint fetches images from `ar://`, `ipfs://`, or `https://` URLs and optionally resizes and converts them to a target format.\n\n**Supported URL formats:**\n- `ar://` - Arweave URLs (e.g., `ar://abc123...`)\n- `ipfs://` - IPFS URLs (e.g., `ipfs://Qm...`)\n- `https://` - Direct HTTPS URLs\n\nImages are processed using sharp and can be resized and converted to WebP, AVIF, JPEG, or PNG formats. Responses are cached with immutable cache headers.",
+        "operationId": "proxyImage",
         "security": [],
         "parameters": [
           {
             "name": "url",
             "in": "query",
-            "description": "The URL of the audio file to stream. Supports Arweave (`ar://`), IPFS (`ipfs://`), and HTTPS URLs.",
+            "description": "The URL of the image to fetch. Supports Arweave (`ar://`), IPFS (`ipfs://`), and HTTPS URLs.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "arweave": {
+                "summary": "Arweave URL",
+                "value": "ar://abc123xyz..."
+              },
+              "ipfs": {
+                "summary": "IPFS URL",
+                "value": "ipfs://QmXyz..."
+              },
+              "https": {
+                "summary": "HTTPS URL",
+                "value": "https://arweave.net/abc123..."
+              }
+            }
+          },
+          {
+            "name": "w",
+            "in": "query",
+            "description": "Target width in pixels. The image will be resized to fit within this width without enlargement.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          {
+            "name": "h",
+            "in": "query",
+            "description": "Target height in pixels. The image will be resized to fit within this height without enlargement.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4096
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Image quality (1-100). Higher values produce better quality but larger files.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 80
+            }
+          },
+          {
+            "name": "f",
+            "in": "query",
+            "description": "Output image format.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["webp", "avif", "jpeg", "png"],
+              "default": "webp"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Processed image returned",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the output image",
+                "schema": {
+                  "type": "string",
+                  "example": "image/webp"
+                }
+              },
+              "Content-Length": {
+                "description": "The size of the image in bytes",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Cache-Control": {
+                "description": "Caching directive for the response",
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=31536000, immutable"
+                }
+              }
+            },
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or unsupported URL format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid or unsupported URL format"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error while processing image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Failed to process image"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/stream": {
+      "get": {
+        "summary": "Stream Media",
+        "description": "Stream audio or video content from decentralized storage protocols like Arweave and IPFS. This endpoint acts as a proxy that handles decentralized storage protocols and enables partial content streaming for media players.\n\n**Supported URL formats:**\n- `ar://` - Arweave URLs (e.g., `ar://abc123...`)\n- `ipfs://` - IPFS URLs (e.g., `ipfs://Qm...`)\n- `https://` - Direct HTTPS URLs\n\nThe endpoint supports HTTP Range headers for seeking within media files, returning `206 Partial Content` when range requests are supported by the origin.",
+        "operationId": "streamMedia",
+        "security": [],
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "description": "The URL of the media file to stream. Supports Arweave (`ar://`), IPFS (`ipfs://`), and HTTPS URLs.",
             "required": true,
             "schema": {
               "type": "string"
@@ -2176,17 +2315,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Full audio content returned",
+            "description": "Full media content returned",
             "headers": {
               "Content-Type": {
-                "description": "The MIME type of the audio content",
+                "description": "The MIME type of the media content (e.g., audio/mpeg, video/mp4)",
                 "schema": {
                   "type": "string",
                   "example": "audio/mpeg"
                 }
               },
               "Content-Length": {
-                "description": "The size of the audio content in bytes",
+                "description": "The size of the media content in bytes",
                 "schema": {
                   "type": "integer"
                 }
@@ -2212,6 +2351,12 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "video/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           },
@@ -2219,7 +2364,7 @@
             "description": "Partial content returned (for range requests)",
             "headers": {
               "Content-Type": {
-                "description": "The MIME type of the audio content",
+                "description": "The MIME type of the media content",
                 "schema": {
                   "type": "string",
                   "example": "audio/mpeg"
@@ -2252,6 +2397,12 @@
                   "type": "string",
                   "format": "binary"
                 }
+              },
+              "video/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
               }
             }
           },
@@ -2269,14 +2420,14 @@
             }
           },
           "500": {
-            "description": "Server error while streaming audio",
+            "description": "Server error while streaming media",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Failed to stream audio"
+                  "error": "Failed to stream media"
                 }
               }
             }
