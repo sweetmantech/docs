@@ -4188,11 +4188,11 @@
       },
       "Error": {
         "type": "object",
-        "required": [
-          "status",
-          "message"
-        ],
         "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message returned by media endpoints"
+          },
           "status": {
             "type": "string",
             "enum": [
