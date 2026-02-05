@@ -2261,7 +2261,8 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Invalid or unsupported URL format"
+                  "status": "error",
+                  "message": "Invalid or unsupported URL format"
                 }
               }
             }
@@ -2274,7 +2275,8 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Failed to process image"
+                  "status": "error",
+                  "message": "Failed to process image"
                 }
               }
             }
@@ -2414,7 +2416,8 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Invalid or unsupported URL format"
+                  "status": "error",
+                  "message": "Invalid or unsupported URL format"
                 }
               }
             }
@@ -2427,7 +2430,8 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Failed to stream media"
+                  "status": "error",
+                  "message": "Failed to stream media"
                 }
               }
             }
@@ -2440,7 +2444,8 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "error": "Unable to determine content length"
+                  "status": "error",
+                  "message": "Unable to determine content length"
                 }
               }
             }
@@ -4188,11 +4193,11 @@
       },
       "Error": {
         "type": "object",
+        "required": [
+          "status",
+          "message"
+        ],
         "properties": {
-          "error": {
-            "type": "string",
-            "description": "Error message returned by media endpoints"
-          },
           "status": {
             "type": "string",
             "enum": [
