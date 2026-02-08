@@ -1,0 +1,39 @@
+---
+title: Upload Media to Arweave
+openapi: GET /arweave/{path}
+---
+
+<Note>
+  This endpoint is **public** and does not require authentication.
+</Note>
+
+## Overview
+
+The Arweave Proxy API enables uploading media (audio, images, video) to Arweave for permanent decentralized storage. It proxies requests to the Arweave gateway (`https://arweave.net`), providing a simple interface for:
+
+- Uploading media files (audio, images, video) to Arweave for permanent storage
+- Retrieving previously uploaded media by Arweave transaction ID
+- Forwarding request bodies and Content-Type headers to the Arweave gateway
+
+## Supported Methods
+
+| Method | Use Case |
+|--------|----------|
+| `GET` | Retrieve content from Arweave by transaction ID or path |
+| `POST` | Upload media content to Arweave |
+
+## Example Usage
+
+### Fetch Content from Arweave
+
+```bash
+curl "https://api.inprocess.world/api/arweave/your-arweave-tx-id"
+```
+
+### Upload Media to Arweave
+
+```bash
+curl -X POST "https://api.inprocess.world/api/arweave/tx" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @your-media-file.mp3
+```

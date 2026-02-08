@@ -2452,6 +2452,125 @@
           }
         }
       }
+    },
+    "/arweave/{path}": {
+      "get": {
+        "summary": "Get Arweave Content",
+        "description": "Proxy requests to the Arweave gateway (`https://arweave.net`). This endpoint forwards the request path and query parameters to Arweave, returning the response content with its original Content-Type.\n\nUse this to fetch content stored on Arweave without directly connecting to the Arweave gateway.",
+        "operationId": "getArweaveContent",
+        "security": [],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "description": "The Arweave path to proxy (e.g., a transaction ID).",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "abc123xyz..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Content returned from Arweave",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the content from Arweave",
+                "schema": {
+                  "type": "string",
+                  "example": "application/json"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to fetch from Arweave",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Failed to fetch from Arweave"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Upload to Arweave",
+        "description": "Proxy upload requests to the Arweave gateway (`https://arweave.net`). This endpoint forwards the request body and Content-Type header to Arweave, enabling media uploads through the In\u2022Process API.\n\nUse this to upload media content to Arweave for permanent decentralized storage.",
+        "operationId": "uploadToArweave",
+        "security": [],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "path",
+            "description": "The Arweave path to proxy.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The content to upload to Arweave.",
+          "required": true,
+          "content": {
+            "*/*": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload response from Arweave",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the response from Arweave",
+                "schema": {
+                  "type": "string",
+                  "example": "application/json"
+                }
+              }
+            },
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Failed to fetch from Arweave",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Failed to fetch from Arweave"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
