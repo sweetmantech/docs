@@ -2,9 +2,9 @@
 title: Upload Files to Arweave
 ---
 
-> **For Feria Nounish Artists:** This documentation is inspired by Gabriel Lago from Cali, Colombia, who is building a Feria Nounish MiniApp for the artists participating in this year's fair. The `clientUploadToArweave` function enables artists to upload their artwork and metadata to decentralized storage, creating permanent, onchain records of their contributions to the collective timeline.
+> **For Feria Nounish Artists:** This documentation is inspired by Gabriel Lago from Cali, Colombia, who is building a Feria Nounish MiniApp for the artists participating in this year's fair. The `uploadToArweave` function enables artists to upload their artwork and metadata to decentralized storage, creating permanent, onchain records of their contributions to the collective timeline.
 
-Upload files to Arweave decentralized storage for use in your NFT collections and moments. This function is perfect for artists participating in events like Feria Nounish who need to store metadata and assets onchain.
+Upload files to Arweave decentralized storage for use in your NFT collections and moments. This function works on both **client-side** and **server-side** environments, making it suitable for browser-based uploads as well as backend services and API routes.
 
 > **Note:** This function uploads files to Arweave and returns a URI that can be used in [collection creation](/create-collection) or [moment creation](/moment/create).
 
@@ -18,8 +18,37 @@ npm install arweave
 
 ## Function Implementation
 
+This guide uses the [In•Process Arweave Proxy API](/api-reference/arweave/proxy) to upload chunks to Arweave. The proxy forwards requests to `https://arweave.net`, so your client never connects directly to the Arweave gateway.
+
+### postToArweave
+
+A helper that sends transaction headers and chunks through the proxy:
+
+```typescript
+const IN_PROCESS_API = "https://api.inprocess.world/api";
+
+const postToArweave = async (path: string, body: unknown): Promise<Response> => {
+  const res = await fetch(`${IN_PROCESS_API}/arweave/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "text/plain" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`Arweave ${path} request failed: ${res.status}`);
+  }
+  return res;
+};
+
+export default postToArweave;
+```
+
+### uploadToArweave
+
+The main upload function that signs a transaction locally, then uploads the header and each chunk via the proxy:
+
 ```typescript
 import Arweave from "arweave";
+import postToArweave from "./postToArweave";
 
 const arweave = Arweave.init({
   host: "arweave.net",
@@ -29,7 +58,7 @@ const arweave = Arweave.init({
   logging: false,
 });
 
-const clientUploadToArweave = async (
+const uploadToArweave = async (
   file: File,
   getProgress: (progress: number) => void = () => {}
 ): Promise<string> => {
@@ -49,20 +78,27 @@ const clientUploadToArweave = async (
   );
   transaction.addTag("Content-Type", file.type);
   await arweave.transactions.sign(transaction, ARWEAVE_KEY);
-  const uploader = await arweave.transactions.getUploader(transaction);
 
-  while (!uploader.isComplete) {
-    console.log(
-      `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`
-    );
-    getProgress(uploader.pctComplete);
-    await uploader.uploadChunk();
+  const data = transaction.data;
+  const totalChunks = transaction.chunks!.chunks.length;
+
+  // Post transaction header via proxy (with data emptied for chunked upload)
+  transaction.data = new Uint8Array(0);
+  await postToArweave("tx", transaction);
+
+  // Upload each chunk via proxy
+  for (let i = 0; i < totalChunks; i++) {
+    const chunk = transaction.getChunk(i, data);
+    await postToArweave("chunk", chunk);
+    const pctComplete = Math.round(((i + 1) / totalChunks) * 100);
+    console.log(`${pctComplete}% complete, ${i + 1}/${totalChunks}`);
+    getProgress(pctComplete);
   }
 
   return `ar://${transaction.id}`;
 };
 
-export default clientUploadToArweave;
+export default uploadToArweave;
 ```
 
 ## Parameters
@@ -90,11 +126,11 @@ NEXT_PUBLIC_ARWEAVE_KEY=your_base64_encoded_arweave_key_here
 ### Basic Upload
 
 ```typescript
-import clientUploadToArweave from "./clientUploadToArweave";
+import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 // Upload a file
 const file = document.getElementById("fileInput").files[0];
-const arweaveUri = await clientUploadToArweave(file);
+const arweaveUri = await uploadToArweave(file);
 console.log("File uploaded to:", arweaveUri);
 // Output: ar://abc123...
 ```
@@ -102,7 +138,7 @@ console.log("File uploaded to:", arweaveUri);
 ### Upload with Progress Tracking
 
 ```typescript
-import clientUploadToArweave from "./clientUploadToArweave";
+import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 const file = document.getElementById("fileInput").files[0];
 
@@ -114,7 +150,7 @@ const handleProgress = (progress: number) => {
 };
 
 try {
-  const arweaveUri = await clientUploadToArweave(file, handleProgress);
+  const arweaveUri = await uploadToArweave(file, handleProgress);
   console.log("Upload complete:", arweaveUri);
 } catch (error) {
   console.error("Upload failed:", error);
@@ -124,7 +160,7 @@ try {
 ### Upload for Collection Metadata
 
 ```typescript
-import clientUploadToArweave from "./clientUploadToArweave";
+import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 // Upload collection metadata JSON
 const metadata = {
@@ -143,7 +179,7 @@ const metadataFile = new File([metadataBlob], "metadata.json", {
 });
 
 // Upload to Arweave
-const contractUri = await clientUploadToArweave(metadataFile);
+const contractUri = await uploadToArweave(metadataFile);
 console.log("Contract URI:", contractUri);
 // Use this URI in your collection creation
 ```
@@ -151,7 +187,7 @@ console.log("Contract URI:", contractUri);
 ### Upload for Moment Content
 
 ```typescript
-import clientUploadToArweave from "./clientUploadToArweave";
+import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 // Upload moment content (text, image, etc.)
 const momentContent = {
@@ -168,7 +204,7 @@ const contentFile = new File([contentBlob], "moment.json", {
   type: "application/json",
 });
 
-const momentUri = await clientUploadToArweave(contentFile);
+const momentUri = await uploadToArweave(contentFile);
 console.log("Moment URI:", momentUri);
 // Use this URI when creating your moment
 ```
@@ -179,7 +215,7 @@ For React applications, here's a custom hook for file uploads:
 
 ```typescript
 import { useState } from "react";
-import clientUploadToArweave from "./clientUploadToArweave";
+import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 export const useArweaveUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
@@ -192,7 +228,7 @@ export const useArweaveUpload = () => {
     setError(null);
 
     try {
-      const uri = await clientUploadToArweave(file, setProgress);
+      const uri = await uploadToArweave(file, setProgress);
       setIsUploading(false);
       return uri;
     } catch (err) {
@@ -271,7 +307,7 @@ After uploading your metadata to Arweave, use the returned URI in your collectio
 
 ```typescript
 // Upload collection metadata
-const contractUri = await clientUploadToArweave(metadataFile);
+const contractUri = await uploadToArweave(metadataFile);
 
 // Use in collection creation
 const createContractData = encodeFunctionData({

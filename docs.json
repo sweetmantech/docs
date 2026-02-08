@@ -136,7 +136,8 @@
             "group": "Media",
             "pages": [
               "api-reference/media/image",
-              "api-reference/media/stream"
+              "api-reference/media/stream",
+              "api-reference/arweave/proxy"
             ]
           }
         ]
