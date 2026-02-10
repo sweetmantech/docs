@@ -1,0 +1,17 @@
+---
+title: Upload to Arweave
+description: Proxy upload requests to store media content on Arweave permanent storage.
+openapi: POST /arweave/{path}
+---
+
+<Note>
+  This endpoint is **public** and does not require authentication.
+</Note>
+
+## Example Usage
+
+```bash
+curl -X POST "https://api.inprocess.world/api/arweave/tx" \
+  -H "Content-Type: application/octet-stream" \
+  --data-binary @your-media-file.mp3
+```
