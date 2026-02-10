@@ -8,10 +8,75 @@ openapi: POST /arweave/{path}
   This endpoint is **public** and does not require authentication.
 </Note>
 
-## Example Usage
+## Upload Flow
+
+Uploading to Arweave is a two-step chunked process:
+
+1. **Post the transaction header** to `/arweave/tx` with the signed transaction (data emptied for chunked upload).
+2. **Post each chunk** to `/arweave/chunk` sequentially until all chunks are uploaded.
+
+Both requests use `Content-Type: application/json`.
+
+### Step 1: Post Transaction Header
 
 ```bash
 curl -X POST "https://api.inprocess.world/api/arweave/tx" \
-  -H "Content-Type: application/octet-stream" \
-  --data-binary @your-media-file.mp3
+  -H "Content-Type: application/json" \
+  -H "Accept: text/plain" \
+  -d '{ "id": "...", "owner": "...", "tags": [...], "data": "", ... }'
+```
+
+### Step 2: Upload Chunks
+
+```bash
+curl -X POST "https://api.inprocess.world/api/arweave/chunk" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/plain" \
+  -d '{ "data_root": "...", "data_size": "...", "data_path": "...", "offset": "...", "chunk": "..." }'
+```
+
+### JavaScript Example
+
+```typescript
+import Arweave from "arweave";
+
+const arweave = Arweave.init({
+  host: "arweave.net",
+  port: 443,
+  protocol: "https",
+});
+
+const uploadToArweave = async (file: File): Promise<string> => {
+  const ARWEAVE_KEY = JSON.parse(
+    Buffer.from(process.env.NEXT_PUBLIC_ARWEAVE_KEY, "base64").toString()
+  );
+  const buffer = await file.arrayBuffer();
+
+  const transaction = await arweave.createTransaction({ data: buffer }, ARWEAVE_KEY);
+  transaction.addTag("Content-Type", file.type);
+  await arweave.transactions.sign(transaction, ARWEAVE_KEY);
+
+  const data = transaction.data;
+  const totalChunks = transaction.chunks.chunks.length;
+
+  // Post transaction header (data emptied for chunked upload)
+  transaction.data = new Uint8Array(0);
+  await fetch("https://api.inprocess.world/api/arweave/tx", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "text/plain" },
+    body: JSON.stringify(transaction),
+  });
+
+  // Upload each chunk
+  for (let i = 0; i < totalChunks; i++) {
+    const chunk = transaction.getChunk(i, data);
+    await fetch("https://api.inprocess.world/api/arweave/chunk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "text/plain" },
+      body: JSON.stringify(chunk),
+    });
+  }
+
+  return `ar://${transaction.id}`;
+};
 ```
