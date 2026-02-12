@@ -531,6 +531,87 @@
         }
       }
     },
+    "/moment/collectors": {
+      "get": {
+        "summary": "Get Collectors",
+        "description": "Retrieve collectors of a Moment on the In\u2022Process protocol. This endpoint returns a list of addresses that have collected a specific moment, along with collection details.",
+        "operationId": "getMomentCollectors",
+        "security": [],
+        "parameters": [
+          {
+            "name": "collectionAddress",
+            "in": "query",
+            "description": "Moment contract address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tokenId",
+            "in": "query",
+            "description": "Token ID (defaults to \"1\")",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "1"
+            }
+          },
+          {
+            "name": "chainId",
+            "in": "query",
+            "description": "Chain ID (optional, default: Base, 8453)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 8453
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Pagination offset (optional, defaults to 0)",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectorsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment/migrate": {
       "post": {
         "summary": "Migrate Moments",
@@ -3424,6 +3505,55 @@
                 "timestamp": {
                   "type": "number",
                   "description": "Unix timestamp of when the comment was made"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CollectorsResponse": {
+        "type": "object",
+        "required": [
+          "collectors"
+        ],
+        "properties": {
+          "collectors": {
+            "type": "array",
+            "description": "Array of collectors",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "collector",
+                "username",
+                "amount",
+                "transactionHash",
+                "timestamp"
+              ],
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "Collector record ID"
+                },
+                "collector": {
+                  "type": "string",
+                  "description": "Address of the collector"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "Username of the collector"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Amount collected"
+                },
+                "transactionHash": {
+                  "type": "string",
+                  "description": "Transaction hash of the collection"
+                },
+                "timestamp": {
+                  "type": "number",
+                  "description": "Unix timestamp of when the moment was collected"
                 }
               }
             }
