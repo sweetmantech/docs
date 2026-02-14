@@ -1146,7 +1146,7 @@
                       },
                       "buyer": {
                         "address": "0x1d78bff2d6b0a97fcc1401930b3c0158e25b1a2c",
-                        "username": "collector_jane"
+                        "username": null
                       }
                     }
                   ]
