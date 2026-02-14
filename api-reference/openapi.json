@@ -1032,29 +1032,24 @@
                     {
                       "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
                       "token_id": "1",
-                      "max_supply": 17256554458,
                       "chain_id": 8453,
                       "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
                       "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
                       "default_admin": {
                         "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                        "username": "artist name 1",
                         "hidden": false
                       },
                       "admins": [
                         {
                           "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                          "username": "artist name 1",
                           "hidden": false
                         },
                         {
                           "address": "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33",
-                          "username": "artist name 2",
                           "hidden": true
                         }
                       ],
-                      "created_at": "2025-06-07T20:41:35+00:00",
-                      "updated_at": "2025-08-12T12:28:41+00:00"
+                      "created_at": "2025-06-07T20:41:35+00:00"
                     }
                   ],
                   "pagination": {
@@ -1127,28 +1122,32 @@
                   "status": "success",
                   "payments": [
                     {
-                      "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
-                      "token": {
-                        "id": "5fc69bea-1a8a-47f0-8652-8bf041c16a06",
-                        "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
-                        "tokenId": "0",
-                        "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
-                        "defaultAdmin": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
-                        "chainId": 8453,
-                        "createdAt": "2025-06-07T20:41:35+00:00",
-                        "hidden": false
+                      "id": "3a803eeb-4089-4091-b6f2-d1c2b018e4d1",
+                      "amount": "1",
+                      "currency": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                      "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
+                      "transferred_at": "2026-02-14T11:46:25+00:00",
+                      "moment": {
+                        "id": "94f64917-2160-4b68-980a-d98c059c5955",
+                        "token_id": 1,
+                        "uri": "ar://Tm83VA3goluv0g7oZKaRjOJBGi1KQo96Ptwn5m0T-i0",
+                        "collection": {
+                          "address": "0xee6c324c03287c28d81c88d11914aaf8505844ba",
+                          "chain_id": 8453,
+                          "default_admin": "0x551d219b790a7c45cb661ce59461d7646b631e6c",
+                          "payout_recipient": "0x551d219b790a7c45cb661ce59461d7646b631e6c"
+                        },
+                        "fee_recipients": [
+                          {
+                            "artist_address": "0x71ea0189673968499be6386f8febf37a7d3dacdc",
+                            "percent_allocation": 100
+                          }
+                        ]
                       },
                       "buyer": {
-                        "address": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
-                        "username": "digital_artist_1",
-                        "bio": "Digital artist exploring the intersection of technology and creativity",
-                        "instagram_username": "@digital_artist_1",
-                        "twitter_username": "@digital_artist_1",
-                        "telegram_username": "@digital_artist_1"
-                      },
-                      "amount": "0.1",
-                      "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-                      "block": "12345678"
+                        "address": "0x1d78bff2d6b0a97fcc1401930b3c0158e25b1a2c",
+                        "username": ""
+                      }
                     }
                   ]
                 }
@@ -1273,27 +1272,31 @@
                       "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
                       "payment": {
                         "id": "5fc69bea-1a8a-47f0-8652-8bf041c16a06",
-                        "token": {
-                          "id": "a1b2c3d4-e5f6-7g8h-9i0j-k1l2m3n4o5p6",
-                          "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
-                          "tokenId": "0",
+                        "amount": "1",
+                        "currency": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                        "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
+                        "transferred_at": "2026-02-14T11:46:25+00:00",
+                        "moment": {
+                          "id": "a1b2c3d4-e5f6-7890-9i0j-k1l2m3n4o5p6",
+                          "token_id": 1,
                           "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
-                          "defaultAdmin": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
-                          "chainId": 8453,
-                          "createdAt": "2025-06-07T20:41:35+00:00",
-                          "hidden": false
+                          "collection": {
+                            "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+                            "chain_id": 8453,
+                            "default_admin": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
+                            "payout_recipient": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01"
+                          },
+                          "fee_recipients": [
+                            {
+                              "artist_address": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
+                              "percent_allocation": 100
+                            }
+                          ]
                         },
                         "buyer": {
                           "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                          "username": "crypto_collector",
-                          "bio": "Passionate collector of digital art and NFTs",
-                          "instagram_username": "@crypto_collector",
-                          "twitter_username": "@crypto_collector",
-                          "telegram_username": "@crypto_collector"
-                        },
-                        "amount": "0.1",
-                        "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
-                        "block": "12345678"
+                          "username": "crypto_collector"
+                        }
                       },
                       "artist": {
                         "address": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
@@ -1748,9 +1751,7 @@
                           "default_admin": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33",
                           "payout_recipient": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
                         },
-                        "created_at": "2026-01-30T18:47:09+00:00",
-                        "max_supply": 18446744073709552000,
-                        "updated_at": "2026-01-30T18:47:09+00:00"
+                        "created_at": "2026-01-30T18:47:09+00:00"
                       }
                     }
                   ],
@@ -2694,8 +2695,7 @@
           "uri",
           "default_admin",
           "admins",
-          "created_at",
-          "updated_at"
+          "created_at"
         ],
         "properties": {
           "address": {
@@ -2705,14 +2705,6 @@
           "token_id": {
             "type": "string",
             "description": "Token Id of Moment"
-          },
-          "max_supply": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Maximum supply of tokens (null if unlimited)",
-            "nullable": true
           },
           "chain_id": {
             "type": "integer",
@@ -2741,11 +2733,6 @@
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp when the moment was created"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO timestamp when the moment metadata was updated"
           }
         }
       },
@@ -2760,11 +2747,6 @@
           "address": {
             "type": "string",
             "description": "Address of the original default admin"
-          },
-          "username": {
-            "type": "string",
-            "description": "Username of the default admin, if available",
-            "nullable": true
           },
           "hidden": {
             "type": "boolean",
@@ -2783,11 +2765,6 @@
           "address": {
             "type": "string",
             "description": "Admin artist address"
-          },
-          "username": {
-            "type": "string",
-            "description": "Username of the admin/artist, if available",
-            "nullable": true
           },
           "hidden": {
             "type": "boolean",
@@ -3489,14 +3466,25 @@
             "items": {
               "type": "object",
               "required": [
+                "id",
                 "sender",
+                "username",
                 "comment",
                 "timestamp"
               ],
               "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUID of the comment"
+                },
                 "sender": {
                   "type": "string",
                   "description": "Address of the comment sender"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "Username of the comment sender"
                 },
                 "comment": {
                   "type": "string",
@@ -3532,7 +3520,8 @@
               ],
               "properties": {
                 "id": {
-                  "type": "integer",
+                  "type": "string",
+                  "format": "uuid",
                   "description": "Collector record ID"
                 },
                 "collector": {
@@ -3688,11 +3677,12 @@
         "type": "object",
         "required": [
           "id",
-          "token",
+          "moment",
           "buyer",
           "amount",
-          "hash",
-          "block"
+          "currency",
+          "transaction_hash",
+          "transferred_at"
         ],
         "properties": {
           "id": {
@@ -3700,8 +3690,8 @@
             "format": "uuid",
             "description": "UUID of the payment record"
           },
-          "token": {
-            "$ref": "#/components/schemas/PaymentToken"
+          "moment": {
+            "$ref": "#/components/schemas/PaymentMoment"
           },
           "buyer": {
             "$ref": "#/components/schemas/PaymentBuyer"
@@ -3710,39 +3700,37 @@
             "type": "string",
             "description": "Numeric amount paid"
           },
-          "hash": {
+          "currency": {
+            "type": "string",
+            "description": "Currency contract address (e.g., USDC contract address)"
+          },
+          "transaction_hash": {
             "type": "string",
             "description": "Transaction hash"
           },
-          "block": {
+          "transferred_at": {
             "type": "string",
-            "description": "Block number where the transaction occurred"
+            "format": "date-time",
+            "description": "ISO timestamp when the payment was transferred"
           }
         }
       },
-      "PaymentToken": {
+      "PaymentMoment": {
         "type": "object",
         "required": [
           "id",
-          "address",
-          "tokenId",
+          "token_id",
           "uri",
-          "defaultAdmin",
-          "chainId",
-          "createdAt",
-          "hidden"
+          "collection",
+          "fee_recipients"
         ],
         "properties": {
           "id": {
             "type": "string",
             "format": "uuid",
-            "description": "UUID of the token"
+            "description": "UUID of the moment"
           },
-          "address": {
-            "type": "string",
-            "description": "Contract address of the token"
-          },
-          "tokenId": {
+          "token_id": {
             "type": "string",
             "description": "Token ID"
           },
@@ -3750,22 +3738,53 @@
             "type": "string",
             "description": "Metadata URI"
           },
-          "defaultAdmin": {
-            "type": "string",
-            "description": "Admin address of the token"
+          "collection": {
+            "type": "object",
+            "required": [
+              "address",
+              "chain_id",
+              "default_admin",
+              "payout_recipient"
+            ],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Contract address of the collection"
+              },
+              "chain_id": {
+                "type": "integer",
+                "description": "Chain ID where the collection exists"
+              },
+              "default_admin": {
+                "type": "string",
+                "description": "Default admin address of the collection"
+              },
+              "payout_recipient": {
+                "type": "string",
+                "description": "Address that receives payouts"
+              }
+            }
           },
-          "chainId": {
-            "type": "integer",
-            "description": "Chain ID where the token exists"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO timestamp when the token was created"
-          },
-          "hidden": {
-            "type": "boolean",
-            "description": "Whether the token is hidden"
+          "fee_recipients": {
+            "type": "array",
+            "description": "Fee recipients for this moment",
+            "items": {
+              "type": "object",
+              "required": [
+                "artist_address",
+                "percent_allocation"
+              ],
+              "properties": {
+                "artist_address": {
+                  "type": "string",
+                  "description": "Recipient artist address"
+                },
+                "percent_allocation": {
+                  "type": "number",
+                  "description": "Allocation percentage (0-100)"
+                }
+              }
+            }
           }
         }
       },
@@ -3773,11 +3792,7 @@
         "type": "object",
         "required": [
           "address",
-          "username",
-          "bio",
-          "instagram_username",
-          "twitter_username",
-          "telegram_username"
+          "username"
         ],
         "properties": {
           "address": {
@@ -3786,23 +3801,8 @@
           },
           "username": {
             "type": "string",
-            "description": "Username of the buyer"
-          },
-          "bio": {
-            "type": "string",
-            "description": "Bio of the buyer"
-          },
-          "instagram_username": {
-            "type": "string",
-            "description": "Instagram handle of the buyer"
-          },
-          "twitter_username": {
-            "type": "string",
-            "description": "Twitter handle of the buyer"
-          },
-          "telegram_username": {
-            "type": "string",
-            "description": "Telegram handle of the buyer"
+            "description": "Username of the buyer",
+            "nullable": true
           }
         }
       },
@@ -4363,9 +4363,7 @@
           "uri",
           "token_id",
           "collection",
-          "created_at",
-          "max_supply",
-          "updated_at"
+          "created_at"
         ],
         "properties": {
           "id": {
@@ -4388,15 +4386,6 @@
             "type": "string",
             "format": "date-time",
             "description": "Timestamp when the moment was created"
-          },
-          "max_supply": {
-            "type": "number",
-            "description": "Maximum supply of tokens for this moment"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the moment was last updated"
           }
         }
       },
