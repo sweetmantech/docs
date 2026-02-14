@@ -1129,7 +1129,7 @@
                       "transferred_at": "2026-02-14T11:46:25+00:00",
                       "moment": {
                         "id": "94f64917-2160-4b68-980a-d98c059c5955",
-                        "token_id": 1,
+                        "token_id": "1",
                         "uri": "ar://Tm83VA3goluv0g7oZKaRjOJBGi1KQo96Ptwn5m0T-i0",
                         "collection": {
                           "address": "0xee6c324c03287c28d81c88d11914aaf8505844ba",
@@ -1277,8 +1277,8 @@
                         "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
                         "transferred_at": "2026-02-14T11:46:25+00:00",
                         "moment": {
-                          "id": "a1b2c3d4-e5f6-7890-9i0j-k1l2m3n4o5p6",
-                          "token_id": 1,
+                          "id": "a1b2c3d4-e5f6-4890-9a0b-c1d2e3f4a5b6",
+                          "token_id": "1",
                           "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
                           "collection": {
                             "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
