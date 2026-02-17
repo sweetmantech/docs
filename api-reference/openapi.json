@@ -1924,7 +1924,10 @@
             "description": "Maximum number of email records to return per page.",
             "required": false,
             "schema": {
-              "type": "integer"
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
             }
           }
         ],
@@ -1968,6 +1971,11 @@
                                 "type": "string",
                                 "nullable": true,
                                 "description": "The artist's primary wallet address, or null if not mapped"
+                              },
+                              "username": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The artist's username, or null if not set"
                               }
                             }
                           }
@@ -1995,7 +2003,8 @@
                         {
                           "address": "0xabc123...",
                           "email": "artist@example.com",
-                          "artist_address": "0xdef456..."
+                          "artist_address": "0xdef456...",
+                          "username": "sweetman.eth"
                         }
                       ],
                       "next_cursor": "cursor_token_here"
@@ -2013,6 +2022,7 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
+                  "status": "error",
                   "message": "Forbidden"
                 }
               }
