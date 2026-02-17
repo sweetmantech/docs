@@ -115,6 +115,12 @@
             ]
           },
           {
+            "group": "Emails",
+            "pages": [
+              "api-reference/emails/get"
+            ]
+          },
+          {
             "group": "Smart Wallet",
             "pages": [
               "api-reference/smartwallet/get",

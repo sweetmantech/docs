@@ -1889,6 +1889,158 @@
         }
       }
     },
+    "/emails": {
+      "get": {
+        "summary": "Get Emails",
+        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior:\n- If `artist_address` is provided: Returns the email associated with that artist (accessible to any authenticated user).\n- If no `artist_address` is provided: Returns a paginated list of all artist emails with cursor-based pagination. **Admin access only.**",
+        "operationId": "getEmails",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "artist_address",
+            "in": "query",
+            "description": "The artist wallet address to look up the email for. When provided, returns a single email object for that artist.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Pagination cursor for fetching the next page of results. Use the `next_cursor` value from the previous response.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of email records to return per page.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "description": "Single artist email response (when artist_address is provided)",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "The email address associated with the artist, or null if not found"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "description": "Paginated list of artist emails (admin only, no artist_address provided)",
+                      "properties": {
+                        "emails": {
+                          "type": "array",
+                          "description": "Array of artist email records",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "address": {
+                                "type": "string",
+                                "description": "The social wallet address associated with the email"
+                              },
+                              "email": {
+                                "type": "string",
+                                "description": "The artist's email address"
+                              },
+                              "artist_address": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The artist's primary wallet address, or null if not mapped"
+                              },
+                              "username": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The artist's username, or null if not set"
+                              }
+                            }
+                          }
+                        },
+                        "next_cursor": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "Cursor for the next page of results. Null if there are no more pages."
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "single_artist": {
+                    "summary": "Single artist email",
+                    "value": {
+                      "email": "artist@example.com"
+                    }
+                  },
+                  "paginated_list": {
+                    "summary": "Paginated email list (admin)",
+                    "value": {
+                      "emails": [
+                        {
+                          "address": "0xabc123...",
+                          "email": "artist@example.com",
+                          "artist_address": "0xdef456...",
+                          "username": "sweetman.eth"
+                        }
+                      ],
+                      "next_cursor": "cursor_token_here"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - caller is not an admin and no artist_address was provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "status": "error",
+                  "message": "Forbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/smartwallet": {
       "get": {
         "summary": "Get Smart Wallet",
