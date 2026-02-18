@@ -1892,7 +1892,7 @@
     "/emails": {
       "get": {
         "summary": "Get Emails",
-        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior:\n- If `artist_address` is provided: Returns the email associated with that artist (accessible to any authenticated user).\n- If no `artist_address` is provided: Returns a paginated list of all artist emails with cursor-based pagination. **Admin access only.**",
+        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\nEndpoint behavior:\n- If `artist_address` is provided: Returns the email associated with that artist. **This is a public endpoint and does not require authentication.**\n- If no `artist_address` is provided: Returns a paginated list of all artist emails with cursor-based pagination. **Authentication required. Admin access only.**",
         "operationId": "getEmails",
         "security": [
           {
