@@ -1892,7 +1892,7 @@
     "/emails": {
       "get": {
         "summary": "Get Emails",
-        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\nEndpoint behavior:\n- If `artist_address` is provided: Returns the email associated with that artist. **This is a public endpoint and does not require authentication.**\n- If no `artist_address` is provided: Returns a paginated list of all artist emails with cursor-based pagination. **Authentication required. Admin access only.**",
+        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior depends on the type of API key used:\n- **Normal API key**: No parameters accepted. The artist address is inferred from the API key and returns that artist's own email.\n- **Admin API key**: `artist_address` is optional. If provided, returns the email for that specific artist. If omitted, returns a paginated list of all artist emails.",
         "operationId": "getEmails",
         "security": [
           {
@@ -1903,7 +1903,7 @@
           {
             "name": "artist_address",
             "in": "query",
-            "description": "The artist wallet address to look up the email for. When provided, returns a single email object for that artist.",
+            "description": "The artist wallet address to look up the email for. **Admin API key only.** When provided, returns a single email object for that artist; when omitted, returns all emails paginated.",
             "required": false,
             "schema": {
               "type": "string"
@@ -1940,7 +1940,7 @@
                   "oneOf": [
                     {
                       "type": "object",
-                      "description": "Single artist email response (when artist_address is provided)",
+                      "description": "Single artist email response (normal API key, or admin API key with artist_address provided)",
                       "properties": {
                         "email": {
                           "type": "string",
@@ -1951,7 +1951,7 @@
                     },
                     {
                       "type": "object",
-                      "description": "Paginated list of artist emails (admin only, no artist_address provided)",
+                      "description": "Paginated list of artist emails (admin API key only, no artist_address provided)",
                       "properties": {
                         "emails": {
                           "type": "array",
@@ -2015,7 +2015,7 @@
             }
           },
           "403": {
-            "description": "Forbidden - caller is not an admin and no artist_address was provided",
+            "description": "Forbidden - caller does not have the required API key type for the requested operation",
             "content": {
               "application/json": {
                 "schema": {
