@@ -65,6 +65,7 @@
               "api-reference/moment/writing",
               "api-reference/moment/collect",
               "api-reference/moment/airdrop",
+              "api-reference/moment/sale",
               "api-reference/moment/add-permission",
               "api-reference/moment/remove-permission",
               "api-reference/moment/update-uri",

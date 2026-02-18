@@ -612,6 +612,70 @@
         }
       }
     },
+    "/moment/sale": {
+      "post": {
+        "summary": "Set Moment Sale",
+        "description": "Update the sale configuration for a Moment on the In\u2022Process protocol. This endpoint allows artists to update the price, sale window, token limit per address, and funds recipient for a Moment's sale.\n\n**Note:** At least one sale field must be provided. Requires authentication via API key.",
+        "operationId": "setMomentSale",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSaleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sale config not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment/migrate": {
       "post": {
         "summary": "Migrate Moments",
@@ -3548,6 +3612,42 @@
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          }
+        }
+      },
+      "UpdateSaleRequest": {
+        "type": "object",
+        "required": [
+          "moment"
+        ],
+        "description": "At least one of pricePerToken, saleStart, saleEnd, maxTokensPerAddress, or fundsRecipient must be provided.",
+        "properties": {
+          "moment": {
+            "$ref": "#/components/schemas/MomentIdentifier"
+          },
+          "pricePerToken": {
+            "type": "string",
+            "pattern": "^[0-9]+$",
+            "description": "Price per token in wei as a non-negative integer string (e.g., \"0\" for free, \"1000000000000000\" for 0.001 ETH)"
+          },
+          "saleStart": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 datetime for when the sale starts"
+          },
+          "saleEnd": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 datetime for when the sale ends"
+          },
+          "maxTokensPerAddress": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Maximum number of tokens a single address can mint (0 = unlimited)"
+          },
+          "fundsRecipient": {
+            "type": "string",
+            "description": "Address that receives the sale proceeds"
           }
         }
       },
