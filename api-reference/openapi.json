@@ -3631,14 +3631,12 @@
             "description": "Price per token in wei as a non-negative integer string (e.g., \"0\" for free, \"1000000000000000\" for 0.001 ETH)"
           },
           "saleStart": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 datetime for when the sale starts"
+            "type": "integer",
+            "description": "Unix timestamp for when the sale starts"
           },
           "saleEnd": {
-            "type": "string",
-            "format": "date-time",
-            "description": "ISO 8601 datetime for when the sale ends"
+            "type": "integer",
+            "description": "Unix timestamp for when the sale ends"
           },
           "maxTokensPerAddress": {
             "type": "integer",
