@@ -1,0 +1,35 @@
+---
+title: Get Metadata
+description: Proxy requests to fetch JSON metadata from IPFS or Arweave URIs.
+openapi: GET /metadata
+---
+
+<Note>
+  This endpoint is **public** and does not require authentication.
+</Note>
+
+## Example Usage
+
+```bash
+curl "https://api.inprocess.world/api/metadata?uri=ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+```
+
+```bash
+curl "https://api.inprocess.world/api/metadata?uri=ipfs://bafybeig..."
+```
+
+## Example Response
+
+```json
+{
+  "name": "Screenshot",
+  "description": "",
+  "image": "ar://gV14eh4vlzv1uVXLqFurgbpf9NXZqFSMxRBk2uO3J5o",
+  "external_url": "",
+  "animation_url": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
+  "content": {
+    "mime": "image/jpeg",
+    "uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+  }
+}
+```

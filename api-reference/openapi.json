@@ -2869,6 +2869,123 @@
           }
         }
       }
+    },
+    "/metadata": {
+      "get": {
+        "summary": "Get Metadata",
+        "description": "Proxy requests to fetch and return JSON metadata from a given URI. Supports IPFS and Arweave URIs by resolving them to a fetchable gateway URL before fetching.",
+        "operationId": "getMetadata",
+        "security": [],
+        "parameters": [
+          {
+            "name": "uri",
+            "in": "query",
+            "description": "The URI of the metadata to fetch. Supports IPFS (`ipfs://`) and Arweave (`ar://`) URIs.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ipfs://bafybeig..."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Metadata JSON returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the token or asset",
+                      "example": "Screenshot"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Description of the token or asset",
+                      "example": ""
+                    },
+                    "image": {
+                      "type": "string",
+                      "description": "Arweave or IPFS URI of the asset image",
+                      "example": "ar://gV14eh4vlzv1uVXLqFurgbpf9NXZqFSMxRBk2uO3J5o"
+                    },
+                    "external_url": {
+                      "type": "string",
+                      "description": "External URL for the asset",
+                      "example": ""
+                    },
+                    "animation_url": {
+                      "type": "string",
+                      "description": "Arweave or IPFS URI of the animation or media file",
+                      "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+                    },
+                    "content": {
+                      "type": "object",
+                      "description": "Content metadata for the asset media",
+                      "properties": {
+                        "mime": {
+                          "type": "string",
+                          "description": "MIME type of the media content",
+                          "example": "image/jpeg"
+                        },
+                        "uri": {
+                          "type": "string",
+                          "description": "Arweave or IPFS URI of the media content",
+                          "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "name": "Screenshot",
+                  "description": "",
+                  "image": "ar://gV14eh4vlzv1uVXLqFurgbpf9NXZqFSMxRBk2uO3J5o",
+                  "external_url": "",
+                  "animation_url": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
+                  "content": {
+                    "mime": "image/jpeg",
+                    "uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid URI",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "noUri": {
+                    "value": { "message": "No URI provided" }
+                  },
+                  "invalidUri": {
+                    "value": { "message": "Invalid or unsupported URI" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "failed to get metadata"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
