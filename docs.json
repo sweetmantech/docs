@@ -146,7 +146,8 @@
               "api-reference/media/image",
               "api-reference/media/stream",
               "api-reference/arweave/proxy",
-              "api-reference/arweave/upload"
+              "api-reference/arweave/upload",
+              "api-reference/arweave/metadata"
             ]
           }
         ]
