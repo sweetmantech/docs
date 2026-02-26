@@ -141,6 +141,12 @@
             ]
           },
           {
+            "group": "OAuth",
+            "pages": [
+              "api-reference/oauth/send-code"
+            ]
+          },
+          {
             "group": "Media",
             "pages": [
               "api-reference/media/image",

@@ -1790,7 +1790,7 @@
                       "role": "assistant",
                       "parts": [
                         {
-                          "text": "✅ Moment created! https://inprocess.world/sms/base:0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806/1",
+                          "text": "\u2705 Moment created! https://inprocess.world/sms/base:0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806/1",
                           "type": "text"
                         }
                       ],
@@ -1807,7 +1807,7 @@
                         "collection": {
                           "id": "5005b11c-3ae4-4178-a9b1-3b38882aa68c",
                           "uri": "ar://QoSsN-mitKMKum21lN0DK0DVxXn11l0IDnhe93pqnUU",
-                          "name": "🏕nature ⛰",
+                          "name": "\ud83c\udfd5nature \u26f0",
                           "address": "0x880e7708fd3a5dd810bdc4a50e38b821ee6c9806",
                           "chain_id": 8453,
                           "created_at": "2026-01-30T18:47:09+00:00",
@@ -1869,7 +1869,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["messageId"],
+                "required": [
+                  "messageId"
+                ],
                 "properties": {
                   "messageId": {
                     "type": "string",
@@ -1956,7 +1958,7 @@
     "/emails": {
       "get": {
         "summary": "Get Emails",
-        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior depends on the type of API key used:\n- **Normal API key**: No parameters accepted. The artist address is inferred from the API key and returns that artist's own email.\n- **Admin API key**: `artist_address` is optional. If provided, returns the email for that specific artist. If omitted, returns a paginated list of all artist emails.",
+        "description": "Retrieve email addresses for artists on the In\u2022Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior depends on the type of API key used:\n- **Normal API key**: No parameters accepted. The artist address is inferred from the API key and returns that artist's own email.\n- **Admin API key**: `artist_address` is optional. If provided, returns the email for that specific artist. If omitted, returns a paginated list of all artist emails.",
         "operationId": "getEmails",
         "security": [
           {
@@ -2512,7 +2514,12 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["webp", "avif", "jpeg", "png"],
+              "enum": [
+                "webp",
+                "avif",
+                "jpeg",
+                "png"
+              ],
               "default": "webp"
             }
           }
@@ -2818,7 +2825,10 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["tx", "chunk"]
+              "enum": [
+                "tx",
+                "chunk"
+              ]
             }
           }
         ],
@@ -2959,17 +2969,25 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 },
                 "examples": {
                   "noUri": {
-                    "value": { "message": "No URI provided" }
+                    "value": {
+                      "message": "No URI provided"
+                    }
                   },
                   "invalidUri": {
-                    "value": { "message": "Invalid or unsupported URI" }
+                    "value": {
+                      "message": "Invalid or unsupported URI"
+                    }
                   }
                 }
               }
@@ -2981,13 +2999,76 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 },
                 "example": {
                   "message": "failed to get metadata"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/code": {
+      "post": {
+        "summary": "Send Code",
+        "description": "Send a one-time verification code to the provided email address for email-based OAuth login.\n\n**Overview:**\n\nThis endpoint initiates the email login flow by sending a one-time PIN (OTP) to the user\u2019s email address via Privy.\n\n1. Provide a valid email address in the request body.\n2. A one-time verification code will be sent to that email.\n3. Use the received code to complete the authentication flow.",
+        "operationId": "sendCode",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendCodeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verification code sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendCodeResponse"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error - Invalid email address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Invalid request body"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - Failed to send verification code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Failed to send code"
                 }
               }
             }
@@ -4780,7 +4861,10 @@
           },
           "role": {
             "type": "string",
-            "enum": ["user", "assistant"],
+            "enum": [
+              "user",
+              "assistant"
+            ],
             "description": "The role of the message sender"
           },
           "parts": {
@@ -4842,6 +4926,30 @@
                 }
               }
             }
+          }
+        }
+      },
+      "SendCodeRequest": {
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The email address to send the one-time verification code to",
+            "example": "user@example.com"
+          }
+        }
+      },
+      "SendCodeResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the verification code was sent successfully",
+            "example": true
           }
         }
       }
