@@ -3020,7 +3020,7 @@
     "/oauth/login": {
       "post": {
         "summary": "Login with OTP",
-        "description": "Authenticate a user using an email address and a one-time verification code (OTP).\n\n**Overview:**\n\nThis endpoint completes the email login flow. After receiving a verification code via the [Send Code](/api-reference/oauth/send-code) endpoint:\n\n1. Provide the same email address and the 6-digit code from the email.\n2. The code is verified against Privy's passwordless authentication.\n3. On success, a JWT auth token is returned. The token expires in 1 hour and should be included as a Bearer token in subsequent authenticated requests.",
+        "description": "Authenticate an account using an email address and a one-time verification code (OTP).\n\n**Overview:**\n\nThis endpoint completes the email login flow. After receiving a verification code via the [Send Code](/api-reference/oauth/send-code) endpoint:\n\n1. Provide the same email address and the 6-digit code from the email.\n2. The code is verified against Privy's passwordless authentication.\n3. On success, a JWT auth token is returned. The token expires in 1 hour and should be included as a Bearer token in subsequent authenticated requests.",
         "operationId": "loginWithOtp",
         "security": [],
         "requestBody": {
@@ -3079,7 +3079,7 @@
     "/oauth/code": {
       "post": {
         "summary": "Send Code",
-        "description": "Send a one-time verification code to the provided email address for email-based OAuth login.\n\n**Overview:**\n\nThis endpoint initiates the email login flow by sending a one-time PIN (OTP) to the user\u2019s email address via Privy.\n\n1. Provide a valid email address in the request body.\n2. A one-time verification code will be sent to that email.\n3. Use the received code with the [Login with OTP](/api-reference/oauth/login) endpoint to complete the authentication flow.",
+        "description": "Send a one-time verification code to the provided email address for email-based OAuth login.\n\n**Overview:**\n\nThis endpoint initiates the email login flow by sending a one-time PIN (OTP) to the account\u2019s email address via Privy.\n\n1. Provide a valid email address in the request body.\n2. A one-time verification code will be sent to that email.\n3. Use the received code with the [Login with OTP](/api-reference/oauth/login) endpoint to complete the authentication flow.",
         "operationId": "sendCode",
         "security": [],
         "requestBody": {
@@ -4999,7 +4999,7 @@
             "type": "string",
             "format": "email",
             "description": "The email address used to request the OTP",
-            "example": "user@example.com"
+            "example": "artist@example.com"
           },
           "code": {
             "type": "string",
@@ -5029,7 +5029,7 @@
             "type": "string",
             "format": "email",
             "description": "The email address to send the one-time verification code to",
-            "example": "user@example.com"
+            "example": "artist@example.com"
           }
         }
       },
