@@ -1,0 +1,221 @@
+---
+title: Sign in with In•Process
+---
+
+Add a **Sign in with In•Process** button to your app using email one-time passwords (OTP). The flow has two steps: send a verification code to the user's email, then exchange that code for a JWT auth token.
+
+## Flow Overview
+
+1. User enters their email and clicks **Send Code**
+2. Your app calls [`POST /oauth/code`](/api-reference/oauth/send-code) — In•Process emails a 6-digit OTP
+3. User enters the code
+4. Your app calls [`POST /oauth/login`](/api-reference/oauth/login) — returns a JWT valid for 1 hour
+5. Include the JWT as a `Bearer` token on subsequent authenticated requests
+
+## API Helpers
+
+Create two thin wrappers around the In•Process API endpoints:
+
+```typescript
+const IN_PROCESS_API = "https://api.inprocess.world/api";
+
+export const sendCode = async (email: string): Promise<void> => {
+  const res = await fetch(`${IN_PROCESS_API}/oauth/code`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) throw new Error("Failed to send verification code");
+};
+
+export const loginWithOTP = async (
+  email: string,
+  code: string
+): Promise<string> => {
+  const res = await fetch(`${IN_PROCESS_API}/oauth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code }),
+  });
+  if (!res.ok) throw new Error("Failed to login");
+  const data = await res.json();
+  return data.token;
+};
+```
+
+## React Hook
+
+Encapsulate the two-step flow in a custom hook:
+
+```typescript
+import { useState } from "react";
+import { sendCode, loginWithOTP } from "./inprocess";
+
+type Step = "email" | "code" | "authenticated";
+
+export const useInProcessAuth = () => {
+  const [step, setStep] = useState<Step>("email");
+  const [email, setEmail] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSendCode = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await sendCode(email);
+      setStep("code");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (code: string) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const jwt = await loginWithOTP(email, code);
+      setToken(jwt);
+      setStep("authenticated");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid code");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setStep("email");
+    setEmail("");
+    setToken(null);
+    setError(null);
+  };
+
+  return { step, email, setEmail, token, error, loading, handleSendCode, handleLogin, reset };
+};
+```
+
+## Button Component
+
+Wire the hook into a self-contained sign-in component:
+
+```tsx
+import { useState } from "react";
+import { useInProcessAuth } from "./useInProcessAuth";
+
+export const SignInWithInProcess = () => {
+  const {
+    step,
+    email,
+    setEmail,
+    token,
+    error,
+    loading,
+    handleSendCode,
+    handleLogin,
+    reset,
+  } = useInProcessAuth();
+
+  const [code, setCode] = useState("");
+
+  if (step === "authenticated") {
+    return (
+      <div>
+        <p>Signed in successfully.</p>
+        <button onClick={reset}>Sign out</button>
+      </div>
+    );
+  }
+
+  if (step === "code") {
+    return (
+      <div>
+        <p>Enter the 6-digit code sent to <strong>{email}</strong>.</p>
+        <input
+          type="text"
+          inputMode="numeric"
+          maxLength={6}
+          placeholder="123456"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
+        <button
+          onClick={() => handleLogin(code)}
+          disabled={loading || code.length !== 6}
+        >
+          {loading ? "Verifying..." : "Verify Code"}
+        </button>
+        <button onClick={reset}>Start over</button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <input
+        type="email"
+        placeholder="you@example.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button onClick={handleSendCode} disabled={loading || !email}>
+        {loading ? "Sending..." : "Sign in with In•Process"}
+      </button>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
+};
+```
+
+## Using the Token
+
+After a successful login the JWT is available from `token`. Pass it as a `Bearer` header on authenticated In•Process API calls. For example, create an API key for the signed-in artist:
+
+```typescript
+const res = await fetch("https://api.inprocess.world/api/artists/api-keys", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+});
+const { apiKey } = await res.json();
+```
+
+The token expires in **1 hour**. Store it in memory or `sessionStorage` and call the full OTP flow again when it expires.
+
+## Parameters
+
+### `POST /oauth/code` — Send Code
+
+| Field   | Type   | Required | Description                               |
+| ------- | ------ | -------- | ----------------------------------------- |
+| `email` | string | Yes      | Email address to send the OTP to          |
+
+**Response**
+
+```json
+{ "success": true }
+```
+
+### `POST /oauth/login` — Login with OTP
+
+| Field   | Type   | Required | Description                              |
+| ------- | ------ | -------- | ---------------------------------------- |
+| `email` | string | Yes      | Same email used to request the OTP       |
+| `code`  | string | Yes      | 6-digit code received in the email       |
+
+**Response**
+
+```json
+{ "token": "<JWT_TOKEN>" }
+```
+
+## Next Steps
+
+- Browse the [API Reference](/api-reference/introduction) to see which endpoints require authentication
+- Use the token to [create moments](/api-reference/moment/create) or manage [collections](/api-reference/collections/create) on behalf of the signed-in user

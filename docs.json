@@ -39,6 +39,12 @@
             ]
           },
           {
+            "group": "OAuth",
+            "pages": [
+              "oauth/login-with-otp"
+            ]
+          },
+          {
             "group": "Protocol",
             "pages": [
               "protocol/protocol-deployments",
