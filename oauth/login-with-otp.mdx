@@ -2,13 +2,13 @@
 title: Sign in with In•Process
 ---
 
-Add a **Sign in with In•Process** button to your app using email one-time passwords (OTP). The flow has two steps: send a verification code to the user's email, then exchange that code for a JWT auth token.
+Add a **Sign in with In•Process** button to your app using email one-time passwords (OTP). The flow has two steps: send a verification code to the artist's email, then exchange that code for a JWT auth token.
 
 ## Flow Overview
 
-1. User enters their email and clicks **Send Code**
+1. Artist enters their email and clicks **Send Code**
 2. Your app calls [`POST /oauth/code`](/api-reference/oauth/send-code) — In•Process emails a 6-digit OTP
-3. User enters the code
+3. Artist enters the code
 4. Your app calls [`POST /oauth/login`](/api-reference/oauth/login) — returns a JWT valid for 1 hour
 5. Include the JWT as a `Bearer` token on subsequent authenticated requests
 
@@ -218,4 +218,4 @@ The token expires in **1 hour**. Store it in memory or `sessionStorage` and call
 ## Next Steps
 
 - Browse the [API Reference](/api-reference/introduction) to see which endpoints require authentication
-- Use the token to [create moments](/api-reference/moment/create) or manage [collections](/api-reference/collections/create) on behalf of the signed-in user
+- Use the token to [create moments](/api-reference/moment/create) or manage [collections](/api-reference/collections/create) on behalf of the signed-in artist
