@@ -796,11 +796,10 @@
                       "chainId": 8453,
                       "name": "My Collection",
                       "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
-                      "default_admin": {
+                      "creator": {
                         "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
                         "username": "artist name 1"
                       },
-                      "payout_recipient": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
                       "created_at": "2025-06-07T20:41:35+00:00",
                       "updated_at": "2025-08-12T12:28:41+00:00"
                     }
@@ -1099,7 +1098,7 @@
                       "chain_id": 8453,
                       "id": "bceddfb3-28f2-49f3-8669-73a813a06b90",
                       "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
-                      "default_admin": {
+                      "creator": {
                         "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
                         "hidden": false
                       },
@@ -1113,7 +1112,8 @@
                           "hidden": true
                         }
                       ],
-                      "created_at": "2025-06-07T20:41:35+00:00"
+                      "created_at": "2025-06-07T20:41:35+00:00",
+                      "protocol": "in_process"
                     }
                   ],
                   "pagination": {
@@ -1198,8 +1198,7 @@
                         "collection": {
                           "address": "0xee6c324c03287c28d81c88d11914aaf8505844ba",
                           "chain_id": 8453,
-                          "default_admin": "0x551d219b790a7c45cb661ce59461d7646b631e6c",
-                          "payout_recipient": "0x551d219b790a7c45cb661ce59461d7646b631e6c"
+                          "creator": "0x551d219b790a7c45cb661ce59461d7646b631e6c"
                         },
                         "fee_recipients": [
                           {
@@ -1347,8 +1346,7 @@
                           "collection": {
                             "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
                             "chain_id": 8453,
-                            "default_admin": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01",
-                            "payout_recipient": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01"
+                            "creator": "0x29b6674c1562e31EdFd9709D9576e8E5F1e68d01"
                           },
                           "fee_recipients": [
                             {
@@ -1812,8 +1810,7 @@
                           "chain_id": 8453,
                           "created_at": "2026-01-30T18:47:09+00:00",
                           "updated_at": "2026-01-30T18:47:09+00:00",
-                          "default_admin": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33",
-                          "payout_recipient": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
+                          "creator": "0xaf1452d289e22fbd0dea9d5097353c72a90fac33"
                         },
                         "created_at": "2026-01-30T18:47:09+00:00"
                       }
@@ -3174,9 +3171,10 @@
           "chain_id",
           "id",
           "uri",
-          "default_admin",
+          "creator",
           "admins",
-          "created_at"
+          "created_at",
+          "protocol"
         ],
         "properties": {
           "address": {
@@ -3200,7 +3198,7 @@
             "type": "string",
             "description": "Metadata URI"
           },
-          "default_admin": {
+          "creator": {
             "$ref": "#/components/schemas/DefaultAdmin"
           },
           "admins": {
@@ -3214,6 +3212,14 @@
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp when the moment was created"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol the moment belongs to",
+            "enum": [
+              "in_process",
+              "catalog"
+            ]
           }
         }
       },
@@ -3311,8 +3317,7 @@
           "chainId",
           "name",
           "uri",
-          "default_admin",
-          "payout_recipient",
+          "creator",
           "created_at",
           "updated_at"
         ],
@@ -3333,12 +3338,8 @@
             "type": "string",
             "description": "Metadata URI"
           },
-          "default_admin": {
+          "creator": {
             "$ref": "#/components/schemas/CollectionDefaultAdmin"
-          },
-          "payout_recipient": {
-            "type": "string",
-            "description": "Address to receive sale proceeds"
           },
           "created_at": {
             "type": "string",
@@ -3449,11 +3450,11 @@
           "chain_id",
           "name",
           "uri",
-          "default_admin",
+          "creator",
           "admins",
-          "payout_recipient",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "protocol"
         ],
         "properties": {
           "id": {
@@ -3509,7 +3510,7 @@
               }
             }
           },
-          "default_admin": {
+          "creator": {
             "$ref": "#/components/schemas/CollectionDefaultAdmin"
           },
           "admins": {
@@ -3518,10 +3519,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "payout_recipient": {
-            "type": "string",
-            "description": "Address to receive sale proceeds"
           },
           "created_at": {
             "type": "string",
@@ -3532,6 +3529,14 @@
             "type": "string",
             "format": "date-time",
             "description": "ISO timestamp when the collection was updated"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol the moment belongs to",
+            "enum": [
+              "in_process",
+              "catalog"
+            ]
           }
         }
       },
@@ -3650,7 +3655,8 @@
           "uri",
           "owner",
           "saleConfig",
-          "momentAdmins"
+          "momentAdmins",
+          "protocol"
         ],
         "properties": {
           "uri": {
@@ -3702,6 +3708,14 @@
                 }
               }
             }
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol the moment belongs to",
+            "enum": [
+              "in_process",
+              "catalog"
+            ]
           }
         }
       },
@@ -4258,8 +4272,7 @@
             "required": [
               "address",
               "chain_id",
-              "default_admin",
-              "payout_recipient"
+              "creator"
             ],
             "properties": {
               "address": {
@@ -4270,13 +4283,9 @@
                 "type": "integer",
                 "description": "Chain ID where the collection exists"
               },
-              "default_admin": {
+              "creator": {
                 "type": "string",
                 "description": "Default admin address of the collection"
-              },
-              "payout_recipient": {
-                "type": "string",
-                "description": "Address that receives payouts"
               }
             }
           },
@@ -4826,8 +4835,7 @@
           "chain_id",
           "created_at",
           "updated_at",
-          "default_admin",
-          "payout_recipient"
+          "creator"
         ],
         "properties": {
           "id": {
@@ -4861,13 +4869,9 @@
             "format": "date-time",
             "description": "Timestamp when the collection was last updated"
           },
-          "default_admin": {
+          "creator": {
             "type": "string",
             "description": "Default admin wallet address for the collection"
-          },
-          "payout_recipient": {
-            "type": "string",
-            "description": "Wallet address that receives payouts from the collection"
           }
         }
       },
