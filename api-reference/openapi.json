@@ -888,7 +888,7 @@
     "/collection": {
       "get": {
         "summary": "Get Collection Info",
-        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, default admin, admins, payout recipient, and timestamps.",
+        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, creator, admins, and timestamps.",
         "operationId": "getCollectionInfo",
         "security": [],
         "parameters": [
@@ -1071,7 +1071,7 @@
           {
             "name": "type",
             "in": "query",
-            "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the default admin (`default`), moments co-administered with others (`mutual`), or both when not provided.",
+            "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the creator (`default`), moments co-administered with others (`mutual`), or both when not provided.",
             "required": false,
             "schema": {
               "type": "string",
@@ -3204,7 +3204,7 @@
           },
           "admins": {
             "type": "array",
-            "description": "Array of currently active admin objects. The default admin appears here only if they still have admin permissions.",
+            "description": "Array of currently active admin objects. The creator appears here only if they still have admin permissions.",
             "items": {
               "$ref": "#/components/schemas/Admin"
             }
@@ -3216,7 +3216,7 @@
           },
           "protocol": {
             "type": "string",
-            "description": "Protocol the moment belongs to",
+            "description": "Protocol the collection belongs to",
             "enum": [
               "in_process",
               "catalog"
@@ -3234,11 +3234,11 @@
         "properties": {
           "address": {
             "type": "string",
-            "description": "Address of the original default admin"
+            "description": "Address of the original creator"
           },
           "hidden": {
             "type": "boolean",
-            "description": "Whether the moment is hidden by the default admin"
+            "description": "Whether the moment is hidden by the creator"
           }
         }
       },
@@ -3372,11 +3372,11 @@
         "properties": {
           "address": {
             "type": "string",
-            "description": "Address of the default admin"
+            "description": "Address of the creator"
           },
           "username": {
             "type": "string",
-            "description": "Username of the default admin, if available",
+            "description": "Username of the creator, if available",
             "nullable": true
           }
         }
@@ -3410,7 +3410,7 @@
         "properties": {
           "account": {
             "type": "string",
-            "description": "Creator's address (will be used as default admin)"
+            "description": "Creator's address"
           },
           "name": {
             "type": "string",
@@ -3542,7 +3542,7 @@
           },
           "protocol": {
             "type": "string",
-            "description": "Protocol the moment belongs to",
+            "description": "Protocol the collection belongs to",
             "enum": [
               "in_process",
               "catalog"
@@ -3721,7 +3721,7 @@
           },
           "protocol": {
             "type": "string",
-            "description": "Protocol the moment belongs to",
+            "description": "Protocol the collection belongs to",
             "enum": [
               "in_process",
               "catalog"
@@ -4295,7 +4295,7 @@
               },
               "creator": {
                 "type": "string",
-                "description": "Default admin address of the collection"
+                "description": "Creator's address"
               }
             }
           },
@@ -4881,7 +4881,7 @@
           },
           "creator": {
             "type": "string",
-            "description": "Default admin wallet address for the collection"
+            "description": "Creator's wallet address"
           }
         }
       },
