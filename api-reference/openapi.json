@@ -3132,6 +3132,60 @@
           }
         }
       }
+    },
+    "/catalog/collect": {
+      "post": {
+        "summary": "Collect a Catalog Moment",
+        "description": "Collect a Catalog Moment using USDC via the artist's smart wallet. This endpoint reads the token price from the collection contract, verifies USDC balance, approves spending if needed, and executes a `purchaseTokenWithValue` transaction on-chain.",
+        "operationId": "collectCatalogMoment",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogCollectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3969,6 +4023,35 @@
           "collectionAddress": {
             "type": "string",
             "description": "Contract address of the moment collection"
+          }
+        }
+      },
+      "CatalogCollectRequest": {
+        "type": "object",
+        "required": [
+          "moment"
+        ],
+        "properties": {
+          "moment": {
+            "$ref": "#/components/schemas/MomentIdentifier"
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "description": "Number of tokens to collect (default: 1)"
+          },
+          "recipient": {
+            "type": "string",
+            "description": "Recipient wallet address. Defaults to the authenticated artist's address if not provided."
+          },
+          "ref0": {
+            "type": "string",
+            "description": "First referral address (optional)"
+          },
+          "ref1": {
+            "type": "string",
+            "description": "Second referral address (optional)"
           }
         }
       },

@@ -81,6 +81,12 @@
             ]
           },
           {
+            "group": "Catalog",
+            "pages": [
+              "api-reference/catalog/collect"
+            ]
+          },
+          {
             "group": "Collections",
             "pages": [
               "api-reference/collections/browse",
