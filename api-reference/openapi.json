@@ -3132,7 +3132,7 @@
           }
         }
       }
-    }
+    },
     "/catalog/collect": {
       "post": {
         "summary": "Collect a Catalog Moment",
