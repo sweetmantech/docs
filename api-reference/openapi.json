@@ -3136,7 +3136,7 @@
     "/catalog/collect": {
       "post": {
         "summary": "Collect a Catalog Moment",
-        "description": "Collect a Catalog Moment using USDC via the artist's smart wallet. This endpoint reads the token price from the collection contract, verifies USDC balance, approves spending if needed, and executes a `purchaseTokenWithValue` transaction on-chain.",
+        "description": "Collect a Catalog Moment using USDC via the artist's smart wallet. This endpoint reads the token price from the collection contract, verifies USDC balance, approves spending if needed, and executes a `purchaseTokenWithValue` transaction onchain.",
         "operationId": "collectCatalogMoment",
         "security": [
           {
