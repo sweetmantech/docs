@@ -1069,6 +1069,16 @@
             }
           },
           {
+            "name": "audioOnly",
+            "in": "query",
+            "description": "If true, returns only audio moments (default: false)",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "type",
             "in": "query",
             "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the creator (`default`), moments co-administered with others (`mutual`), or both when not provided.",
