@@ -1253,6 +1253,15 @@
                           "chain_id": 8453,
                           "creator": "0x551d219b790a7c45cb661ce59461d7646b631e6c"
                         },
+                        "metadata": {
+                          "name": "Example Moment",
+                          "image": "ar://example-image-hash",
+                          "description": "An example moment",
+                          "content": {
+                            "mime": "audio/mp3",
+                            "uri": "ar://example-content-hash"
+                          }
+                        },
                         "fee_recipients": [
                           {
                             "artist_address": "0x71ea0189673968499be6386f8febf37a7d3dacdc",
@@ -4466,6 +4475,39 @@
               "creator": {
                 "type": "string",
                 "description": "Creator's address"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Moment metadata object",
+            "nullable": true,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Moment name"
+              },
+              "image": {
+                "type": "string",
+                "description": "Image URI"
+              },
+              "description": {
+                "type": "string",
+                "description": "Moment description"
+              },
+              "content": {
+                "type": "object",
+                "description": "Content object with media information",
+                "properties": {
+                  "mime": {
+                    "type": "string",
+                    "description": "MIME type of the content"
+                  },
+                  "uri": {
+                    "type": "string",
+                    "description": "URI of the content"
+                  }
+                }
               }
             }
           },
