@@ -77,7 +77,13 @@
               "api-reference/moment/update-uri",
               "api-reference/moment/comments",
               "api-reference/moment/collectors",
-              "api-reference/moment/migrate"
+              "api-reference/moment/migrate",
+              {
+                "group": "Simulate",
+                "pages": [
+                  "api-reference/moment/simulate"
+                ]
+              }
             ]
           },
           {
