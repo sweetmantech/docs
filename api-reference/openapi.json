@@ -133,6 +133,56 @@
         }
       }
     },
+    "/moment/create/simulate": {
+      "post": {
+        "summary": "Create a Moment",
+        "description": "Simulate a moment creation without submitting an on-chain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.",
+        "operationId": "simulateCreateMoment",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMomentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful simulation response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulateCreateMomentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment/create/writing": {
       "post": {
         "summary": "Create a Writing Moment",
@@ -4022,6 +4072,39 @@
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          }
+        }
+      },
+      "SimulateCreateMomentResponse": {
+        "type": "object",
+        "required": [
+          "contractSimulation",
+          "userOperation"
+        ],
+        "properties": {
+          "contractSimulation": {
+            "type": "object",
+            "required": ["success"],
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "description": "Whether the contract-level simulation passed"
+              }
+            }
+          },
+          "userOperation": {
+            "type": "object",
+            "required": ["userOpHash", "status"],
+            "properties": {
+              "userOpHash": {
+                "type": "string",
+                "description": "The user operation hash from the AA/paymaster preparation"
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the prepared user operation"
+              }
+            }
           }
         }
       },
