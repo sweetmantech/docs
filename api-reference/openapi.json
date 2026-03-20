@@ -86,7 +86,7 @@
     "/moment/create": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request",
+        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request\n\n> **Simulate first:** Use [POST /moment/create/simulate](/api-reference/endpoint/post-momentcreatesimulate) to validate inputs and estimate gas before submitting a real transaction.",
         "operationId": "createMoment",
         "security": [],
         "requestBody": {
@@ -136,7 +136,7 @@
     "/moment/create/simulate": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Simulate a moment creation without submitting an on-chain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.",
+        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.\n\n> **Ready to submit?** Use [POST /moment/create](/api-reference/endpoint/post-momentcreate) to broadcast the real transaction.",
         "operationId": "simulateCreateMoment",
         "security": [],
         "requestBody": {
