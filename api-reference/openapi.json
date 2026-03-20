@@ -136,7 +136,7 @@
     "/moment/create/simulate": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.\n\n> **Ready to submit?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
+        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.\n\n> **Ready to create?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
         "operationId": "simulateCreateMoment",
         "security": [],
         "requestBody": {
