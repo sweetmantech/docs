@@ -1141,20 +1141,31 @@
           {
             "name": "period",
             "in": "query",
-            "description": "Filter moments by time period. Accepts values like `day`, `week`, `month`, `year`.",
+            "description": "Filter moments by time period.",
             "required": false,
             "schema": {
               "type": "string",
-              "example": "week"
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ]
             }
           },
           {
             "name": "channel",
             "in": "query",
-            "description": "Filter moments by channel identifier.",
+            "description": "Filter moments by the channel they were created through.",
             "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "telegram",
+                "sms",
+                "web",
+                "api"
+              ]
             }
           },
           {
