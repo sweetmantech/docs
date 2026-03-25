@@ -1129,6 +1129,46 @@
             }
           },
           {
+            "name": "content_type",
+            "in": "query",
+            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter. Ignored when `audioOnly` is `true`.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "audio"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "Filter moments by time period.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ]
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "description": "Filter moments by the channel they were created through.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "telegram",
+                "sms",
+                "web",
+                "api"
+              ]
+            }
+          },
+          {
             "name": "type",
             "in": "query",
             "description": "Only applicable when `artist` is provided. Determines whether to show moments where the artist is the creator (`default`), moments co-administered with others (`mutual`), or both when not provided.",
