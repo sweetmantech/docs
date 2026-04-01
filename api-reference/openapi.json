@@ -1119,19 +1119,9 @@
             }
           },
           {
-            "name": "audioOnly",
-            "in": "query",
-            "description": "If true, returns only audio moments (default: false)",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "content_type",
             "in": "query",
-            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter. Ignored when `audioOnly` is `true`.",
+            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter.",
             "required": false,
             "schema": {
               "type": "string",
@@ -1252,7 +1242,7 @@
     "/payments": {
       "get": {
         "summary": "Browse Payments",
-        "description": "Retrieve payment records from the In\u2022Process protocol. Supports filtering by artist, collector, chain, and media type. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest payment records.\n- If `collector` is provided: Payments are filtered so the purchaser is the provided address.\n- If `artist` is provided: Filters where the token creator is the provided address.\n- If `chainId` is provided: Filters payments to the specified chain.\n- If `audioOnly` is true: Returns only payments for audio moments.\n- If `content_type` is provided: Returns only payments for moments matching the specified MIME type prefix (e.g. `audio`, `video`, `image`). Ignored if `audioOnly` is true.",
+        "description": "Retrieve payment records from the In\u2022Process protocol. Supports filtering by artist, collector, chain, and media type. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest payment records.\n- If `collector` is provided: Payments are filtered so the purchaser is the provided address.\n- If `artist` is provided: Filters where the token creator is the provided address.\n- If `chainId` is provided: Filters payments to the specified chain.\n- If `content_type` is provided: Returns only payments for moments matching the specified MIME type prefix (e.g. `audio`, `video`, `image`).",
         "operationId": "getPayments",
         "security": [],
         "parameters": [
@@ -1284,19 +1274,9 @@
             }
           },
           {
-            "name": "audioOnly",
-            "in": "query",
-            "description": "If true, returns only payments for audio moments (default: false). Takes precedence over `content_type`.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "content_type",
             "in": "query",
-            "description": "Filter payments by MIME type prefix (e.g. `audio`, `video`, `image`). Ignored if `audioOnly` is true.",
+            "description": "Filter payments by MIME type prefix (e.g. `audio`, `video`, `image`).",
             "required": false,
             "schema": {
               "type": "string",
