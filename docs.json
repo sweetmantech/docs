@@ -162,7 +162,8 @@
             "group": "OAuth",
             "pages": [
               "api-reference/oauth/send-code",
-              "api-reference/oauth/login"
+              "api-reference/oauth/login",
+              "api-reference/oauth/get"
             ]
           },
           {
