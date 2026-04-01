@@ -3162,6 +3162,117 @@
         }
       }
     },
+    "/oauth": {
+      "get": {
+        "summary": "Get Authenticated Account",
+        "description": "Retrieve the authenticated artist's wallet address and profile.\n\n**Overview:**\n\nThis endpoint verifies the Bearer token from the [Login with OTP](/api-reference/oauth/login) endpoint and returns the associated artist address along with their profile information.\n\n1. Include the JWT token obtained from the login flow as a Bearer token in the `Authorization` header.\n2. On success, the artist's wallet address and profile are returned.",
+        "operationId": "getAuthenticatedAccount",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated account retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["artistAddress", "profile"],
+                  "properties": {
+                    "artistAddress": {
+                      "type": "string",
+                      "description": "The wallet address of the authenticated artist",
+                      "example": "0x1234567890abcdef1234567890abcdef12345678"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "description": "The artist's profile information",
+                      "required": ["username", "bio", "farcaster_username", "instagram_username", "twitter_username", "telegram_username"],
+                      "properties": {
+                        "username": {
+                          "type": "string",
+                          "description": "Artist's username. Falls back to ENS name if not set.",
+                          "example": "sweetman"
+                        },
+                        "bio": {
+                          "type": "string",
+                          "description": "Artist's biography",
+                          "example": "the dev for onchain music."
+                        },
+                        "farcaster_username": {
+                          "type": "string",
+                          "description": "Artist's Farcaster username",
+                          "example": "sweetman.eth"
+                        },
+                        "instagram_username": {
+                          "type": "string",
+                          "description": "Artist's Instagram username",
+                          "example": "sweetman.eth"
+                        },
+                        "twitter_username": {
+                          "type": "string",
+                          "description": "Artist's Twitter/X username",
+                          "example": "sweetman_eth"
+                        },
+                        "telegram_username": {
+                          "type": "string",
+                          "description": "Artist's Telegram username",
+                          "example": "sweetman_eth"
+                        },
+                        "phone": {
+                          "type": "object",
+                          "description": "Artist's connected phone number (omitted if not set)",
+                          "properties": {
+                            "phone_number": {
+                              "type": "string",
+                              "example": "+11234567890"
+                            },
+                            "verified": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "artistAddress": "0x1234567890abcdef1234567890abcdef12345678",
+                  "profile": {
+                    "username": "sweetman",
+                    "bio": "the dev for onchain music.",
+                    "farcaster_username": "sweetman.eth",
+                    "instagram_username": "sweetman.eth",
+                    "twitter_username": "sweetman_eth",
+                    "telegram_username": "sweetman_eth",
+                    "phone": {
+                      "phone_number": "+11234567890",
+                      "verified": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - Failed to retrieve user info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Failed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/oauth/login": {
       "post": {
         "summary": "Login with OTP",
