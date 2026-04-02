@@ -87,18 +87,19 @@
             ]
           },
           {
-            "group": "Catalog",
-            "pages": [
-              "api-reference/catalog/collect"
-            ]
-          },
-          {
             "group": "Collections",
             "pages": [
               "api-reference/collections/browse",
               "api-reference/collections/info",
               "api-reference/collections/create",
               "api-reference/collections/update-uri"
+            ]
+          },
+          {
+            "group": "Catalog",
+            "pages": [
+              "api-reference/catalog/collect",
+              "api-reference/catalog/metadata-moment"
             ]
           },
           {
