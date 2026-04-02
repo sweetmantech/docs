@@ -99,6 +99,7 @@
             "group": "Catalog",
             "pages": [
               "api-reference/catalog/collect",
+              "api-reference/catalog/metadata-collection",
               "api-reference/catalog/metadata-moment"
             ]
           },
