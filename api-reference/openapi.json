@@ -3391,9 +3391,63 @@
         }
       }
     },
+    "/catalog/metadata/moment": {
+      "post": {
+        "summary": "Update Moment Metadata",
+        "description": "Update the token URI (metadata) of a Catalog Moment. This endpoint encodes an `updateTokenURI` call on the collection's ERC-1155 contract and submits it as a user operation via the artist's smart wallet.",
+        "operationId": "updateCatalogMomentMetadata",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogUpdateMetadataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog/collect": {
       "post": {
-        "summary": "Collect a Catalog Moment",
+        "summary": "Collect a Moment",
         "description": "Collect a Catalog Moment using USDC via the artist's smart wallet. This endpoint reads the token price from the collection contract, verifies USDC balance, approves spending if needed, and executes a `purchaseTokenWithValue` transaction onchain.",
         "operationId": "collectCatalogMoment",
         "security": [
@@ -4314,6 +4368,22 @@
           "collectionAddress": {
             "type": "string",
             "description": "Contract address of the moment collection"
+          }
+        }
+      },
+      "CatalogUpdateMetadataRequest": {
+        "type": "object",
+        "required": [
+          "moment",
+          "newUri"
+        ],
+        "properties": {
+          "moment": {
+            "$ref": "#/components/schemas/MomentIdentifier"
+          },
+          "newUri": {
+            "type": "string",
+            "description": "New metadata URI to set for the token (e.g. an Arweave or IPFS URI)"
           }
         }
       },
