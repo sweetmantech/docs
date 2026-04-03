@@ -106,7 +106,8 @@
           {
             "group": "Sound.xyz",
             "pages": [
-              "api-reference/sound/metadata-edition"
+              "api-reference/sound/metadata-edition",
+              "api-reference/sound/metadata-tier"
             ]
           },
           {

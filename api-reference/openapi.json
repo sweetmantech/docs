@@ -3388,6 +3388,60 @@
         }
       }
     },
+    "/sound/metadata/tier": {
+      "post": {
+        "summary": "Update Tier Metadata",
+        "description": "Update the base URI of a specific tier within a Sound.xyz Edition. This endpoint encodes a `setBaseURI` call on the Sound Metadata contract and submits it as a user operation via the artist's smart wallet.",
+        "operationId": "updateSoundTierMetadata",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoundUpdateTierMetadataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/sound/metadata/edition": {
       "post": {
         "summary": "Update Edition Metadata",
@@ -4365,6 +4419,41 @@
           "collectionAddress": {
             "type": "string",
             "description": "Contract address of the moment collection"
+          }
+        }
+      },
+      "SoundUpdateTierMetadataRequest": {
+        "type": "object",
+        "required": [
+          "collection",
+          "tier",
+          "newUri"
+        ],
+        "properties": {
+          "collection": {
+            "type": "object",
+            "required": ["address"],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Contract address of the Sound Edition"
+              },
+              "chainId": {
+                "type": "integer",
+                "description": "Chain ID of the edition (defaults to Base, 8453)",
+                "default": 8453
+              }
+            }
+          },
+          "tier": {
+            "type": "integer",
+            "description": "Tier index to update the base URI for (0–255)",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "newUri": {
+            "type": "string",
+            "description": "New base URI to set for the tier (e.g. an Arweave or IPFS URI)"
           }
         }
       },
