@@ -104,6 +104,12 @@
             ]
           },
           {
+            "group": "Sound.xyz",
+            "pages": [
+              "api-reference/sound/metadata-edition"
+            ]
+          },
+          {
             "group": "Timeline",
             "pages": [
               "api-reference/timeline/index"
