@@ -3499,6 +3499,60 @@
         }
       }
     },
+    "/sound/metadata/edition": {
+      "post": {
+        "summary": "Update Edition Metadata",
+        "description": "Update the contract URI (metadata) of a Sound.xyz Edition. This endpoint encodes a `setContractURI` call on the Sound Edition contract and submits it as a user operation via the artist's smart wallet.",
+        "operationId": "updateSoundEditionMetadata",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SoundUpdateEditionMetadataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog/collect": {
       "post": {
         "summary": "Collect a Moment",
@@ -4425,6 +4479,34 @@
           }
         }
       },
+      "SoundUpdateEditionMetadataRequest": {
+        "type": "object",
+        "required": [
+          "collection",
+          "newUri"
+        ],
+        "properties": {
+          "collection": {
+            "type": "object",
+            "required": ["address"],
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Contract address of the Sound Edition"
+              },
+              "chainId": {
+                "type": "integer",
+                "description": "Chain ID of the edition (defaults to Base, 8453)",
+                "default": 8453
+              }
+            }
+          },
+          "newUri": {
+            "type": "string",
+            "description": "New contract metadata URI to set for the edition (e.g. an Arweave or IPFS URI)"
+          }
+        }
+      },
       "CatalogUpdateCollectionMetadataRequest": {
         "type": "object",
         "required": [
@@ -4434,7 +4516,7 @@
         "properties": {
           "collection": {
             "type": "object",
-            "required": ["address", "chainId"],
+            "required": ["address"],
             "properties": {
               "address": {
                 "type": "string",
@@ -4675,7 +4757,8 @@
           },
           "chainId": {
             "type": "integer",
-            "description": "Chain ID where the transaction was executed"
+            "description": "Chain ID where the transaction was executed",
+            "example": 8453
           }
         }
       },
