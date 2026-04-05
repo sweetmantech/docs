@@ -96,21 +96,6 @@
             ]
           },
           {
-            "group": "Catalog",
-            "pages": [
-              "api-reference/catalog/collect",
-              "api-reference/catalog/metadata-collection",
-              "api-reference/catalog/metadata-moment"
-            ]
-          },
-          {
-            "group": "Sound.xyz",
-            "pages": [
-              "api-reference/sound/metadata-edition",
-              "api-reference/sound/metadata-tier"
-            ]
-          },
-          {
             "group": "Timeline",
             "pages": [
               "api-reference/timeline/index"
