@@ -1170,6 +1170,16 @@
                 "default"
               ]
             }
+          },
+          {
+            "name": "curated",
+            "in": "query",
+            "description": "If true, returns only curated moments (default: false).",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
