@@ -1557,26 +1557,48 @@
         }
       }
     },
-    "/airdrops": {
+    "/transfers": {
       "get": {
         "summary": "Get Airdrops",
-        "description": "Retrieve Artist airdrop information on the In•Process protocol. This endpoint returns a list of airdrops for a specific artist address, including collection addresses, token IDs, recipients, and amounts.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Retrieve airdrop records from the In•Process protocol. Supports filtering by spender, recipient, and chain. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If `spender` is provided: Filters airdrops where this address performed the airdrop.\n- If `recipient` is provided: Filters airdrops where this address received the airdrop.\n- If `chainId` is provided: Filters airdrops to the specified chain.",
         "operationId": "getAirdrops",
         "security": [],
         "parameters": [
           {
-            "name": "artist_address",
+            "name": "type",
             "in": "query",
-            "description": "Artist address",
-            "required": true,
+            "description": "Transfer type — always `airdrop` for this endpoint",
+            "required": false,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": ["airdrop"],
+              "default": "airdrop"
+            }
+          },
+          {
+            "name": "spender",
+            "in": "query",
+            "description": "Filter by spender address (the address that performed the airdrop)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          },
+          {
+            "name": "recipient",
+            "in": "query",
+            "description": "Filter by recipient address (the address that received the airdrop)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
             }
           },
           {
             "name": "chainId",
             "in": "query",
-            "description": "Chain ID (default: Base, 8453)",
+            "description": "Filter by chain ID (default: Base, 8453)",
             "required": false,
             "schema": {
               "type": "integer",
@@ -1584,14 +1606,26 @@
             }
           },
           {
-            "name": "offset",
+            "name": "limit",
             "in": "query",
-            "description": "Pagination offset (default: 0)",
+            "description": "Number of records per page (max: 100, default: 20)",
             "required": false,
             "schema": {
               "type": "integer",
-              "default": 0,
-              "minimum": 0
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to retrieve (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
             }
           }
         ],
@@ -1601,22 +1635,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AirdropItem"
-                  }
+                  "$ref": "#/components/schemas/TransfersResponse"
                 },
-                "example": [
-                  {
-                    "collectionAddress": "0x297F21AAc502571db2c7dBFD271E68Dae7F2cE1E",
-                    "tokenId": "1",
-                    "recipient": {
-                      "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
-                      "username": "sweetman"
-                    },
-                    "amount": 2
+                "example": {
+                  "transfers": [
+                    {
+                      "id": "3a803eeb-4089-4091-b6f2-d1c2b018e4d1",
+                      "transferred_at": "2026-02-14T11:46:25+00:00",
+                      "quantity": "1",
+                      "value": null,
+                      "currency": null,
+                      "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
+                      "recipient": {
+                        "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
+                        "username": "sweetman"
+                      },
+                      "moment": {
+                        "token_id": "1",
+                        "collection": {
+                          "address": "0x297f21aac502571db2c7dbfd271e68dae7f2ce1e",
+                          "chain_id": 8453,
+                          "protocol": "in_process",
+                          "spender": {
+                            "address": "0x297f21aac502571db2c7dbfd271e68dae7f2ce1e",
+                            "username": "artistname"
+                          }
+                        },
+                        "metadata": {
+                          "name": "Example Moment",
+                          "description": "An example airdropped moment",
+                          "image": "ar://example-image-hash",
+                          "animation_url": null,
+                          "external_url": null,
+                          "content": {
+                            "mime": "audio/mp3",
+                            "uri": "ar://example-content-hash"
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "pagination": {
+                    "total_count": 1,
+                    "page": 1,
+                    "limit": 20,
+                    "total_pages": 1
                   }
-                ]
+                }
               }
             }
           },
@@ -5011,29 +5076,172 @@
           }
         }
       },
+      "TransfersResponse": {
+        "type": "object",
+        "required": [
+          "transfers",
+          "pagination"
+        ],
+        "properties": {
+          "transfers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AirdropItem"
+            },
+            "description": "List of transfer records"
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "total_count",
+              "page",
+              "limit",
+              "total_pages"
+            ],
+            "properties": {
+              "total_count": {
+                "type": "integer",
+                "description": "Total number of matching records"
+              },
+              "page": {
+                "type": "integer",
+                "description": "Current page number"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of records per page"
+              },
+              "total_pages": {
+                "type": "integer",
+                "description": "Total number of pages"
+              }
+            }
+          }
+        }
+      },
       "AirdropItem": {
         "type": "object",
         "required": [
-          "collectionAddress",
-          "tokenId",
+          "transferred_at",
+          "quantity",
           "recipient",
-          "amount"
+          "moment"
         ],
         "properties": {
-          "collectionAddress": {
+          "id": {
             "type": "string",
-            "description": "Collection address of the airdropped moment"
+            "description": "Unique identifier of the transfer"
           },
-          "tokenId": {
+          "transferred_at": {
             "type": "string",
-            "description": "Token ID of the airdropped moment"
+            "format": "date-time",
+            "description": "ISO timestamp when the transfer occurred"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "Number of tokens transferred"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true,
+            "description": "Payment value (null for airdrops)"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency of the payment (null for airdrops)"
+          },
+          "transaction_hash": {
+            "type": "string",
+            "description": "Onchain transaction hash"
           },
           "recipient": {
             "$ref": "#/components/schemas/AirdropRecipient"
           },
-          "amount": {
-            "type": "integer",
-            "description": "Amount of tokens airdropped"
+          "moment": {
+            "type": "object",
+            "properties": {
+              "token_id": {
+                "type": "string",
+                "description": "Token ID of the transferred moment"
+              },
+              "collection": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Collection contract address"
+                  },
+                  "chain_id": {
+                    "type": "integer",
+                    "description": "Chain ID of the collection"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "description": "Protocol of the collection (e.g. in_process)"
+                  },
+                  "spender": {
+                    "type": "object",
+                    "description": "Artist who performed the airdrop",
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Spender wallet address"
+                      },
+                      "username": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Spender username, if available"
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the moment"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Description of the moment"
+                  },
+                  "image": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Image URI of the moment"
+                  },
+                  "animation_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Animation URL of the moment"
+                  },
+                  "external_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "External URL of the moment"
+                  },
+                  "content": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "mime": {
+                        "type": "string",
+                        "description": "MIME type of the content"
+                      },
+                      "uri": {
+                        "type": "string",
+                        "description": "Content URI"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
