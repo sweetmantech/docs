@@ -1654,7 +1654,7 @@
                       "value": null,
                       "currency": null,
                       "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
-                      "recipient": {
+                      "collector": {
                         "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
                         "username": "sweetman"
                       },
@@ -5094,7 +5094,10 @@
           "transfers": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AirdropItem"
+              "oneOf": [
+                { "$ref": "#/components/schemas/AirdropItem" },
+                { "$ref": "#/components/schemas/PaymentTransferItem" }
+              ]
             },
             "description": "List of transfer records"
           },
@@ -5132,7 +5135,7 @@
         "required": [
           "transferred_at",
           "quantity",
-          "recipient",
+          "collector",
           "moment"
         ],
         "properties": {
@@ -5163,7 +5166,7 @@
             "type": "string",
             "description": "Onchain transaction hash"
           },
-          "recipient": {
+          "collector": {
             "$ref": "#/components/schemas/AirdropRecipient"
           },
           "moment": {
@@ -5261,12 +5264,155 @@
         "properties": {
           "address": {
             "type": "string",
-            "description": "Recipient wallet address"
+            "description": "Collector wallet address"
           },
           "username": {
             "type": "string",
-            "description": "Recipient username, if available",
+            "description": "Collector username, if available",
             "nullable": true
+          }
+        }
+      },
+      "PaymentTransferItem": {
+        "type": "object",
+        "required": [
+          "transferred_at",
+          "quantity",
+          "value",
+          "currency",
+          "collector",
+          "moment"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the transfer"
+          },
+          "transferred_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp when the transfer occurred"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "Number of tokens transferred"
+          },
+          "value": {
+            "type": "string",
+            "description": "Amount paid"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency contract address"
+          },
+          "transaction_hash": {
+            "type": "string",
+            "description": "Onchain transaction hash"
+          },
+          "collector": {
+            "$ref": "#/components/schemas/AirdropRecipient"
+          },
+          "moment": {
+            "type": "object",
+            "properties": {
+              "token_id": {
+                "type": "string",
+                "description": "Token ID of the purchased moment"
+              },
+              "fee_recipients": {
+                "type": "array",
+                "description": "Artists receiving a share of the payment",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "artist_address": {
+                      "type": "string",
+                      "description": "Artist wallet address"
+                    },
+                    "percent_allocation": {
+                      "type": "number",
+                      "description": "Percentage of the payment allocated to this artist"
+                    }
+                  }
+                }
+              },
+              "collection": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Collection contract address"
+                  },
+                  "chain_id": {
+                    "type": "integer",
+                    "description": "Chain ID of the collection"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "description": "Protocol of the collection (e.g. in_process)"
+                  },
+                  "artist": {
+                    "type": "object",
+                    "description": "Creator of the collection",
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Artist wallet address"
+                      },
+                      "username": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Artist username, if available"
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the moment"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Description of the moment"
+                  },
+                  "image": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Image URI of the moment"
+                  },
+                  "animation_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Animation URL of the moment"
+                  },
+                  "external_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "External URL of the moment"
+                  },
+                  "content": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "mime": {
+                        "type": "string",
+                        "description": "MIME type of the content"
+                      },
+                      "uri": {
+                        "type": "string",
+                        "description": "Content URI"
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
