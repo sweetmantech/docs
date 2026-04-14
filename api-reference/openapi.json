@@ -1263,7 +1263,9 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["payment"],
+              "enum": [
+                "payment"
+              ],
               "default": "payment"
             }
           },
@@ -1327,7 +1329,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TransfersResponse"
+                  "$ref": "#/components/schemas/PaymentsResponse"
                 },
                 "example": {
                   "transfers": [
@@ -1579,7 +1581,9 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["airdrop"],
+              "enum": [
+                "airdrop"
+              ],
               "default": "airdrop"
             }
           },
@@ -1643,7 +1647,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TransfersResponse"
+                  "$ref": "#/components/schemas/AirdropsResponse"
                 },
                 "example": {
                   "transfers": [
@@ -4585,29 +4589,19 @@
       "PaymentsResponse": {
         "type": "object",
         "required": [
-          "status",
-          "payments",
+          "transfers",
           "pagination"
         ],
         "properties": {
-          "status": {
-            "type": "string",
-            "description": "Status of the request",
-            "enum": [
-              "success",
-              "error"
-            ]
-          },
-          "payments": {
+          "transfers": {
             "type": "array",
             "description": "List of payment records",
             "items": {
-              "$ref": "#/components/schemas/Payment"
+              "$ref": "#/components/schemas/PaymentTransferItem"
             }
           },
           "pagination": {
             "type": "object",
-            "description": "Pagination metadata",
             "required": [
               "total_count",
               "page",
@@ -4617,7 +4611,7 @@
             "properties": {
               "total_count": {
                 "type": "integer",
-                "description": "Total number of payment records matching the query"
+                "description": "Total number of matching records"
               },
               "page": {
                 "type": "integer",
@@ -4629,7 +4623,7 @@
               },
               "total_pages": {
                 "type": "integer",
-                "description": "Total number of pages available"
+                "description": "Total number of pages"
               }
             }
           }
@@ -5095,8 +5089,12 @@
             "type": "array",
             "items": {
               "oneOf": [
-                { "$ref": "#/components/schemas/AirdropItem" },
-                { "$ref": "#/components/schemas/PaymentTransferItem" }
+                {
+                  "$ref": "#/components/schemas/AirdropItem"
+                },
+                {
+                  "$ref": "#/components/schemas/PaymentTransferItem"
+                }
               ]
             },
             "description": "List of transfer records"
@@ -5799,6 +5797,49 @@
             "type": "boolean",
             "description": "Indicates whether the verification code was sent successfully",
             "example": true
+          }
+        }
+      },
+      "AirdropsResponse": {
+        "type": "object",
+        "required": [
+          "transfers",
+          "pagination"
+        ],
+        "properties": {
+          "transfers": {
+            "type": "array",
+            "description": "List of airdrop records",
+            "items": {
+              "$ref": "#/components/schemas/AirdropItem"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "required": [
+              "total_count",
+              "page",
+              "limit",
+              "total_pages"
+            ],
+            "properties": {
+              "total_count": {
+                "type": "integer",
+                "description": "Total number of matching records"
+              },
+              "page": {
+                "type": "integer",
+                "description": "Current page number"
+              },
+              "limit": {
+                "type": "integer",
+                "description": "Number of records per page"
+              },
+              "total_pages": {
+                "type": "integer",
+                "description": "Total number of pages"
+              }
+            }
           }
         }
       }
