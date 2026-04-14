@@ -2,3 +2,11 @@
 title: Get Transfers
 openapi: GET /transfers
 ---
+
+Retrieve moment transfer records from the In•Process protocol. Use the `type` parameter to filter by transfer category:
+
+| `type` value | Description |
+|---|---|
+| `airdrop` | Airdrops by the artist or collector |
+| `payment` | Moment transfers completed via payment |
+| *(omitted)* | All transfer types |

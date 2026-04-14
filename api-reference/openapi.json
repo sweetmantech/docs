@@ -1252,10 +1252,20 @@
     "/transfers": {
       "get": {
         "summary": "Get Transfers",
-        "description": "Retrieve all moment transfer records from the In•Process protocol, regardless of type (includes both airdrops and paid collections). Use this to track the complete collection activity for a collector or artist.\n\nEndpoint behavior:\n- If `artist` is provided: Filters transfers to moments created by this artist.\n- If `collector` is provided: Filters transfers where this address is the collector.\n- If `chainId` is provided: Filters transfers to the specified chain.\n- If `content_type` is provided: Filters transfers to moments whose content MIME type matches (e.g. `audio`, `video`, `image`).",
+        "description": "Retrieve moment transfer records from the In•Process protocol. Use the `type` parameter to filter by transfer category, or omit it to retrieve all types.\n\nEndpoint behavior:\n- If `artist` is provided: Filters transfers to moments created by this artist.\n- If `collector` is provided: Filters transfers where this address is the collector.\n- If `chainId` is provided: Filters transfers to the specified chain.\n- If `content_type` is provided: Filters transfers to moments whose content MIME type matches (e.g. `audio`, `video`, `image`).",
         "operationId": "getTransfers",
         "security": [],
         "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filter by transfer type. Omit to retrieve all transfer types. Use `airdrop` for airdrops, `payment` for moment transfers completed via payment.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["airdrop", "payment"]
+            }
+          },
           {
             "name": "artist",
             "in": "query",
@@ -1568,9 +1578,9 @@
     },
     "/distribute": {
       "post": {
-        "summary": "Distribute Payment",
-        "description": "Distribute payments from a split contract. This endpoint allows you to trigger the distribution of payment tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.\n\n**This is a public endpoint and does not require authentication.**",
-        "operationId": "distributePayment",
+        "summary": "Distribute Funds",
+        "description": "Distribute funds from a split contract. This endpoint allows you to trigger the distribution of tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "distributeFunds",
         "security": [],
         "requestBody": {
           "required": true,
