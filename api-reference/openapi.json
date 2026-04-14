@@ -1249,6 +1249,154 @@
         }
       }
     },
+    "/transfers": {
+      "get": {
+        "summary": "Get Transfers",
+        "description": "Retrieve all moment transfer records from the In•Process protocol, regardless of type (includes both airdrops and paid collections). Use this to track the complete collection activity for a collector or artist.\n\nEndpoint behavior:\n- If `artist` is provided: Filters transfers to moments created by this artist.\n- If `collector` is provided: Filters transfers where this address is the collector.\n- If `chainId` is provided: Filters transfers to the specified chain.\n- If `content_type` is provided: Filters transfers to moments whose content MIME type matches (e.g. `audio`, `video`, `image`).",
+        "operationId": "getTransfers",
+        "security": [],
+        "parameters": [
+          {
+            "name": "artist",
+            "in": "query",
+            "description": "Filter by artist address (the creator of the collected moments)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          },
+          {
+            "name": "collector",
+            "in": "query",
+            "description": "Filter by collector address (the address that collected the moments)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          },
+          {
+            "name": "chainId",
+            "in": "query",
+            "description": "Filter by chain ID (default: Base, 8453)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 8453
+            }
+          },
+          {
+            "name": "content_type",
+            "in": "query",
+            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "audio"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of records per page (max: 100, default: 20)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to retrieve (default: 1)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransfersResponse"
+                },
+                "example": {
+                  "transfers": [
+                    {
+                      "id": "3a803eeb-4089-4091-b6f2-d1c2b018e4d1",
+                      "transferred_at": "2026-02-14T11:46:25+00:00",
+                      "quantity": 1,
+                      "value": null,
+                      "currency": null,
+                      "transaction_hash": "0xda5f2c55cb20d77ac935ad132afc58c1bf0940927f9afc2991d87f2eaba1d2a6",
+                      "collector": {
+                        "address": "0xb5acded340d66678f01097818940a0f028dafb8d",
+                        "username": "sweetman"
+                      },
+                      "moment": {
+                        "token_id": 1,
+                        "collection": {
+                          "address": "0x297f21aac502571db2c7dbfd271e68dae7f2ce1e",
+                          "chain_id": 8453,
+                          "protocol": "in_process",
+                          "creator": "0x71ea0189673968499be6386f8febf37a7d3dacdc"
+                        },
+                        "metadata": {
+                          "name": "An example airdropped moment",
+                          "description": null,
+                          "image": "ar://example-image-hash",
+                          "animation_url": null,
+                          "content": {
+                            "mime": "audio/mp3"
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "pagination": {
+                    "total_count": 1,
+                    "page": 1,
+                    "limit": 20,
+                    "total_pages": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "transfers"
+        ]
+      }
+    },
     "/transfers?type=payment": {
       "get": {
         "summary": "Get Payments",
@@ -1297,6 +1445,16 @@
             "schema": {
               "type": "integer",
               "default": 8453
+            }
+          },
+          {
+            "name": "content_type",
+            "in": "query",
+            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "audio"
             }
           },
           {
@@ -1615,6 +1773,16 @@
             "schema": {
               "type": "integer",
               "default": 8453
+            }
+          },
+          {
+            "name": "content_type",
+            "in": "query",
+            "description": "Filter by MIME type category (e.g. `audio`, `video`, `image`). Used to construct a MIME pattern filter.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "audio"
             }
           },
           {
@@ -5088,14 +5256,7 @@
           "transfers": {
             "type": "array",
             "items": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/AirdropItem"
-                },
-                {
-                  "$ref": "#/components/schemas/PaymentTransferItem"
-                }
-              ]
+              "$ref": "#/components/schemas/TransferItem"
             },
             "description": "List of transfer records"
           },
@@ -5123,6 +5284,149 @@
               "total_pages": {
                 "type": "integer",
                 "description": "Total number of pages"
+              }
+            }
+          }
+        }
+      },
+      "TransferItem": {
+        "type": "object",
+        "required": [
+          "transferred_at",
+          "quantity",
+          "collector",
+          "moment"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the transfer"
+          },
+          "transferred_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp when the transfer occurred"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Number of tokens transferred"
+          },
+          "value": {
+            "type": "number",
+            "nullable": true,
+            "description": "Amount paid. null for airdrops"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Currency contract address. null for airdrops"
+          },
+          "transaction_hash": {
+            "type": "string",
+            "description": "Onchain transaction hash"
+          },
+          "collector": {
+            "$ref": "#/components/schemas/AirdropRecipient"
+          },
+          "moment": {
+            "type": "object",
+            "properties": {
+              "token_id": {
+                "type": "number",
+                "description": "Token ID of the transferred moment"
+              },
+              "fee_recipients": {
+                "type": "array",
+                "description": "Artists receiving a share of the payment. Only present for paid transfers",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "artist_address": {
+                      "type": "string",
+                      "description": "Artist wallet address"
+                    },
+                    "percent_allocation": {
+                      "type": "number",
+                      "description": "Percentage of the payment allocated to this artist"
+                    }
+                  }
+                }
+              },
+              "collection": {
+                "type": "object",
+                "properties": {
+                  "address": {
+                    "type": "string",
+                    "description": "Collection contract address"
+                  },
+                  "chain_id": {
+                    "type": "integer",
+                    "description": "Chain ID of the collection"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "description": "Protocol of the collection (e.g. in_process)"
+                  },
+                  "artist": {
+                    "type": "object",
+                    "description": "Creator of the collection",
+                    "properties": {
+                      "address": {
+                        "type": "string",
+                        "description": "Artist wallet address"
+                      },
+                      "username": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Artist username, if available"
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "nullable": true,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the moment"
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Description of the moment"
+                  },
+                  "image": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Image URI of the moment"
+                  },
+                  "animation_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Animation URL of the moment"
+                  },
+                  "external_url": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "External URL of the moment"
+                  },
+                  "content": {
+                    "type": "object",
+                    "nullable": true,
+                    "properties": {
+                      "mime": {
+                        "type": "string",
+                        "description": "MIME type of the content"
+                      },
+                      "uri": {
+                        "type": "string",
+                        "description": "Content URI"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
