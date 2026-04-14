@@ -82,8 +82,7 @@
             "group": "Collecting",
             "pages": [
               "api-reference/moment/collect",
-              "api-reference/moment/collectors",
-              "api-reference/transfers/index"
+              "api-reference/moment/collectors"
             ]
           },
           {
@@ -122,10 +121,9 @@
             ]
           },
           {
-            "group": "Payments",
+            "group": "Transfers",
             "pages": [
-              "api-reference/payments/index",
-              "api-reference/payments/distribute"
+              "api-reference/transfers/index"
             ]
           },
           {
@@ -137,7 +135,6 @@
           {
             "group": "Airdrops",
             "pages": [
-              "api-reference/airdrops/index",
               "api-reference/moment/airdrop"
             ]
           },
@@ -160,6 +157,12 @@
               "api-reference/smartwallet/get",
               "api-reference/smartwallet/balances",
               "api-reference/smartwallet/withdraw"
+            ]
+          },
+          {
+            "group": "Splits",
+            "pages": [
+              "api-reference/splits/distribute"
             ]
           },
           {
