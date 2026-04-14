@@ -69,21 +69,40 @@
               "api-reference/moment/get",
               "api-reference/moment/create",
               "api-reference/moment/writing",
-              "api-reference/moment/collect",
-              "api-reference/moment/airdrop",
-              "api-reference/moment/sale",
-              "api-reference/moment/add-permission",
-              "api-reference/moment/remove-permission",
               "api-reference/moment/update-uri",
-              "api-reference/moment/comments",
-              "api-reference/moment/collectors",
-              "api-reference/moment/migrate",
               {
                 "group": "Simulate",
                 "pages": [
                   "api-reference/moment/simulate"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Collecting",
+            "pages": [
+              "api-reference/moment/collect",
+              "api-reference/moment/collectors"
+            ]
+          },
+          {
+            "group": "Sales",
+            "pages": [
+              "api-reference/moment/sale"
+            ]
+          },
+          {
+            "group": "Comments",
+            "pages": [
+              "api-reference/moment/comments"
+            ]
+          },
+          {
+            "group": "Admins",
+            "pages": [
+              "api-reference/moment/add-permission",
+              "api-reference/moment/remove-permission",
+              "api-reference/moment/migrate"
             ]
           },
           {
@@ -117,7 +136,8 @@
           {
             "group": "Airdrops",
             "pages": [
-              "api-reference/airdrops/index"
+              "api-reference/airdrops/index",
+              "api-reference/moment/airdrop"
             ]
           },
           {
