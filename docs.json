@@ -82,7 +82,8 @@
             "group": "Collecting",
             "pages": [
               "api-reference/moment/collect",
-              "api-reference/moment/collectors"
+              "api-reference/moment/collectors",
+              "api-reference/transfers/index"
             ]
           },
           {
