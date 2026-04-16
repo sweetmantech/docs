@@ -4,98 +4,166 @@ title: Upload Files to Arweave
 
 > **For Feria Nounish Artists:** This documentation is inspired by Gabriel Lago from Cali, Colombia, who is building a Feria Nounish MiniApp for the artists participating in this year's fair. The `uploadToArweave` function enables artists to upload their artwork and metadata to decentralized storage, creating permanent, onchain records of their contributions to the collective timeline.
 
-Upload files to Arweave decentralized storage for use in your NFT collections and moments. This function works on both **client-side** and **server-side** environments, making it suitable for browser-based uploads as well as backend services and API routes.
+Upload files to Arweave decentralized storage for use in your NFT collections and moments. This function works on **client-side** environments using the `@ardrive/turbo-sdk` web bundle.
+
+<Note>
+  This guide targets **Next.js 16**. The examples use the App Router and rely on Next.js 16's native `Buffer` support in browser bundles.
+</Note>
 
 > **Note:** This function uploads files to Arweave and returns a URI that can be used in [collection creation](/create-collection) or [moment creation](/moment/create).
 
 ## Installation
 
-First, install the required Arweave package:
+Install the Turbo SDK and the Node.js polyfills required for browser environments:
 
 ```bash
-npm install arweave
+pnpm add @ardrive/turbo-sdk buffer crypto-browserify stream-browserify process
+```
+
+## Next.js Configuration
+
+The Turbo SDK uses Node.js built-ins (`buffer`, `crypto`, `stream`) that are not available in the browser. Add the following to your `next.config.js` to polyfill them and to prevent the SDK from being bundled on the server:
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Prevent the Turbo SDK from being bundled — load it as a server external only
+  serverExternalPackages: ["@ardrive/turbo-sdk"],
+
+  // Turbopack alias (Next.js 16 dev server)
+  turbopack: {
+    resolveAlias: {
+      buffer: "buffer/",
+      crypto: "crypto-browserify",
+      stream: "stream-browserify",
+      process: "process/browser",
+    },
+  },
+
+  // Webpack alias (production builds)
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        buffer: require.resolve("buffer/"),
+        crypto: require.resolve("crypto-browserify"),
+        stream: require.resolve("stream-browserify"),
+        process: require.resolve("process/browser"),
+      };
+    }
+    return config;
+  },
+};
+
+module.exports = nextConfig;
 ```
 
 ## Function Implementation
 
-This guide uses the [In•Process Arweave Proxy API](/api-reference/arweave/proxy) to upload chunks to Arweave. The proxy forwards requests to `https://arweave.net`, so your client never connects directly to the Arweave gateway.
+### client.ts
 
-### postToArweave
-
-A helper that sends transaction headers and chunks through the proxy:
+Create a singleton Turbo client authenticated with your Arweave wallet key:
 
 ```typescript
-const IN_PROCESS_API = "https://api.inprocess.world/api";
+import { TurboFactory } from "@ardrive/turbo-sdk/web";
 
-const postToArweave = async (path: string, body: unknown): Promise<Response> => {
-  const res = await fetch(`${IN_PROCESS_API}/arweave/${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "text/plain" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) {
-    throw new Error(`Arweave ${path} request failed: ${res.status}`);
-  }
-  return res;
-};
+const ARWEAVE_KEY = JSON.parse(
+  Buffer.from(process.env.NEXT_PUBLIC_ARWEAVE_KEY as string, "base64").toString()
+);
 
-export default postToArweave;
+const turboClient = TurboFactory.authenticated({ privateKey: ARWEAVE_KEY });
+
+export default turboClient;
 ```
 
-### uploadToArweave
+### patchFetch.ts
 
-The main upload function that signs a transaction locally, then uploads the header and each chunk via the proxy:
+The Turbo web SDK passes a `ReadableStream` as the fetch body, which browsers mark as "disturbed" after the first read. This helper intercepts those calls and converts the stream to a `Blob` so the body can be reused across SDK retries:
 
 ```typescript
-import Arweave from "arweave";
-import postToArweave from "./postToArweave";
+let baseOriginalFetch: typeof globalThis.fetch | null = null;
+let patchCount = 0;
 
-const arweave = Arweave.init({
-  host: "arweave.net",
-  port: 443,
-  protocol: "https",
-  timeout: 20000,
-  logging: false,
-});
+const patchFetch = (): (() => void) => {
+  if (patchCount === 0) {
+    baseOriginalFetch = globalThis.fetch;
+    globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (init?.body instanceof ReadableStream) {
+        const blob = await new Response(init.body).blob();
+        const { duplex: _duplex, ...rest } = init as RequestInit & { duplex?: string };
+        return baseOriginalFetch!(input, { ...rest, body: blob });
+      }
+      return baseOriginalFetch!(input, init);
+    };
+  }
+  patchCount++;
+
+  let restored = false;
+  return () => {
+    if (restored) return;
+    restored = true;
+    patchCount--;
+    if (patchCount === 0) {
+      globalThis.fetch = baseOriginalFetch!;
+      baseOriginalFetch = null;
+    }
+  };
+};
+
+export default patchFetch;
+```
+
+### uploadFile.ts
+
+Core upload logic using the Turbo client:
+
+```typescript
+import turboClient from "./client";
+
+export const uploadFile = async (
+  file: File,
+  getProgress: (progress: number) => void = () => {}
+): Promise<string> => {
+  const uint8Array = new Uint8Array(await file.arrayBuffer());
+
+  const { id } = await turboClient.uploadFile({
+    fileStreamFactory: () => Buffer.from(uint8Array),
+    fileSizeFactory: () => file.size,
+    dataItemOpts: {
+      tags: [
+        { name: "Content-Type", value: file.type },
+        { name: "File-Name", value: file.name },
+      ],
+    },
+    events: {
+      onProgress: ({ totalBytes, processedBytes }) => {
+        getProgress(Math.round((processedBytes / totalBytes) * 100));
+      },
+    },
+  });
+
+  return `ar://${id}`;
+};
+```
+
+### uploadToArweave.ts
+
+The main entry point that applies the fetch patch around the upload:
+
+```typescript
+import { uploadFile } from "./uploadFile";
+import patchFetch from "./patchFetch";
 
 const uploadToArweave = async (
   file: File,
   getProgress: (progress: number) => void = () => {}
 ): Promise<string> => {
-  const ARWEAVE_KEY = JSON.parse(
-    Buffer.from(
-      process.env.NEXT_PUBLIC_ARWEAVE_KEY as string,
-      "base64"
-    ).toString()
-  );
-  const buffer = await file.arrayBuffer();
-
-  const transaction = await arweave.createTransaction(
-    {
-      data: buffer,
-    },
-    ARWEAVE_KEY
-  );
-  transaction.addTag("Content-Type", file.type);
-  await arweave.transactions.sign(transaction, ARWEAVE_KEY);
-
-  const data = transaction.data;
-  const totalChunks = transaction.chunks!.chunks.length;
-
-  // Post transaction header via proxy (with data emptied for chunked upload)
-  transaction.data = new Uint8Array(0);
-  await postToArweave("tx", transaction);
-
-  // Upload each chunk via proxy
-  for (let i = 0; i < totalChunks; i++) {
-    const chunk = transaction.getChunk(i, data);
-    await postToArweave("chunk", chunk);
-    const pctComplete = Math.round(((i + 1) / totalChunks) * 100);
-    console.log(`${pctComplete}% complete, ${i + 1}/${totalChunks}`);
-    getProgress(pctComplete);
+  const restoreFetch = patchFetch();
+  try {
+    return await uploadFile(file, getProgress);
+  } finally {
+    restoreFetch();
   }
-
-  return `ar://${transaction.id}`;
 };
 
 export default uploadToArweave;
@@ -128,7 +196,6 @@ NEXT_PUBLIC_ARWEAVE_KEY=your_base64_encoded_arweave_key_here
 ```typescript
 import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
-// Upload a file
 const file = document.getElementById("fileInput").files[0];
 const arweaveUri = await uploadToArweave(file);
 console.log("File uploaded to:", arweaveUri);
@@ -142,10 +209,8 @@ import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
 const file = document.getElementById("fileInput").files[0];
 
-// Track upload progress
 const handleProgress = (progress: number) => {
   console.log(`Upload progress: ${progress}%`);
-  // Update your UI progress bar
   document.getElementById("progressBar").style.width = `${progress}%`;
 };
 
@@ -157,12 +222,13 @@ try {
 }
 ```
 
-### Upload for Collection Metadata
+### Upload JSON Metadata
+
+Use the `uploadJson` helper to upload plain objects directly:
 
 ```typescript
-import uploadToArweave from "@/lib/arweave/uploadToArweave";
+import { uploadJson } from "@/lib/arweave/uploadJson";
 
-// Upload collection metadata JSON
 const metadata = {
   name: "Feria Nounish Collection",
   description: "Artwork from the Feria Nounish fair",
@@ -170,18 +236,22 @@ const metadata = {
   external_link: "https://ferianounish.com",
 };
 
-// Convert metadata to file
-const metadataBlob = new Blob([JSON.stringify(metadata, null, 2)], {
-  type: "application/json",
-});
-const metadataFile = new File([metadataBlob], "metadata.json", {
-  type: "application/json",
-});
-
-// Upload to Arweave
-const contractUri = await uploadToArweave(metadataFile);
+const contractUri = await uploadJson(metadata);
 console.log("Contract URI:", contractUri);
-// Use this URI in your collection creation
+```
+
+The `uploadJson` helper is implemented as:
+
+```typescript
+import uploadToArweave from "./uploadToArweave";
+
+export async function uploadJson(json: object): Promise<string> {
+  const jsonString = JSON.stringify(json);
+  const file = new File([jsonString], "upload.json", {
+    type: "application/json",
+  });
+  return uploadToArweave(file);
+}
 ```
 
 ### Upload for Moment Content
@@ -189,7 +259,6 @@ console.log("Contract URI:", contractUri);
 ```typescript
 import uploadToArweave from "@/lib/arweave/uploadToArweave";
 
-// Upload moment content (text, image, etc.)
 const momentContent = {
   title: "My Feria Moment",
   content: "This is my contribution to the collective timeline",
@@ -206,12 +275,9 @@ const contentFile = new File([contentBlob], "moment.json", {
 
 const momentUri = await uploadToArweave(contentFile);
 console.log("Moment URI:", momentUri);
-// Use this URI when creating your moment
 ```
 
 ## React Hook Example
-
-For React applications, here's a custom hook for file uploads:
 
 ```typescript
 import { useState } from "react";
@@ -238,12 +304,7 @@ export const useArweaveUpload = () => {
     }
   };
 
-  return {
-    uploadFile,
-    isUploading,
-    progress,
-    error,
-  };
+  return { uploadFile, isUploading, progress, error };
 };
 
 // Usage in component
@@ -291,13 +352,13 @@ The function supports any file type that can be stored on Arweave:
 
 ## Best Practices
 
-1. **File Size**: Arweave has no strict size limits, but larger files take longer to upload and cost more AR tokens.
+1. **File Size**: Turbo uploads are paid with Credits (not AR tokens directly). Larger files consume more credits. See the [Turbo Credits documentation](https://docs.ar.io/build/upload/turbo-credits) to learn how to top up your balance.
 
-2. **Content-Type Tagging**: The function automatically tags files with their MIME type for proper handling.
+2. **Content-Type Tagging**: The function automatically tags files with their MIME type and file name for proper handling.
 
 3. **Progress Tracking**: Always implement progress tracking for better user experience, especially for larger files.
 
-4. **Error Handling**: Wrap upload calls in try-catch blocks to handle network issues or insufficient AR tokens.
+4. **Error Handling**: Wrap upload calls in try-catch blocks to handle network issues or insufficient Turbo Credits.
 
 5. **Metadata Structure**: When uploading JSON metadata, follow standard NFT metadata schemas for compatibility with marketplaces.
 
@@ -306,10 +367,8 @@ The function supports any file type that can be stored on Arweave:
 After uploading your metadata to Arweave, use the returned URI in your collection creation:
 
 ```typescript
-// Upload collection metadata
 const contractUri = await uploadToArweave(metadataFile);
 
-// Use in collection creation
 const createContractData = encodeFunctionData({
   abi: tokenAbi,
   functionName: "createContract",
@@ -327,9 +386,9 @@ const createContractData = encodeFunctionData({
 
 Common errors and solutions:
 
-- **Insufficient AR tokens**: Ensure your Arweave wallet has enough AR tokens for the upload
+- **Insufficient Turbo Credits**: Ensure your Arweave wallet has enough Turbo Credits for the upload
 - **Invalid wallet key**: Verify your `NEXT_PUBLIC_ARWEAVE_KEY` is correctly base64 encoded
-- **Network timeout**: Increase the timeout value in the Arweave configuration
+- **ReadableStream error**: The `patchFetch` helper handles browser stream compatibility automatically
 - **File too large**: Consider compressing or optimizing your files before upload
 
 ## Next Steps
