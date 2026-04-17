@@ -352,7 +352,7 @@ The function supports any file type that can be stored on Arweave:
 
 ## Best Practices
 
-1. **File Size**: Turbo uploads are paid with Credits (not AR tokens directly). Larger files consume more credits. See the [Turbo Credits documentation](https://docs.ar.io/build/upload/turbo-credits) to learn how to top up your balance.
+1. **File Size**: Turbo uploads are paid with Credits (not AR tokens directly). Larger files consume more credits. Top up your Turbo Credits balance at [https://turbo.ar.io/topup](https://turbo.ar.io/topup).
 
 2. **Content-Type Tagging**: The function automatically tags files with their MIME type and file name for proper handling.
 
@@ -386,7 +386,7 @@ const createContractData = encodeFunctionData({
 
 Common errors and solutions:
 
-- **Insufficient Turbo Credits**: Ensure your Arweave wallet has enough Turbo Credits for the upload
+- **Insufficient Turbo Credits**: Ensure your Arweave wallet has enough Turbo Credits for the upload. Top up at [https://turbo.ar.io/topup](https://turbo.ar.io/topup)
 - **Invalid wallet key**: Verify your `NEXT_PUBLIC_ARWEAVE_KEY` is correctly base64 encoded
 - **ReadableStream error**: The `patchFetch` helper handles browser stream compatibility automatically
 - **File too large**: Consider compressing or optimizing your files before upload
