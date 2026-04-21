@@ -3306,16 +3306,6 @@
               "type": "string"
             },
             "example": "ipfs://bafybeig..."
-          },
-          {
-            "name": "content_uri",
-            "in": "query",
-            "description": "Optional content URI override for resolving the asset media location.",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
           }
         ],
         "responses": {
