@@ -141,8 +141,7 @@
           {
             "group": "Messages",
             "pages": [
-              "api-reference/messages/get",
-              "api-reference/messages/index-moment"
+              "api-reference/messages/get"
             ]
           },
           {
