@@ -101,8 +101,7 @@
             "group": "Admins",
             "pages": [
               "api-reference/moment/add-permission",
-              "api-reference/moment/remove-permission",
-              "api-reference/moment/migrate"
+              "api-reference/moment/remove-permission"
             ]
           },
           {
