@@ -1968,7 +1968,7 @@
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Social Wallet",
-        "description": "Link the authenticated social wallet to an artist (external) wallet on the In•Process protocol.\n\nThe social wallet is taken from your **Privy access token** (Bearer) — it is not sent in the request body. Send only the `artist_wallet` you want to associate.\n\n**Note:** This endpoint requires a Privy access token for authentication (not an API key or other auth methods). Privy access tokens are obtained through the Privy authentication flow. For more information, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
+        "description": "Link the authenticated social wallet to an artist (external) wallet on the In•Process protocol.\n\nThe social wallet is taken from your **Privy access token** (Bearer). Send only the `artist_wallet` you want to associate.\n\n**Note:** This endpoint requires a Privy access token for authentication (not an API key or other auth methods). Privy access tokens are obtained through the Privy authentication flow. For more information, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
         "operationId": "connectSocialWallet",
         "security": [
           {
