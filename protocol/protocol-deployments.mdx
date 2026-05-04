@@ -2,14 +2,56 @@
 title: Protocol Deployments
 ---
 
-Contract addresses for all supported networks.
+Contract addresses for all supported networks. If you integrate **directly against the contracts** (not only the hosted API), use [Sales strategies and ERC-20 minters](#sales-strategies-and-erc-20-minters) for fixed-price flows and ERC-20-paid minting.
 
-## Base
+## Creator1155FactoryImpl
 
-- **Base (Mainnet):** `0x540C18B7f99b3b599c6FeB99964498931c211858`
+Factory implementations that deploy/configure **ERC-1155 creator** collections compatible with Zora tooling.
+
+- **Base (Mainnet):** Creator1155FactoryImpl `0x540C18B7f99b3b599c6FeB99964498931c211858`
   - [View on Etherscan ↗](https://basescan.org/address/0x540C18B7f99b3b599c6FeB99964498931c211858)
   - [View on Thirdweb ↗](https://thirdweb.com/base/0x540C18B7f99b3b599c6FeB99964498931c211858)
   
-- **Base Sepolia (Testnet):** `0x6832A997D8616707C7b68721D6E9332E77da7F6C`
+- **Base Sepolia (Testnet):** Creator1155FactoryImpl `0x6832A997D8616707C7b68721D6E9332E77da7F6C`
   - [View on Etherscan ↗](https://sepolia.basescan.org/address/0x6832A997D8616707C7b68721D6E9332E77da7F6C)
   - [View on Thirdweb ↗](https://thirdweb.com/base-sepolia-testnet/0x6832A997D8616707C7b68721D6E9332E77da7F6C)
+
+## Sales strategies and ERC-20 minters
+
+These deployments are stable entry points for building fixed-price ETH sales and ERC-20–denominated mints on Base and Base Sepolia.
+
+### Fixed Price Sale strategy
+
+| Network        | Chain ID | Address                                                                      |
+|----------------|----------|------------------------------------------------------------------------------|
+| Base           | `8453`   | [`0x2994762aA0E4C750c51f333C10d81961faEBE785`](https://basescan.org/address/0x2994762aA0E4C750c51f333C10d81961faEBE785) |
+| Base Sepolia   | `84532`  | [`0x2994762aA0E4C750c51f333C10d81961faEBE785`](https://sepolia.basescan.org/address/0x2994762aA0E4C750c51f333C10d81961faEBE785) |
+
+### ERC-20 minter
+
+| Network        | Chain ID | Address                                                                      |
+|----------------|----------|------------------------------------------------------------------------------|
+| Base           | `8453`   | [`0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014`](https://basescan.org/address/0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014) |
+| Base Sepolia   | `84532`  | [`0x4538D7A07227D21597fb851A14057f00d15b4D5e`](https://sepolia.basescan.org/address/0x4538D7A07227D21597fb851A14057f00d15b4D5e) |
+
+### Mint fee (`mintFee`)
+
+**`mintFee()` is zero** on In•Process. **In•Process applies no mint platform fee on the creative workflow**—deliberately, to **support artists**.
+
+### TypeScript helpers (optional)
+
+Copy into your project for lookups by chain ID:
+
+```typescript
+/** Fixed-price sale strategy (In Process deployments). */
+export const FixedPriceSaleStrategyAddress = {
+  8453: "0x2994762aA0E4C750c51f333C10d81961faEBE785",
+  84532: "0x2994762aA0E4C750c51f333C10d81961faEBE785",
+} as const;
+
+/** ERC-20 denominated minting minter addresses. */
+export const erc20MinterAddresses = {
+  8453: "0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014",
+  84532: "0x4538D7A07227D21597fb851A14057f00d15b4D5e",
+} as const;
+```
