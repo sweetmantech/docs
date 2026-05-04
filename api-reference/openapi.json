@@ -1968,15 +1968,22 @@
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Social Wallet",
-        "description": "Connect a social wallet and an artist wallet on the In•Process protocol.",
+        "description": "Link the authenticated social wallet to an artist (external) wallet on the In•Process protocol.\n\nThe social wallet is taken from your **Privy access token** (Bearer) — it is not sent in the request body. Send only the `artist_wallet` you want to associate.\n\n**Note:** This endpoint requires a Privy access token for authentication (not an API key or other auth methods). Privy access tokens are obtained through the Privy authentication flow. For more information, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
         "operationId": "connectSocialWallet",
-        "security": [],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ConnectSocialWalletRequest"
+              },
+              "example": {
+                "artist_wallet": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
               }
             }
           }
@@ -1997,6 +2004,26 @@
           },
           "400": {
             "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — invalid or missing authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — authentication must be a Privy access token (API key or other methods are rejected), or `artist_wallet` is the same as the authenticated social wallet",
             "content": {
               "application/json": {
                 "schema": {
@@ -5626,17 +5653,13 @@
       "ConnectSocialWalletRequest": {
         "type": "object",
         "required": [
-          "artist_wallet",
-          "social_wallet"
+          "artist_wallet"
         ],
         "properties": {
           "artist_wallet": {
             "type": "string",
-            "description": "The artist wallet address"
-          },
-          "social_wallet": {
-            "type": "string",
-            "description": "The social wallet address"
+            "description": "The artist (external) wallet address to connect. Must be a checksummed or lowercase `0x`-prefixed 40-hex-character EVM address. The social wallet is determined from the Privy Bearer token, not this field.",
+            "pattern": "^0x[a-fA-F0-9]{40}$"
           }
         }
       },
