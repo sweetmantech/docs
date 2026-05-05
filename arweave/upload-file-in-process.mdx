@@ -1,0 +1,127 @@
+---
+title: Upload File with In•Process
+---
+
+Upload files to Arweave through the In•Process API. The client splits the file into chunks, sends them one at a time, and the server assembles and stores the result via Turbo.
+
+<Note>
+  To upload directly from the client without routing through this API, see [Upload Files to Arweave](/arweave/upload-to-arweave).
+</Note>
+
+## Endpoints
+
+| Method | Description |
+| --- | --- |
+| `POST /upload` | [Create a session](/api-reference/upload/chunk-session) |
+| `PATCH /upload` | [Send a chunk](/api-reference/upload/chunk) |
+| `PUT /upload` | [Complete the upload](/api-reference/upload/chunk-complete) |
+
+## Authentication
+
+Both methods work on all three calls.
+
+| Method | Header |
+| --- | --- |
+| Privy | `Authorization: Bearer <privy_access_token>` |
+| API key | `x-api-key: <api_key>` |
+
+The authenticated artist must match the session owner. Returns **403** if the artist hasn't set a name at [inprocess.world/manage/account](https://inprocess.world/manage/account).
+
+For OTP tokens, see [Sign in with In•Process](/oauth/login-with-otp).
+
+## Quotas and billing
+
+Files **≥ 5 MiB** are always **paid**. USDC is debited from the artist's smart wallet when the session is created.
+
+Files **< 5 MiB** are **free** up to **11 uploads per month**. After that the upload is paid, and `total_size_bytes` becomes required in the session request.
+
+If the USDC balance is too low, the API returns **402** with `required`, `available`, and `smart_wallet` fields.
+
+## Limits
+
+| | |
+| --- | --- |
+| Max chunk size | 4 MiB |
+| Max file size | 444 MiB |
+| Free threshold | `total_size_bytes` < 5 MiB |
+| Free uploads / month | 11 |
+
+Expired sessions return **410** on `PATCH /upload` or `PUT /upload`.
+
+## Example (TypeScript)
+
+Calculate `total_chunks` before creating the session. Use `chunk_size_bytes` from the session response when slicing the file — don't hard-code it.
+
+```typescript
+const UPLOAD_URL = "https://api.inprocess.world/api/upload";
+const CHUNK_SIZE_BYTES = 4 * 1024 * 1024;
+
+async function readErrorMessage(res: Response): Promise<string> {
+  try {
+    const { message } = await res.json();
+    if (message) return String(message);
+  } catch {}
+  return `HTTP ${res.status}`;
+}
+
+export async function uploadFileViaInProcess(
+  file: File,
+  accessToken: string
+): Promise<string> {
+  if (file.size < 1) throw new Error("File is empty");
+
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE_BYTES);
+
+  const sessionRes = await fetch(UPLOAD_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename: file.name,
+      content_type: file.type || "application/octet-stream",
+      total_chunks: totalChunks,
+      total_size_bytes: file.size,
+    }),
+  });
+  if (!sessionRes.ok) throw new Error(await readErrorMessage(sessionRes));
+
+  const { session_id, chunk_size_bytes } = await sessionRes.json();
+
+  for (let i = 0; i < totalChunks; i++) {
+    const start = i * chunk_size_bytes;
+    const end = Math.min(start + chunk_size_bytes, file.size);
+    const patch = await fetch(UPLOAD_URL, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "x-session-id": session_id,
+        "x-chunk-index": String(i),
+      },
+      body: file.slice(start, end),
+    });
+    if (!patch.ok) throw new Error(await readErrorMessage(patch));
+  }
+
+  const done = await fetch(UPLOAD_URL, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ session_id }),
+  });
+  if (!done.ok) throw new Error(await readErrorMessage(done));
+
+  const { uri } = await done.json();
+  return uri;
+}
+```
+
+Use `x-api-key` instead of `Authorization` on all three calls when integrating with an API key.
+
+## See also
+
+- [Upload Files to Arweave](/arweave/upload-to-arweave)
+- [Sign in with In•Process](/oauth/login-with-otp)

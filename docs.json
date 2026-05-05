@@ -8,6 +8,9 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.png",
+  "api": {
+    "openapi": "api-reference/openapi.json"
+  },
   "navigation": {
     "tabs": [
       {
@@ -29,7 +32,8 @@
           {
             "group": "Arweave",
             "pages": [
-              "arweave/upload-to-arweave"
+              "arweave/upload-to-arweave",
+              "arweave/upload-file-in-process"
             ]
           },
           {
@@ -188,6 +192,14 @@
               "api-reference/media/image",
               "api-reference/media/stream",
               "api-reference/arweave/metadata"
+            ]
+          },
+          {
+            "group": "Upload",
+            "pages": [
+              "api-reference/upload/chunk-session",
+              "api-reference/upload/chunk",
+              "api-reference/upload/chunk-complete"
             ]
           }
         ]
