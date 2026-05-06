@@ -1,7 +1,35 @@
 ---
-title: Create chunk upload session
-description: Start a resumable upload; returns session id and chunk size.
+title: Upload File to Arweave
+description: Fetch a file from a URL and upload it to Arweave permanent storage.
 openapi: POST /upload
 ---
 
-[Upload File with In•Process](/arweave/upload-file-in-process) — quotas, limits, and a client example.
+<Note>
+  This endpoint requires authentication. Use a bearer token in the `Authorization` header or an API key in the `x-api-key` header.
+</Note>
+
+## Overview
+
+Fetches the file at the given `url` and uploads it to Arweave via the Turbo SDK. The upload tier is determined automatically:
+
+- **Free** — files under 5 MB, once per month per artist.
+- **Paid** — files 5 MB or larger, or additional uploads beyond the free monthly quota. The USDC cost is debited from the artist's smart wallet.
+
+For paid uploads, ensure the artist's smart wallet has sufficient USDC before calling this endpoint. A `402` response includes the `required` and `available` amounts plus the `smart_wallet` address.
+
+## Example Request
+
+```bash
+curl -X POST https://api.inprocess.world/api/upload \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "url": "https://example.com/image.jpg" }'
+```
+
+## Example Response
+
+```json
+{
+  "uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+}
+```
