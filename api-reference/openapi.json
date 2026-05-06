@@ -3539,19 +3539,35 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["logs", "count"],
+                  "required": [
+                    "logs",
+                    "count"
+                  ],
                   "properties": {
                     "logs": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "id": { "type": "integer" },
-                          "arweave_uri": { "type": "string" },
-                          "winc_cost": { "type": "string" },
-                          "usdc_cost": { "type": "string", "nullable": true },
-                          "file_size_bytes": { "type": "integer" },
-                          "content_type": { "type": "string" },
+                          "id": {
+                            "type": "integer"
+                          },
+                          "arweave_uri": {
+                            "type": "string"
+                          },
+                          "winc_cost": {
+                            "type": "string"
+                          },
+                          "usdc_cost": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "file_size_bytes": {
+                            "type": "integer"
+                          },
+                          "content_type": {
+                            "type": "string"
+                          },
                           "created_at": {
                             "type": "string",
                             "format": "date-time"
@@ -3559,14 +3575,21 @@
                           "artist": {
                             "type": "object",
                             "properties": {
-                              "username": { "type": "string", "nullable": true },
-                              "address": { "type": "string" }
+                              "username": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "address": {
+                                "type": "string"
+                              }
                             }
                           }
                         }
                       }
                     },
-                    "count": { "type": "integer" }
+                    "count": {
+                      "type": "integer"
+                    }
                   }
                 },
                 "example": {
@@ -3596,12 +3619,19 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message", "errors"],
+                  "required": [
+                    "message",
+                    "errors"
+                  ],
                   "properties": {
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "errors": {
                       "type": "array",
-                      "items": { "type": "object" }
+                      "items": {
+                        "type": "object"
+                      }
                     }
                   }
                 },
@@ -3615,7 +3645,9 @@
                       "inclusive": true,
                       "exact": false,
                       "message": "Number must be greater than or equal to 1",
-                      "path": ["page"]
+                      "path": [
+                        "page"
+                      ]
                     }
                   ]
                 }
@@ -3652,7 +3684,7 @@
       },
       "post": {
         "summary": "Log Arweave Uploads",
-        "description": "Record completed Arweave uploads to the In•Process database. Each upload is verified on Arweave before being logged. Returns the list of successfully logged URIs and any that failed verification.",
+        "description": "Record completed Arweave uploads to the In\u2022Process database. Each upload is verified on Arweave before being logged. Returns the list of successfully logged URIs and any that failed verification.",
         "operationId": "logArweaveUploads",
         "security": [
           {
@@ -3668,7 +3700,12 @@
                 "minItems": 1,
                 "items": {
                   "type": "object",
-                  "required": ["arweave_uri", "winc_cost", "file_size_bytes", "content_type"],
+                  "required": [
+                    "arweave_uri",
+                    "winc_cost",
+                    "file_size_bytes",
+                    "content_type"
+                  ],
                   "properties": {
                     "arweave_uri": {
                       "type": "string",
@@ -3712,22 +3749,31 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["logged", "failed"],
+                  "required": [
+                    "logged",
+                    "failed"
+                  ],
                   "properties": {
                     "logged": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Arweave URIs that were successfully verified and logged."
                     },
                     "failed": {
                       "type": "array",
-                      "items": { "type": "string" },
+                      "items": {
+                        "type": "string"
+                      },
                       "description": "Arweave URIs that failed onchain verification and were not logged."
                     }
                   }
                 },
                 "example": {
-                  "logged": ["ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"],
+                  "logged": [
+                    "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+                  ],
                   "failed": []
                 }
               }
@@ -3739,27 +3785,39 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 },
-                "example": { "message": "Malformed JSON body" }
+                "example": {
+                  "message": "Malformed JSON body"
+                }
               }
             }
           },
           "401": {
-            "description": "Unauthorized — missing or invalid API key",
+            "description": "Unauthorized \u2014 missing or invalid API key",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 },
-                "example": { "message": "Unauthorized" }
+                "example": {
+                  "message": "Unauthorized"
+                }
               }
             }
           },
@@ -3769,12 +3827,18 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 },
-                "example": { "message": "Failed" }
+                "example": {
+                  "message": "Failed"
+                }
               }
             }
           }
@@ -3783,9 +3847,9 @@
     },
     "/upload": {
       "post": {
-        "summary": "Create chunk upload session",
-        "description": "Start a resumable upload. Returns `session_id` and `chunk_size_bytes`. Paid uploads debit USDC from the artist smart wallet before the session exists. Guide: [Upload File with In\u2022Process](/arweave/upload-file-in-process).",
-        "operationId": "createChunkUploadSession",
+        "summary": "Upload file to Arweave",
+        "description": "Fetch a file from the given URL and upload it to Arweave permanent storage. Small files under 5 MB are free once per month per artist; larger or additional uploads debit USDC from the artist's smart wallet.",
+        "operationId": "uploadFile",
         "security": [
           {
             "bearerAuth": []
@@ -3799,18 +3863,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChunkUploadSessionRequest"
+                "$ref": "#/components/schemas/UploadRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Session created",
+            "description": "File uploaded",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChunkUploadSessionResponse"
+                  "$ref": "#/components/schemas/UploadResponse"
                 }
               }
             }
@@ -3836,7 +3900,7 @@
             }
           },
           "402": {
-            "description": "Insufficient USDC for paid upload",
+            "description": "Insufficient USDC balance in smart wallet",
             "content": {
               "application/json": {
                 "schema": {
@@ -3846,13 +3910,16 @@
                       "type": "string"
                     },
                     "required": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "USDC amount required in micros"
                     },
                     "available": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "USDC amount available in micros"
                     },
                     "smart_wallet": {
-                      "type": "string"
+                      "type": "string",
+                      "description": "Artist smart wallet address"
                     }
                   }
                 }
@@ -3860,218 +3927,7 @@
             }
           },
           "403": {
-            "description": "Forbidden (e.g. name not set on account)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "summary": "Upload chunk",
-        "description": "Send one binary slice. Headers `x-session-id` and `x-chunk-index`. Body is raw bytes. Guide: [Upload File with In\u2022Process](/arweave/upload-file-in-process).",
-        "operationId": "uploadChunk",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "x-session-id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "x-chunk-index",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "minimum": 0
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/octet-stream": {
-              "schema": {
-                "type": "string",
-                "format": "binary"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Chunk stored",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChunkUploadChunkResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
             "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "410": {
-            "description": "Session expired",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Complete chunk upload",
-        "description": "Merge chunks, upload to Arweave, return `ar://` URI. Guide: [Upload File with In\u2022Process](/arweave/upload-file-in-process).",
-        "operationId": "completeChunkUpload",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChunkUploadCompleteRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Upload complete",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChunkUploadCompleteResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Session not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "410": {
-            "description": "Session expired",
             "content": {
               "application/json": {
                 "schema": {
@@ -6545,84 +6401,20 @@
           }
         }
       },
-      "ChunkUploadSessionRequest": {
+      "UploadRequest": {
         "type": "object",
         "required": [
-          "filename",
-          "total_chunks"
+          "url"
         ],
         "properties": {
-          "filename": {
+          "url": {
             "type": "string",
-            "minLength": 1,
-            "maxLength": 512
-          },
-          "content_type": {
-            "type": "string",
-            "default": "application/octet-stream"
-          },
-          "total_chunks": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "total_size_bytes": {
-            "type": "integer",
-            "minimum": 1
+            "description": "URL of the file to fetch and upload to Arweave.",
+            "example": "https://example.com/image.jpg"
           }
         }
       },
-      "ChunkUploadSessionResponse": {
-        "type": "object",
-        "required": [
-          "session_id",
-          "chunk_size_bytes",
-          "max_total_bytes",
-          "max_chunks"
-        ],
-        "properties": {
-          "session_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "chunk_size_bytes": {
-            "type": "integer",
-            "example": 4194304
-          },
-          "max_total_bytes": {
-            "type": "integer"
-          },
-          "max_chunks": {
-            "type": "integer"
-          }
-        }
-      },
-      "ChunkUploadChunkResponse": {
-        "type": "object",
-        "properties": {
-          "ok": {
-            "type": "boolean"
-          },
-          "chunk_index": {
-            "type": "integer"
-          },
-          "byte_length": {
-            "type": "integer"
-          }
-        }
-      },
-      "ChunkUploadCompleteRequest": {
-        "type": "object",
-        "required": [
-          "session_id"
-        ],
-        "properties": {
-          "session_id": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      },
-      "ChunkUploadCompleteResponse": {
+      "UploadResponse": {
         "type": "object",
         "required": [
           "uri"
@@ -6630,6 +6422,7 @@
         "properties": {
           "uri": {
             "type": "string",
+            "description": "Arweave URI of the uploaded file.",
             "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
           }
         }
