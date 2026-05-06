@@ -3722,7 +3722,7 @@
                     "failed": {
                       "type": "array",
                       "items": { "type": "string" },
-                      "description": "Arweave URIs that failed on-chain verification and were not logged."
+                      "description": "Arweave URIs that failed onchain verification and were not logged."
                     }
                   }
                 },
