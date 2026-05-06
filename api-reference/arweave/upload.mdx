@@ -1,107 +1,35 @@
 ---
-title: Upload to Arweave
-description: Upload media content to Arweave permanent storage using the Turbo SDK.
+title: Upload File to Arweave
+description: Fetch a file from a URL and upload it to Arweave permanent storage.
+openapi: POST /upload
 ---
 
 <Note>
-  Uploads are handled directly by the **Turbo SDK** (`@ardrive/turbo-sdk/web`) from the client. No proxy endpoint is required. This guide targets **Next.js 16**.
+  This endpoint requires authentication. Use a bearer token in the `Authorization` header or an API key in the `x-api-key` header.
 </Note>
 
-## Next.js Configuration
+## Overview
 
-The Turbo SDK imports Node.js built-ins (`buffer`, `crypto`, `stream`) that are unavailable in the browser. Configure polyfills in `next.config.js` to prevent runtime errors:
+Fetches the file at the given `url` and uploads it to Arweave via the Turbo SDK. The upload tier is determined automatically:
 
-```js
-const nextConfig = {
-  serverExternalPackages: ["@ardrive/turbo-sdk"],
+- **Free** — files under 5 MB, once per month per artist.
+- **Paid** — files 5 MB or larger, or additional uploads beyond the free monthly quota. The USDC cost is debited from the artist's smart wallet.
 
-  turbopack: {
-    resolveAlias: {
-      buffer: "buffer/",
-      crypto: "crypto-browserify",
-      stream: "stream-browserify",
-      process: "process/browser",
-    },
-  },
+For paid uploads, ensure the artist's smart wallet has sufficient USDC before calling this endpoint. A `402` response includes the `required` and `available` amounts plus the `smart_wallet` address.
 
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        buffer: require.resolve("buffer/"),
-        crypto: require.resolve("crypto-browserify"),
-        stream: require.resolve("stream-browserify"),
-        process: require.resolve("process/browser"),
-      };
-    }
-    return config;
-  },
-};
+## Example Request
+
+```bash
+curl -X POST https://api.inprocess.world/api/upload \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "url": "https://example.com/image.jpg" }'
 ```
 
-## How It Works
+## Example Response
 
-The Turbo SDK authenticates with your Arweave wallet key and uploads files directly to Arweave via the Turbo upload service. The SDK handles chunking, retries, and progress tracking internally.
-
-### JavaScript Example
-
-```typescript
-import { TurboFactory } from "@ardrive/turbo-sdk/web";
-
-const ARWEAVE_KEY = JSON.parse(
-  Buffer.from(process.env.NEXT_PUBLIC_ARWEAVE_KEY, "base64").toString()
-);
-
-const turboClient = TurboFactory.authenticated({ privateKey: ARWEAVE_KEY });
-
-const uploadToArweave = async (
-  file: File,
-  getProgress: (progress: number) => void = () => {}
-): Promise<string> => {
-  const uint8Array = new Uint8Array(await file.arrayBuffer());
-
-  const { id } = await turboClient.uploadFile({
-    fileStreamFactory: () => Buffer.from(uint8Array),
-    fileSizeFactory: () => file.size,
-    dataItemOpts: {
-      tags: [
-        { name: "Content-Type", value: file.type },
-        { name: "File-Name", value: file.name },
-      ],
-    },
-    events: {
-      onProgress: ({ totalBytes, processedBytes }) => {
-        getProgress(Math.round((processedBytes / totalBytes) * 100));
-      },
-    },
-  });
-
-  return `ar://${id}`;
-};
-```
-
-### Browser Fetch Compatibility
-
-The Turbo web SDK passes a `ReadableStream` as the fetch body, which browsers mark as "disturbed" after the first read. Patch the global `fetch` before uploading so the SDK can retry requests:
-
-```typescript
-const patchFetch = (): (() => void) => {
-  const original = globalThis.fetch;
-  globalThis.fetch = async (input, init) => {
-    if (init?.body instanceof ReadableStream) {
-      const blob = await new Response(init.body).blob();
-      return original(input, { ...init, body: blob });
-    }
-    return original(input, init);
-  };
-  return () => { globalThis.fetch = original; };
-};
-
-// Wrap your upload call
-const restoreFetch = patchFetch();
-try {
-  const uri = await uploadToArweave(file);
-} finally {
-  restoreFetch();
+```json
+{
+  "uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
 }
 ```
