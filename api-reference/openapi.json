@@ -1917,7 +1917,7 @@
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Social Wallet",
-        "description": "Link the authenticated social wallet to an artist (external) wallet on the In\u2022Process protocol.\n\nThe social wallet is taken from your **Privy access token** (Bearer). Send only the `artist_wallet` you want to associate.\n\n**Note:** This endpoint requires a Privy access token for authentication (not an API key or other auth methods). Privy access tokens are obtained through the Privy authentication flow. For more information, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
+        "description": "Link the authenticated social wallet to an artist (external) wallet on the In\u2022Process protocol.\n\nThe social wallet is taken from your Privy access token (Bearer). Send only the artist_wallet you want to associate.\n\nAuthentication: You can authenticate with either a Privy access token (Authorization: Bearer <privy_access_token>) or an API key (x-api-key: <api_key>), like other authenticated endpoints. For Privy token setup, see the Privy documentation.",
         "operationId": "connectSocialWallet",
         "security": [
           {
@@ -3485,138 +3485,6 @@
                 "example": {
                   "message": "Failed to send code"
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/arweave/logs": {
-      "post": {
-        "summary": "Log Arweave Uploads",
-        "description": "Record completed Arweave uploads to the In•Process database. Each upload is verified on Arweave before being logged. Returns the list of successfully logged URIs and any that failed verification.",
-        "operationId": "logArweaveUploads",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "object",
-                  "required": ["arweave_uri", "winc_cost", "file_size_bytes", "content_type"],
-                  "properties": {
-                    "arweave_uri": {
-                      "type": "string",
-                      "description": "The Arweave URI of the uploaded file. Must be a valid `ar://` URI.",
-                      "pattern": "^ar://.+",
-                      "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
-                    },
-                    "winc_cost": {
-                      "type": "string",
-                      "description": "The cost of the upload in winston credits (winc).",
-                      "example": "1234567"
-                    },
-                    "file_size_bytes": {
-                      "type": "integer",
-                      "description": "The size of the uploaded file in bytes.",
-                      "example": 204800
-                    },
-                    "content_type": {
-                      "type": "string",
-                      "description": "The MIME type of the uploaded file.",
-                      "example": "image/jpeg"
-                    }
-                  }
-                }
-              },
-              "example": [
-                {
-                  "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
-                  "winc_cost": "1234567",
-                  "file_size_bytes": 204800,
-                  "content_type": "image/jpeg"
-                }
-              ]
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Upload log results returned",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["logged", "failed"],
-                  "properties": {
-                    "logged": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "Arweave URIs that were successfully verified and logged."
-                    },
-                    "failed": {
-                      "type": "array",
-                      "items": { "type": "string" },
-                      "description": "Arweave URIs that failed on-chain verification and were not logged."
-                    }
-                  }
-                },
-                "example": {
-                  "logged": ["ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"],
-                  "failed": []
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid request body",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": { "type": "string" }
-                  }
-                },
-                "example": { "message": "Malformed JSON body" }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized — missing or invalid API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": { "type": "string" }
-                  }
-                },
-                "example": { "message": "Unauthorized" }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": { "type": "string" }
-                  }
-                },
-                "example": { "message": "Failed" }
               }
             }
           }
