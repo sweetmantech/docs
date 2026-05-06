@@ -3491,6 +3491,293 @@
         }
       }
     },
+    "/arweave/logs": {
+      "get": {
+        "summary": "Get Arweave Upload Logs",
+        "description": "Retrieve paginated Arweave upload logs for the authenticated artist. Results are ordered by `created_at` descending. Admin addresses can view all logs.",
+        "operationId": "getArweaveLogs",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of logs per page (1 to 100). Defaults to 20.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "1-based page number. Defaults to 1.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated Arweave logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["logs", "count"],
+                  "properties": {
+                    "logs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "integer" },
+                          "arweave_uri": { "type": "string" },
+                          "winc_cost": { "type": "string" },
+                          "usdc_cost": { "type": "string", "nullable": true },
+                          "file_size_bytes": { "type": "integer" },
+                          "content_type": { "type": "string" },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "artist": {
+                            "type": "object",
+                            "properties": {
+                              "username": { "type": "string", "nullable": true },
+                              "artist_address": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "count": { "type": "integer" }
+                  }
+                },
+                "example": {
+                  "logs": [
+                    {
+                      "id": 123,
+                      "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
+                      "winc_cost": "1234567",
+                      "usdc_cost": "0.002300",
+                      "file_size_bytes": 204800,
+                      "content_type": "image/jpeg",
+                      "created_at": "2026-05-06T14:22:31.123Z",
+                      "artist": {
+                        "username": "artist_name",
+                        "artist_address": "0x1234567890abcdef1234567890abcdef12345678"
+                      }
+                    }
+                  ],
+                  "count": 42
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message", "errors"],
+                  "properties": {
+                    "message": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": { "type": "object" }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Invalid query parameters",
+                  "errors": [
+                    {
+                      "code": "too_small",
+                      "minimum": 1,
+                      "type": "number",
+                      "inclusive": true,
+                      "exact": false,
+                      "message": "Number must be greater than or equal to 1",
+                      "path": ["page"]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Unauthorized"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "message": "Failed to fetch arweave logs"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Log Arweave Uploads",
+        "description": "Record completed Arweave uploads to the In•Process database. Each upload is verified on Arweave before being logged. Returns the list of successfully logged URIs and any that failed verification.",
+        "operationId": "logArweaveUploads",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["arweave_uri", "winc_cost", "file_size_bytes", "content_type"],
+                  "properties": {
+                    "arweave_uri": {
+                      "type": "string",
+                      "description": "The Arweave URI of the uploaded file. Must be a valid `ar://` URI.",
+                      "pattern": "^ar://.+",
+                      "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+                    },
+                    "winc_cost": {
+                      "type": "string",
+                      "description": "The cost of the upload in winston credits (winc).",
+                      "example": "1234567"
+                    },
+                    "file_size_bytes": {
+                      "type": "integer",
+                      "description": "The size of the uploaded file in bytes.",
+                      "example": 204800
+                    },
+                    "content_type": {
+                      "type": "string",
+                      "description": "The MIME type of the uploaded file.",
+                      "example": "image/jpeg"
+                    }
+                  }
+                }
+              },
+              "example": [
+                {
+                  "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
+                  "winc_cost": "1234567",
+                  "file_size_bytes": 204800,
+                  "content_type": "image/jpeg"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Upload log results returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["logged", "failed"],
+                  "properties": {
+                    "logged": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Arweave URIs that were successfully verified and logged."
+                    },
+                    "failed": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Arweave URIs that failed on-chain verification and were not logged."
+                    }
+                  }
+                },
+                "example": {
+                  "logged": ["ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"],
+                  "failed": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                },
+                "example": { "message": "Malformed JSON body" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                },
+                "example": { "message": "Unauthorized" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                },
+                "example": { "message": "Failed" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/upload": {
       "post": {
         "summary": "Create chunk upload session",
