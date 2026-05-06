@@ -1917,11 +1917,14 @@
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Social Wallet",
-        "description": "Link the authenticated social wallet to an artist (external) wallet on the In\u2022Process protocol.\n\nThe social wallet is taken from your Privy access token (Bearer). Send only the artist_wallet you want to associate.\n\nAuthentication: You can authenticate with either a Privy access token (Authorization: Bearer <privy_access_token>) or an API key (x-api-key: <api_key>), like other authenticated endpoints. For Privy token setup, see the Privy documentation.",
+        "description": "Link the authenticated social wallet to an artist (external) wallet on the In\u2022Process protocol.",
         "operationId": "connectSocialWallet",
         "security": [
           {
             "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
           }
         ],
         "requestBody": {
@@ -1972,7 +1975,7 @@
             }
           },
           "403": {
-            "description": "Forbidden \u2014 authentication must be a Privy access token (API key or other methods are rejected), or `artist_wallet` is the same as the authenticated social wallet",
+            "description": "Forbidden \u2014 `artist_wallet` is the same as the authenticated social wallet",
             "content": {
               "application/json": {
                 "schema": {
