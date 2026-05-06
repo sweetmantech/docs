@@ -197,7 +197,7 @@
           {
             "group": "Arweave",
             "pages": [
-              "api-reference/upload/chunk-session",
+              "api-reference/arweave/upload",
               "api-reference/arweave/get-logs",
               "api-reference/arweave/logs"
             ]
