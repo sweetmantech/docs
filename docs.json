@@ -195,11 +195,22 @@
             ]
           },
           {
-            "group": "Upload",
+            "group": "Arweave",
             "pages": [
-              "api-reference/upload/chunk-session",
-              "api-reference/upload/chunk",
-              "api-reference/upload/chunk-complete"
+              {
+                "group": "Upload",
+                "pages": [
+                  "api-reference/upload/chunk-session",
+                  "api-reference/upload/chunk",
+                  "api-reference/upload/chunk-complete"
+                ]
+              },
+              {
+                "group": "Logs",
+                "pages": [
+                  "api-reference/arweave/logs"
+                ]
+              }
             ]
           }
         ]
