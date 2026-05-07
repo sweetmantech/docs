@@ -3363,6 +3363,21 @@
         ],
         "parameters": [
           {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "description": "Filter logs by time period. Omit or use `all` to return all logs.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ]
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -3383,6 +3398,16 @@
               "type": "integer",
               "minimum": 1,
               "default": 1
+            }
+          },
+          {
+            "name": "artist",
+            "in": "query",
+            "required": false,
+            "description": "Filter by artist wallet address or username. Admin only \u2014 non-admin callers always see their own logs.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
             }
           }
         ],
