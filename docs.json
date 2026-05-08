@@ -192,8 +192,7 @@
             "group": "Arweave",
             "pages": [
               "api-reference/arweave/upload",
-              "api-reference/arweave/get-logs",
-              "api-reference/arweave/logs"
+              "api-reference/arweave/get-logs"
             ]
           }
         ]
