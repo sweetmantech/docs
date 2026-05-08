@@ -3348,11 +3348,11 @@
         }
       }
     },
-    "/arweave/logs": {
+    "/uploads": {
       "get": {
-        "summary": "Get Arweave Upload Logs",
-        "description": "Retrieve paginated Arweave upload logs for the authenticated artist. Results are ordered by `created_at` descending. Admin addresses can view all logs.",
-        "operationId": "getArweaveLogs",
+        "summary": "Get Arweave Uploads",
+        "description": "Retrieve paginated Arweave uploads for the authenticated artist. Results are ordered by `created_at` descending. Admin addresses can view all uploads.",
+        "operationId": "getArweaveUploads",
         "security": [
           {
             "bearerAuth": []
@@ -3366,7 +3366,7 @@
             "name": "period",
             "in": "query",
             "required": false,
-            "description": "Filter logs by time period. Omit or use `all` to return all logs.",
+            "description": "Filter uploads by time period. Omit or use `all` to return all uploads.",
             "schema": {
               "type": "string",
               "enum": [
@@ -3381,7 +3381,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Number of logs per page (1 to 100). Defaults to 20.",
+            "description": "Number of uploads per page (1 to 100). Defaults to 20.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -3404,7 +3404,7 @@
             "name": "artist",
             "in": "query",
             "required": false,
-            "description": "Filter by artist wallet address or username. Admin only \u2014 non-admin callers always see their own logs.",
+            "description": "Filter by artist wallet address or username. Admin only \u2014 non-admin artists always see their own uploads.",
             "schema": {
               "type": "string",
               "minLength": 1
@@ -3413,17 +3413,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Paginated Arweave logs",
+            "description": "Paginated Arweave uploads",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
-                    "logs",
+                    "uploads",
                     "count"
                   ],
                   "properties": {
-                    "logs": {
+                    "uploads": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -3472,7 +3472,7 @@
                   }
                 },
                 "example": {
-                  "logs": [
+                  "uploads": [
                     {
                       "id": 123,
                       "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
@@ -3554,7 +3554,7 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "message": "Failed to fetch arweave logs"
+                  "message": "Failed to fetch arweave uploads"
                 }
               }
             }
