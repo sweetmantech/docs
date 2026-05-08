@@ -4517,33 +4517,38 @@
         "type": "object",
         "required": [
           "recipients",
-          "collectionAddress"
+          "moment"
         ],
         "properties": {
           "recipients": {
             "type": "array",
-            "description": "Array of recipients to receive the airdrop",
+            "description": "Array of wallet addresses to receive the airdrop",
             "items": {
-              "type": "object",
-              "required": [
-                "recipientAddress",
-                "tokenId"
-              ],
-              "properties": {
-                "recipientAddress": {
-                  "type": "string",
-                  "description": "Address to receive the airdrop"
-                },
-                "tokenId": {
-                  "type": "string",
-                  "description": "TokenId of the moment to airdrop"
-                }
-              }
+              "type": "string",
+              "description": "Wallet address of the recipient"
             }
           },
-          "collectionAddress": {
-            "type": "string",
-            "description": "Contract address of the moment collection"
+          "moment": {
+            "type": "object",
+            "required": [
+              "tokenId",
+              "collectionAddress"
+            ],
+            "properties": {
+              "tokenId": {
+                "type": "string",
+                "description": "Token ID of the moment to airdrop"
+              },
+              "collectionAddress": {
+                "type": "string",
+                "description": "Contract address of the moment collection"
+              },
+              "chainId": {
+                "type": "integer",
+                "description": "Chain ID where the collection is deployed. Defaults to Base (8453).",
+                "default": 8453
+              }
+            }
           }
         }
       },
