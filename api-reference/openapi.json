@@ -3348,7 +3348,7 @@
         }
       }
     },
-    "/arweave/uploads": {
+    "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
         "description": "Retrieve paginated Arweave uploads for the authenticated artist. Results are ordered by `created_at` descending. Admin addresses can view all uploads.",
