@@ -72,6 +72,7 @@
             "pages": [
               "api-reference/moment/get",
               "api-reference/moment/create",
+              "api-reference/moment/create-batch",
               "api-reference/moment/writing",
               "api-reference/moment/update-uri",
               {
