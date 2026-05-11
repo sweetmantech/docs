@@ -3351,7 +3351,7 @@
     "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
-        "description": "Paginated rows from permanent upload logs. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`size` | `usdc_cost` | `created_at`) and `sort_order` (`asc` | `desc`); default `created_at` descending.",
+        "description": "Paginated rows from permanent upload logs. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`size` | `usdc_cost` | `created_at`) and `sort_order` (`asc` | `desc`); default `created_at` descending. Validates query then runs handler; each request is dynamic (no route fetch cache).",
         "operationId": "getArweaveUploads",
         "security": [
           {
@@ -3442,14 +3442,15 @@
         ],
         "responses": {
           "200": {
-            "description": "`uploads` page plus `count` (estimated total).",
+            "description": "`uploads` (page), `count` (matching rows), `total_usdc_cost` (USDC sum for same filter, number).",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "required": [
                     "uploads",
-                    "count"
+                    "count",
+                    "total_usdc_cost"
                   ],
                   "properties": {
                     "uploads": {
@@ -3497,6 +3498,9 @@
                     },
                     "count": {
                       "type": "integer"
+                    },
+                    "total_usdc_cost": {
+                      "type": "number"
                     }
                   }
                 },
@@ -3516,7 +3520,8 @@
                       }
                     }
                   ],
-                  "count": 42
+                  "count": 42,
+                  "total_usdc_cost": 0.0966
                 }
               }
             }
@@ -3576,14 +3581,25 @@
             }
           },
           "500": {
-            "description": "Internal server error",
+            "description": "Handler failure (e.g. DB) or uncaught exception; body is `{ message }` (text varies).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "example": {
-                  "message": "Failed to fetch arweave uploads"
+                "examples": {
+                  "handler": {
+                    "summary": "Handler / DB error",
+                    "value": {
+                      "message": "Failed to fetch arweave uploads"
+                    }
+                  },
+                  "uncaught": {
+                    "summary": "Uncaught route error",
+                    "value": {
+                      "message": "Failed"
+                    }
+                  }
                 }
               }
             }
