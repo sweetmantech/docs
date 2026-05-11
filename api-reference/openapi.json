@@ -3351,7 +3351,7 @@
     "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
-        "description": "Retrieve paginated Arweave uploads for the authenticated artist. Results are ordered by `created_at` descending. Admin addresses can view all uploads.",
+        "description": "Paginated rows from permanent upload logs. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`size` | `usdc_cost` | `created_at`) and `sort_order` (`asc` | `desc`); default `created_at` descending.",
         "operationId": "getArweaveUploads",
         "security": [
           {
@@ -3366,7 +3366,7 @@
             "name": "period",
             "in": "query",
             "required": false,
-            "description": "Filter uploads by time period. Omit or use `all` to return all uploads.",
+            "description": "`created_at` \u2265 now minus 1, 7, or 30 days. Omit or `all` for no filter.",
             "schema": {
               "type": "string",
               "enum": [
@@ -3404,16 +3404,45 @@
             "name": "artist",
             "in": "query",
             "required": false,
-            "description": "Filter by artist wallet address or username. Admin only \u2014 non-admin artists always see their own uploads.",
+            "description": "Admin only: `0x`+40 hex or username. Non-admins: ignored (server uses auth wallet).",
             "schema": {
               "type": "string",
               "minLength": 1
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "`size` (bytes), `usdc_cost`, or `created_at`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "size",
+                "usdc_cost",
+                "created_at"
+              ],
+              "default": "created_at"
+            }
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "description": "`asc` or `desc`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Paginated Arweave uploads",
+            "description": "`uploads` page plus `count` (estimated total).",
             "content": {
               "application/json": {
                 "schema": {
