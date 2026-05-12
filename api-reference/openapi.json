@@ -2285,7 +2285,7 @@
             }
           },
           "403": {
-            "description": "Forbidden - caller does not have the required API key type for the requested operation",
+            "description": "Forbidden - the artist does not have the required API key type for the requested operation",
             "content": {
               "application/json": {
                 "schema": {
@@ -3410,7 +3410,7 @@
     "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
-        "description": "Paginated rows from permanent upload logs. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`size` | `usdc_cost` | `created_at`) and `sort_order` (`asc` | `desc`); default `created_at` descending. Validates query then runs handler; each request is dynamic (no route fetch cache).",
+        "description": "Requires bearer token or API key. Admin artists may pass `artist` (`0x` + 40 hex or username) or omit it to list all; non-admin artists cannot filter by `artist`. Optional `period` limits how far back results go (`day`, `week`, `month`, or omit / `all`). Results are ordered by `sort_by` (`usdc_cost` or `winc_cost`) and `sort_order` (`asc` or `desc`); default is `usdc_cost` descending.",
         "operationId": "getArweaveUploads",
         "security": [
           {
@@ -3425,7 +3425,7 @@
             "name": "period",
             "in": "query",
             "required": false,
-            "description": "`created_at` \u2265 now minus 1, 7, or 30 days. Omit or `all` for no filter.",
+            "description": "Restrict results to approximately the last day, week, or month. Omit or use `all` for no time limit.",
             "schema": {
               "type": "string",
               "enum": [
@@ -3440,7 +3440,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Number of uploads per page (1 to 100). Defaults to 20.",
+            "description": "Page size (1 to 100). Default 20.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -3463,7 +3463,7 @@
             "name": "artist",
             "in": "query",
             "required": false,
-            "description": "Admin only: `0x`+40 hex or username. Non-admins: ignored (server uses auth wallet).",
+            "description": "Admin only: filter by wallet (`0x` + 40 hex) or username. No effect for non-admin artists.",
             "schema": {
               "type": "string",
               "minLength": 1
@@ -3473,15 +3473,14 @@
             "name": "sort_by",
             "in": "query",
             "required": false,
-            "description": "`size` (bytes), `usdc_cost`, or `created_at`.",
+            "description": "Sort by total USDC or total WinC.",
             "schema": {
               "type": "string",
               "enum": [
-                "size",
                 "usdc_cost",
-                "created_at"
+                "winc_cost"
               ],
-              "default": "created_at"
+              "default": "usdc_cost"
             }
           },
           {
@@ -3501,7 +3500,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`uploads` (page), `count` (matching rows), `total_usdc_cost` (USDC sum for same filter, number).",
+            "description": "Successful response; see schema for field meanings.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3513,35 +3512,30 @@
                   ],
                   "properties": {
                     "uploads": {
+                      "description": "One object per artist: that artist's total WinC, total USDC (string with six decimal places), and `artist` (username and address).",
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "winc_cost",
+                          "usdc_cost",
+                          "artist"
+                        ],
                         "properties": {
-                          "id": {
-                            "type": "integer"
-                          },
-                          "arweave_uri": {
-                            "type": "string"
-                          },
                           "winc_cost": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Total WinC for that artist (string)."
                           },
                           "usdc_cost": {
                             "type": "string",
-                            "nullable": true
-                          },
-                          "file_size_bytes": {
-                            "type": "integer"
-                          },
-                          "content_type": {
-                            "type": "string"
-                          },
-                          "created_at": {
-                            "type": "string",
-                            "format": "date-time"
+                            "description": "Total USDC for that artist, six decimal places."
                           },
                           "artist": {
                             "type": "object",
+                            "required": [
+                              "username",
+                              "address"
+                            ],
                             "properties": {
                               "username": {
                                 "type": "string",
@@ -3556,23 +3550,20 @@
                       }
                     },
                     "count": {
-                      "type": "integer"
+                      "type": "integer",
+                      "description": "Total number of artists matching the request (for pagination)."
                     },
                     "total_usdc_cost": {
-                      "type": "number"
+                      "type": "number",
+                      "description": "Sum of USDC across all matching artists (not only the current page)."
                     }
                   }
                 },
                 "example": {
                   "uploads": [
                     {
-                      "id": 123,
-                      "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
                       "winc_cost": "1234567",
                       "usdc_cost": "0.002300",
-                      "file_size_bytes": 204800,
-                      "content_type": "image/jpeg",
-                      "created_at": "2026-05-06T14:22:31.123Z",
                       "artist": {
                         "username": "artist_name",
                         "address": "0x1234567890abcdef1234567890abcdef12345678"
@@ -3640,25 +3631,14 @@
             }
           },
           "500": {
-            "description": "Handler failure (e.g. DB) or uncaught exception; body is `{ message }` (text varies).",
+            "description": "Error. JSON body includes `message`.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
-                "examples": {
-                  "handler": {
-                    "summary": "Handler / DB error",
-                    "value": {
-                      "message": "Failed to fetch arweave uploads"
-                    }
-                  },
-                  "uncaught": {
-                    "summary": "Uncaught route error",
-                    "value": {
-                      "message": "Failed"
-                    }
-                  }
+                "example": {
+                  "message": "Failed to fetch arweave uploads"
                 }
               }
             }
