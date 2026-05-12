@@ -3410,7 +3410,7 @@
     "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
-        "description": "Paginated **per-artist aggregates** over upload logs (WinC and USDC are summed for each artist within the filter); not one row per upload. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`usdc_cost` | `winc_cost`) and `sort_order` (`asc` | `desc`); default `usdc_cost` descending. Each `uploads` item is totals plus `artist` only (no URI, size, content type, or timestamps). Validates query then runs handler; each request is dynamic (no route fetch cache).",
+        "description": "Paginated **per-artist aggregates** over upload logs (WinC and USDC are summed for each artist within the filter); not one row per upload. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`usdc_cost` | `winc_cost`) and `sort_order` (`asc` | `desc`); default `usdc_cost` descending.",
         "operationId": "getArweaveUploads",
         "security": [
           {
@@ -3500,7 +3500,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`uploads`: one entry per artist after aggregation; each row has summed `winc_cost`, summed `usdc_cost` (six decimal places as a string), and `artist`. `count` is the number of artists matching the filter. `total_usdc_cost` is total USDC across those artists (number).",
+            "description": "`uploads`: per-row summed `winc_cost`, `usdc_cost` (string, six decimals), and `artist`. `count`: artists in the filter. `total_usdc_cost`: their combined USDC (number).",
             "content": {
               "application/json": {
                 "schema": {
