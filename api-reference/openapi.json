@@ -3410,7 +3410,7 @@
     "/uploads": {
       "get": {
         "summary": "Get Arweave Uploads",
-        "description": "Paginated rows from permanent upload logs. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`size` | `usdc_cost` | `created_at`) and `sort_order` (`asc` | `desc`); default `created_at` descending. Validates query then runs handler; each request is dynamic (no route fetch cache).",
+        "description": "Paginated **per-artist aggregates** over upload logs (WinC and USDC are summed for each artist within the filter); not one row per upload. Bearer or API key required. Non-admins always get their wallet only (`artist` ignored). Admins: optional `artist` as `0x`+40 hex or username; omit for all. `period` cuts `created_at` to rolling 1/7/30 days (`day`/`week`/`month`); omit or `all` for no cut. Sort: `sort_by` (`usdc_cost` | `winc_cost`) and `sort_order` (`asc` | `desc`); default `usdc_cost` descending. Each `uploads` item is totals plus `artist` only (no URI, size, content type, or timestamps). Validates query then runs handler; each request is dynamic (no route fetch cache).",
         "operationId": "getArweaveUploads",
         "security": [
           {
@@ -3440,7 +3440,7 @@
             "name": "limit",
             "in": "query",
             "required": false,
-            "description": "Number of uploads per page (1 to 100). Defaults to 20.",
+            "description": "Page size: number of artist aggregate rows per page (1 to 100). Defaults to 20.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -3473,15 +3473,14 @@
             "name": "sort_by",
             "in": "query",
             "required": false,
-            "description": "`size` (bytes), `usdc_cost`, or `created_at`.",
+            "description": "Sort key: USDC cost or WinC (Turbo credits) cost.",
             "schema": {
               "type": "string",
               "enum": [
-                "size",
                 "usdc_cost",
-                "created_at"
+                "winc_cost"
               ],
-              "default": "created_at"
+              "default": "usdc_cost"
             }
           },
           {
@@ -3501,7 +3500,7 @@
         ],
         "responses": {
           "200": {
-            "description": "`uploads` (page), `count` (matching rows), `total_usdc_cost` (USDC sum for same filter, number).",
+            "description": "`uploads`: one entry per artist after aggregation; each row has summed `winc_cost`, summed `usdc_cost` (six decimal places as a string), and `artist`. `count` is the number of artists matching the filter. `total_usdc_cost` is total USDC across those artists (number).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3516,32 +3515,26 @@
                       "type": "array",
                       "items": {
                         "type": "object",
+                        "required": [
+                          "winc_cost",
+                          "usdc_cost",
+                          "artist"
+                        ],
                         "properties": {
-                          "id": {
-                            "type": "integer"
-                          },
-                          "arweave_uri": {
-                            "type": "string"
-                          },
                           "winc_cost": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "WinC (Turbo credits) cost as a string."
                           },
                           "usdc_cost": {
                             "type": "string",
-                            "nullable": true
-                          },
-                          "file_size_bytes": {
-                            "type": "integer"
-                          },
-                          "content_type": {
-                            "type": "string"
-                          },
-                          "created_at": {
-                            "type": "string",
-                            "format": "date-time"
+                            "description": "USDC amount with six decimal places."
                           },
                           "artist": {
                             "type": "object",
+                            "required": [
+                              "username",
+                              "address"
+                            ],
                             "properties": {
                               "username": {
                                 "type": "string",
@@ -3566,13 +3559,8 @@
                 "example": {
                   "uploads": [
                     {
-                      "id": 123,
-                      "arweave_uri": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30",
                       "winc_cost": "1234567",
                       "usdc_cost": "0.002300",
-                      "file_size_bytes": 204800,
-                      "content_type": "image/jpeg",
-                      "created_at": "2026-05-06T14:22:31.123Z",
                       "artist": {
                         "username": "artist_name",
                         "address": "0x1234567890abcdef1234567890abcdef12345678"
