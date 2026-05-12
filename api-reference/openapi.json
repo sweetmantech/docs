@@ -86,7 +86,7 @@
     "/moment/create": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request\n\n> **Simulate first:** Use [POST /moment/create/simulate](/api-reference/moment/simulate) to validate inputs and estimate gas before submitting a real transaction.",
+        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).\n\n> **Simulate first:** Use [POST /moment/create/simulate](/api-reference/moment/simulate) to validate inputs and estimate gas before submitting a real transaction.",
         "operationId": "createMoment",
         "security": [],
         "requestBody": {
@@ -136,7 +136,7 @@
     "/moment/create-batch": {
       "post": {
         "summary": "Create Moments Batch",
-        "description": "Create multiple moments on an existing collection in a single onchain transaction. Provide `contract.address`.\n\nEach token can use its own `salesConfig`, `mintToCreatorCount`, `maxSupply`, and `payoutRecipient`. If `splits` are provided, the payout recipient is resolved to the split contract address for all tokens.",
+        "description": "Create multiple moments in a single onchain transaction. Uses the same unified `contract` object as [POST /moment/create](/api-reference/moment/create): provide `contract.address` for an existing collection, or `contract.name` and `contract.uri` to deploy a new collection and mint all batch tokens on it.\n\nEach token can use its own `salesConfig`, `mintToCreatorCount`, `maxSupply`, and `payoutRecipient`. If `splits` are provided, the payout recipient is resolved to the split contract address for all tokens.",
         "operationId": "createMomentBatch",
         "security": [],
         "requestBody": {
@@ -195,7 +195,7 @@
     "/moment/create/simulate": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** \u2014 validates contract-level logic (no gas spent)\n2. **UserOperation preparation** \u2014 validates at AA/paymaster level (no broadcast)\n\nUses the same request body as `POST /moment/create`.\n\n> **Ready to create?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
+        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** \u2014 validates contract-level logic (no gas spent)\n2. **UserOperation preparation** \u2014 validates at AA/paymaster level (no broadcast)\n\nUses the same request body schema as `POST /moment/create`.\n\n> **Ready to create?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
         "operationId": "simulateCreateMoment",
         "security": [],
         "requestBody": {
@@ -245,7 +245,7 @@
     "/moment/create/writing": {
       "post": {
         "summary": "Create a Writing Moment",
-        "description": "Create a new Writing Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request",
+        "description": "Create a new Writing Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).",
         "operationId": "createWritingMoment",
         "security": [],
         "requestBody": {
@@ -4282,16 +4282,46 @@
             "description": "The sale type"
           },
           "pricePerToken": {
-            "type": "string",
-            "description": "Price per token in wei (18 decimals). For example, \"100000000000000000\" represents 0.1 ETH"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Price per token in wei (18 decimals), as a decimal integer string or JSON number. For example, \"100000000000000000\" or 100000000000000000 represents 0.1 ETH"
           },
           "saleStart": {
-            "type": "string",
-            "description": "Unix timestamp as a string indicating when the sale starts"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Sale start time: Unix timestamp as a decimal integer string or JSON number"
           },
           "saleEnd": {
-            "type": "string",
-            "description": "Unix timestamp as a string indicating when the sale ends"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "description": "Sale end time: Unix timestamp as a decimal integer string or JSON number"
           },
           "currency": {
             "type": "string",
@@ -4370,30 +4400,34 @@
           }
         }
       },
+      "MomentContractInput": {
+        "type": "object",
+        "description": "Collection target. Provide `address` to mint on an existing ERC-1155 collection, or provide both `name` and `uri` to deploy a new collection in the same request.",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Existing collection contract address"
+          },
+          "name": {
+            "type": "string",
+            "description": "New collection name (required together with `uri` when `address` is omitted)"
+          },
+          "uri": {
+            "type": "string",
+            "description": "New collection metadata URI (required together with `name` when `address` is omitted)"
+          }
+        }
+      },
       "CreateMomentRequest": {
         "type": "object",
         "required": [
+          "contract",
           "token",
           "account"
         ],
         "properties": {
           "contract": {
-            "type": "object",
-            "description": "Contract object. If address is provided, uses existing collection. If name and uri are provided, creates new collection.",
-            "properties": {
-              "address": {
-                "type": "string",
-                "description": "Optional: Address of existing collection (if provided, uses existing collection)"
-              },
-              "name": {
-                "type": "string",
-                "description": "Optional: Collection name (required if address is not provided)"
-              },
-              "uri": {
-                "type": "string",
-                "description": "Optional: Collection metadata URI (required if address is not provided)"
-              }
-            }
+            "$ref": "#/components/schemas/MomentContractInput"
           },
           "token": {
             "type": "object",
@@ -4441,6 +4475,11 @@
           "account": {
             "type": "string",
             "description": "Creator's address"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID (optional; defaults to Base mainnet in production and Base Sepolia in preview or development)",
+            "default": 8453
           }
         }
       },
@@ -4453,22 +4492,12 @@
         ],
         "properties": {
           "contract": {
-            "type": "object",
-            "required": [
-              "address"
-            ],
-            "description": "Existing collection to add moments to. Batch creation requires an existing collection address.",
-            "properties": {
-              "address": {
-                "type": "string",
-                "description": "Address of the existing collection"
-              }
-            }
+            "$ref": "#/components/schemas/MomentContractInput"
           },
           "tokens": {
             "type": "array",
             "minItems": 1,
-            "description": "Tokens to create on the existing collection. Tokens are created in order and returned as `tokenIds` in the same order.",
+            "description": "Tokens to create. Tokens are created in order and returned as `tokenIds` in the same order.",
             "items": {
               "$ref": "#/components/schemas/CreateMomentBatchToken"
             }
@@ -4484,6 +4513,11 @@
           "account": {
             "type": "string",
             "description": "Creator's address"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID (optional; defaults to Base mainnet in production and Base Sepolia in preview or development)",
+            "default": 8453
           }
         }
       },
@@ -4526,6 +4560,7 @@
         "type": "object",
         "required": [
           "title",
+          "contract",
           "token",
           "account"
         ],
@@ -4535,22 +4570,7 @@
             "description": "Title of the writing moment"
           },
           "contract": {
-            "type": "object",
-            "description": "Contract object. If address is provided, uses existing collection. If name and uri are provided, creates new collection.",
-            "properties": {
-              "address": {
-                "type": "string",
-                "description": "Optional: Address of existing collection (if provided, uses existing collection)"
-              },
-              "name": {
-                "type": "string",
-                "description": "Optional: Collection name (required if address is not provided)"
-              },
-              "uri": {
-                "type": "string",
-                "description": "Optional: Collection metadata URI (required if address is not provided)"
-              }
-            }
+            "$ref": "#/components/schemas/MomentContractInput"
           },
           "token": {
             "type": "object",
@@ -4593,6 +4613,11 @@
           "account": {
             "type": "string",
             "description": "Creator's address"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID (optional; defaults to Base mainnet in production and Base Sepolia in preview or development)",
+            "default": 8453
           }
         }
       },
