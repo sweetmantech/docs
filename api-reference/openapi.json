@@ -133,6 +133,65 @@
         }
       }
     },
+    "/moment/create-batch": {
+      "post": {
+        "summary": "Create Moments Batch",
+        "description": "Create multiple moments on an existing collection in a single onchain transaction. Provide `contract.address`.\n\nEach token can use its own `salesConfig`, `mintToCreatorCount`, `maxSupply`, and `payoutRecipient`. If `splits` are provided, the payout recipient is resolved to the split contract address for all tokens.",
+        "operationId": "createMomentBatch",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMomentBatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateMomentBatchResponse"
+                },
+                "example": {
+                  "contractAddress": "0xfd5b6abaeb35d5d14ebad9c047c2947de938791e",
+                  "hash": "0x49a71e96b5234eb15127c7de6446663fea1c13b91d18b5538108888ffca385cd",
+                  "chainId": 8453,
+                  "tokenIds": [
+                    "4",
+                    "5"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment/create/simulate": {
       "post": {
         "summary": "Create a Moment",
@@ -4385,6 +4444,84 @@
           }
         }
       },
+      "CreateMomentBatchRequest": {
+        "type": "object",
+        "required": [
+          "contract",
+          "tokens",
+          "account"
+        ],
+        "properties": {
+          "contract": {
+            "type": "object",
+            "required": [
+              "address"
+            ],
+            "description": "Existing collection to add moments to. Batch creation requires an existing collection address.",
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Address of the existing collection"
+              }
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Tokens to create on the existing collection. Tokens are created in order and returned as `tokenIds` in the same order.",
+            "items": {
+              "$ref": "#/components/schemas/CreateMomentBatchToken"
+            }
+          },
+          "splits": {
+            "type": "array",
+            "description": "Optional revenue splits configuration. Must have at least 2 recipients and sum to 100%",
+            "items": {
+              "$ref": "#/components/schemas/Split"
+            },
+            "minItems": 2
+          },
+          "account": {
+            "type": "string",
+            "description": "Creator's address"
+          }
+        }
+      },
+      "CreateMomentBatchToken": {
+        "type": "object",
+        "required": [
+          "tokenMetadataURI",
+          "createReferral",
+          "salesConfig",
+          "mintToCreatorCount"
+        ],
+        "properties": {
+          "tokenMetadataURI": {
+            "type": "string",
+            "description": "The URI pointing to the token's metadata (for example, an Arweave URI)"
+          },
+          "createReferral": {
+            "type": "string",
+            "description": "The address that will receive referral rewards for this moment creation"
+          },
+          "salesConfig": {
+            "$ref": "#/components/schemas/SalesConfig"
+          },
+          "mintToCreatorCount": {
+            "type": "number",
+            "description": "Number of tokens to mint to the creator upon creation (typically 1)"
+          },
+          "payoutRecipient": {
+            "type": "string",
+            "description": "Optional address that will receive sale proceeds. If splits are configured, this will be automatically set to the splits contract address"
+          },
+          "maxSupply": {
+            "type": "integer",
+            "description": "Optional maximum number of tokens that can be minted. Must be an integer >= 1. If not provided, the token will be an open edition with unlimited supply",
+            "minimum": 1
+          }
+        }
+      },
       "CreateWritingMomentRequest": {
         "type": "object",
         "required": [
@@ -4483,6 +4620,36 @@
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          }
+        }
+      },
+      "CreateMomentBatchResponse": {
+        "type": "object",
+        "required": [
+          "contractAddress",
+          "hash",
+          "chainId",
+          "tokenIds"
+        ],
+        "properties": {
+          "contractAddress": {
+            "type": "string",
+            "description": "The existing collection address"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash of the batch creation operation"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the transaction was executed"
+          },
+          "tokenIds": {
+            "type": "array",
+            "description": "Token IDs created by the batch transaction, returned in the same order as the request tokens",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
