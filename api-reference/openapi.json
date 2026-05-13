@@ -1973,6 +1973,78 @@
         }
       }
     },
+    "/artists/search": {
+      "get": {
+        "summary": "Search Artists",
+        "description": "Search for artists by username on the In\u2022Process protocol.",
+        "operationId": "searchArtists",
+        "security": [],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The username prefix to search for. Matching is case-insensitive and uses prefix matching (e.g. `mat` matches `matt`, `Matilda`).",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of artists to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchArtistsResponse"
+                },
+                "example": {
+                  "artists": [
+                    {
+                      "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                      "username": "matt"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request \u2014 invalid or missing query params",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Social Wallet",
@@ -6019,6 +6091,37 @@
           "address": {
             "type": "string",
             "description": "Artist wallet address associated with social wallet"
+          }
+        }
+      },
+      "SearchArtistsResponse": {
+        "type": "object",
+        "required": [
+          "artists"
+        ],
+        "properties": {
+          "artists": {
+            "type": "array",
+            "description": "Artists matching the search query, ordered by the database default.",
+            "items": {
+              "type": "object",
+              "required": [
+                "address",
+                "username"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "The artist's wallet address.",
+                  "pattern": "^0x[a-fA-F0-9]{40}$"
+                },
+                "username": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "The artist's username."
+                }
+              }
+            }
           }
         }
       },
