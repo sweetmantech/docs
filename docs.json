@@ -170,7 +170,8 @@
               "api-reference/artists/wallets/connect",
               "api-reference/artists/wallets/disconnect",
               "api-reference/artists/phones/connect",
-              "api-reference/artists/phones/disconnect"
+              "api-reference/artists/phones/disconnect",
+              "api-reference/artists/search"
             ]
           },
           {
