@@ -171,6 +171,7 @@
               "api-reference/artists/wallets/disconnect",
               "api-reference/artists/phones/connect",
               "api-reference/artists/phones/disconnect",
+              "api-reference/artists/active",
               "api-reference/artists/search"
             ]
           },
