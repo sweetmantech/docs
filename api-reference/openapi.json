@@ -81,6 +81,58 @@
             }
           }
         }
+      },
+      "patch": {
+        "summary": "Update Moment URI",
+        "description": "Update the URI (metadata) of an existing Moment on the In•Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\nOptionally provide `newCollectionAddress` to move the moment to a different In•Process 1155 contract. The new collection address must differ from the current moment collection address and must be a valid In•Process 1155 contract.\n\n**Note:** Only Moment admins can update the URI.",
+        "operationId": "updateMomentURI",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMomentURIRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateMomentURIResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/moment/create": {
@@ -468,60 +520,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RemovePermissionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TransactionResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/moment/update-uri": {
-      "post": {
-        "summary": "Update Moment URI",
-        "description": "Update the URI (metadata) of an existing Moment on the In\u2022Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\n**Note:** Only Moment admins can update the URI.",
-        "operationId": "updateMomentURI",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateMomentURIRequest"
               }
             }
           }
@@ -5167,6 +5165,38 @@
           "newUri": {
             "type": "string",
             "description": "New metadata URI (e.g., Arweave URI)"
+          },
+          "newCollectionAddress": {
+            "type": "string",
+            "description": "Optional new collection address to move the moment to. Must differ from the current moment collection address and must be a valid In•Process 1155 contract."
+          }
+        }
+      },
+      "UpdateMomentURIResponse": {
+        "type": "object",
+        "required": [
+          "hash",
+          "chainId",
+          "contractAddress",
+          "tokenId"
+        ],
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash of the update operation"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the transaction was executed",
+            "example": 8453
+          },
+          "contractAddress": {
+            "type": "string",
+            "description": "Contract address of the updated Moment (may differ from the original if newCollectionAddress was provided)"
+          },
+          "tokenId": {
+            "type": "string",
+            "description": "Token ID of the updated Moment"
           }
         }
       },
