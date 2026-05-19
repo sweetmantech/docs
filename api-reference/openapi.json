@@ -950,17 +950,21 @@
           }
         }
       },
-      "post": {
-        "summary": "Create a Collection",
-        "description": "Create a new Collection on the In•Process protocol. This endpoint allows artists to create a new collection contract onchain.\n\n**Note:** The collection is created onchain via a smart account transaction.",
-        "operationId": "createCollection",
-        "security": [],
+      "patch": {
+        "summary": "Update Collection Metadata",
+        "description": "Update the metadata (name and URI) of an existing Collection on the In•Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
+        "operationId": "updateCollectionURI",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCollectionRequest"
+                "$ref": "#/components/schemas/UpdateCollectionURIRequest"
               }
             }
           }
@@ -971,7 +975,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCollectionResponse"
+                  "$ref": "#/components/schemas/UpdateCollectionURIResponse"
                 }
               }
             }
@@ -997,24 +1001,18 @@
             }
           }
         }
-      }
-    },
-    "/collection/uri": {
+      },
       "post": {
-        "summary": "Update Collection Metadata",
-        "description": "Update the metadata (name and URI) of an existing Collection on the In\u2022Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
-        "operationId": "updateCollectionURI",
-        "security": [
-          {
-            "apiKeyAuth": []
-          }
-        ],
+        "summary": "Create a Collection",
+        "description": "Create a new Collection on the In•Process protocol. This endpoint allows artists to create a new collection contract onchain.\n\n**Note:** The collection is created onchain via a smart account transaction.",
+        "operationId": "createCollection",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateCollectionURIRequest"
+                "$ref": "#/components/schemas/CreateCollectionRequest"
               }
             }
           }
@@ -1025,7 +1023,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateCollectionURIResponse"
+                  "$ref": "#/components/schemas/CreateCollectionResponse"
                 }
               }
             }
