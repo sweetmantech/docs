@@ -2312,17 +2312,14 @@
         "summary": "Disconnect a Social Wallet",
         "description": "Disconnect a social wallet and an artist wallet on the In\u2022Process protocol.",
         "operationId": "disconnectSocialWallet",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DisconnectSocialWalletRequest"
-              }
-            }
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2337,8 +2334,8 @@
               }
             }
           },
-          "400": {
-            "description": "Bad request",
+          "401": {
+            "description": "Unauthorized \u2014 invalid or missing authentication",
             "content": {
               "application/json": {
                 "schema": {
@@ -6249,18 +6246,6 @@
           "success": {
             "type": "boolean",
             "description": "Indicates whether the operation was successful"
-          }
-        }
-      },
-      "DisconnectSocialWalletRequest": {
-        "type": "object",
-        "required": [
-          "social_wallet"
-        ],
-        "properties": {
-          "social_wallet": {
-            "type": "string",
-            "description": "The social wallet address to disconnect"
           }
         }
       },
