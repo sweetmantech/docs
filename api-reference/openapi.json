@@ -2357,21 +2357,15 @@
         }
       },
       "get": {
-        "summary": "Get an Artist Wallet",
-        "description": "Get an artist wallet associated with a social wallet on the In\u2022Process protocol.",
+        "summary": "Get Artist Wallets",
+        "description": "Get the artist wallet and social wallet associated with the authenticated user on the In\u2022Process protocol.",
         "operationId": "getArtistWallet",
-        "security": [],
-        "parameters": [
+        "security": [
           {
-            "name": "social_wallet",
-            "in": "query",
-            "description": "The address of a social wallet",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "bearerAuth": []
           }
         ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2381,13 +2375,14 @@
                   "$ref": "#/components/schemas/GetArtistWalletResponse"
                 },
                 "example": {
-                  "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
+                  "artist_wallet": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                  "social_wallet": "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12"
                 }
               }
             }
           },
-          "400": {
-            "description": "Bad request",
+          "401": {
+            "description": "Unauthorized \u2014 missing or invalid Bearer token",
             "content": {
               "application/json": {
                 "schema": {
@@ -6264,12 +6259,17 @@
       "GetArtistWalletResponse": {
         "type": "object",
         "required": [
-          "address"
+          "artist_wallet",
+          "social_wallet"
         ],
         "properties": {
-          "address": {
+          "artist_wallet": {
             "type": "string",
-            "description": "Artist wallet address associated with social wallet"
+            "description": "The artist (external) wallet address associated with the authenticated user"
+          },
+          "social_wallet": {
+            "type": "string",
+            "description": "The social wallet address of the authenticated user"
           }
         }
       },
