@@ -31,7 +31,7 @@ export const sendCode = async (email: string): Promise<void> => {
 export const loginWithOTP = async (
   email: string,
   code: string
-): Promise<string> => {
+): Promise<{ token: string; social_wallet: string }> => {
   const res = await fetch(`${IN_PROCESS_API}/oauth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -39,7 +39,7 @@ export const loginWithOTP = async (
   });
   if (!res.ok) throw new Error("Failed to login");
   const data = await res.json();
-  return data.token;
+  return { token: data.token, social_wallet: data.social_wallet };
 };
 ```
 
@@ -57,6 +57,7 @@ export const useInProcessAuth = () => {
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [token, setToken] = useState<string | null>(null);
+  const [socialWallet, setSocialWallet] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -77,8 +78,9 @@ export const useInProcessAuth = () => {
     setError(null);
     setLoading(true);
     try {
-      const jwt = await loginWithOTP(email, code);
+      const { token: jwt, social_wallet } = await loginWithOTP(email, code);
       setToken(jwt);
+      setSocialWallet(social_wallet);
       setStep("authenticated");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid code");
@@ -91,10 +93,11 @@ export const useInProcessAuth = () => {
     setStep("email");
     setEmail("");
     setToken(null);
+    setSocialWallet(null);
     setError(null);
   };
 
-  return { step, email, setEmail, token, error, loading, handleSendCode, handleLogin, reset };
+  return { step, email, setEmail, token, socialWallet, error, loading, handleSendCode, handleLogin, reset };
 };
 ```
 
@@ -173,7 +176,7 @@ export const SignInWithInProcess = () => {
 
 ## Using the Token
 
-After a successful login the JWT is available from `token`. Pass it as a `Bearer` header on authenticated In•Process API calls. For example, create an API key for the signed-in artist:
+After a successful login the JWT is available from `token` and the artist's Privy embedded wallet address is available from `socialWallet`. Pass the token as a `Bearer` header on authenticated In•Process API calls. For example, create an API key for the signed-in artist:
 
 ```typescript
 const res = await fetch("https://api.inprocess.world/api/artists/api-keys", {
@@ -212,7 +215,10 @@ The token expires in **1 hour**. Store it in memory or `sessionStorage` and call
 **Response**
 
 ```json
-{ "token": "<JWT_TOKEN>" }
+{
+  "token": "<JWT_TOKEN>",
+  "social_wallet": "<PRIVY_EMBEDDED_WALLET_ADDRESS>"
+}
 ```
 
 ## Next Steps
