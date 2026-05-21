@@ -3545,7 +3545,7 @@
     "/oauth/login": {
       "post": {
         "summary": "Login with OTP",
-        "description": "Authenticate an account using an email address and a one-time verification code (OTP).\n\n**Overview:**\n\nThis endpoint completes the email login flow. After receiving a verification code via the [Send Code](/api-reference/oauth/send-code) endpoint:\n\n1. Provide the same email address and the 6-digit code from the email.\n2. The code is verified against Privy's passwordless authentication.\n3. On success, a JWT auth token is returned. The token expires in 1 hour and should be included as a Bearer token in subsequent authenticated requests.",
+        "description": "Authenticate an account using an email address and a one-time verification code (OTP).\n\n**Overview:**\n\nThis endpoint completes the email login flow. After receiving a verification code via the [Send Code](/api-reference/oauth/send-code) endpoint:\n\n1. Provide the same email address and the 6-digit code from the email.\n2. The code is verified against Privy's passwordless authentication.\n3. On success, a JWT auth token and the associated Privy embedded wallet address (`social_wallet`) are returned. The token expires in 1 hour and should be included as a Bearer token in subsequent authenticated requests.",
         "operationId": "loginWithOtp",
         "security": [],
         "requestBody": {
@@ -3567,7 +3567,8 @@
                   "$ref": "#/components/schemas/LoginWithCodeResponse"
                 },
                 "example": {
-                  "token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  "token": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...",
+                  "social_wallet": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b"
                 }
               }
             }
@@ -6498,11 +6499,17 @@
       },
       "LoginWithCodeResponse": {
         "type": "object",
+        "required": ["token", "social_wallet"],
         "properties": {
           "token": {
             "type": "string",
             "description": "Authentication token (JWT) that expires in 1 hour",
             "example": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+          },
+          "social_wallet": {
+            "type": "string",
+            "description": "The Privy embedded wallet address associated with the authenticated account",
+            "example": "0x1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b"
           }
         }
       },
