@@ -938,30 +938,31 @@
         }
       }
     },
-    "/collection": {
+    "/collections/{network}/{contract}": {
       "get": {
         "summary": "Get Collection Info",
-        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, creator, admins, and timestamps.",
+        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, creator, admins, and timestamps.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**This is a public endpoint and does not require authentication.**",
         "operationId": "getCollectionInfo",
         "security": [],
         "parameters": [
           {
-            "name": "collectionAddress",
-            "in": "query",
-            "description": "The contract address of the Collection",
+            "name": "network",
+            "in": "path",
+            "description": "CAIP-2 chain reference in the format `eip155:{chainId}` (e.g. `eip155:8453` for Base mainnet)",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "eip155:8453"
             }
           },
           {
-            "name": "chainId",
-            "in": "query",
-            "description": "Chain ID of the collection (default: Base, 8453)",
-            "required": false,
+            "name": "contract",
+            "in": "path",
+            "description": "CAIP-style asset reference in the format `erc1155:{address}` (e.g. `erc1155:0xabc...`)",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "default": 8453
+              "type": "string",
+              "example": "erc1155:0x1234567890abcdef1234567890abcdef12345678"
             }
           }
         ],
@@ -977,7 +978,17 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request \u2014 invalid CAIP format, unsupported namespace, or invalid address",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Collection not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -997,7 +1008,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/collection": {
       "patch": {
         "summary": "Update Collection Metadata",
         "description": "Update the metadata (name and URI) of an existing Collection on the In•Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
@@ -1049,7 +1062,7 @@
             }
           }
         }
-      },
+      }
     },
     "/timeline": {
       "get": {
