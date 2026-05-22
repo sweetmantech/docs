@@ -890,16 +890,16 @@
         }
       },
       "post": {
-        "summary": "Create Collections",
-        "description": "Create one or more new Collection contracts onchain on the In•Process protocol. Each collection in the request body is deployed as a separate smart contract via a smart account transaction.\n\n**Note:** The collections are created onchain via a smart account transaction.",
-        "operationId": "createCollections",
+        "summary": "Create Collection",
+        "description": "Create a new Collection contract onchain on the In•Process protocol. The collection is deployed as a smart contract via a smart account transaction.\n\n**Note:** The collection is created onchain via a smart account transaction.",
+        "operationId": "createCollection",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCollectionsRequest"
+                "$ref": "#/components/schemas/CreateCollectionRequest"
               }
             }
           }
@@ -910,7 +910,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateCollectionsResponse"
+                  "$ref": "#/components/schemas/CreateCollectionResponse"
                 }
               }
             }
@@ -4283,55 +4283,47 @@
           }
         }
       },
-      "CreateCollectionsRequest": {
+      "CreateCollectionRequest": {
         "type": "object",
         "required": [
           "account",
-          "collections"
+          "collection"
         ],
         "properties": {
           "account": {
             "type": "string",
             "description": "Creator's wallet address"
           },
-          "collections": {
-            "type": "array",
-            "description": "List of collections to create. Must contain at least one item.",
-            "minItems": 1,
-            "items": {
-              "$ref": "#/components/schemas/CollectionItem"
-            }
+          "collection": {
+            "$ref": "#/components/schemas/CollectionItem",
+            "description": "The collection to create"
           },
           "chainId": {
             "type": "integer",
-            "description": "Chain ID where the collections will be created (default: Base, 8453)",
+            "description": "Chain ID where the collection will be created (default: Base, 8453)",
             "default": 8453
           }
         }
       },
-      "CreateCollectionsResponse": {
-        "type": "array",
-        "description": "List of results for each created collection, in the same order as the request",
-        "items": {
-          "type": "object",
-          "required": [
-            "contractAddress",
-            "hash",
-            "chainId"
-          ],
-          "properties": {
-            "contractAddress": {
-              "type": "string",
-              "description": "The address of the newly created Collection"
-            },
-            "hash": {
-              "type": "string",
-              "description": "Transaction hash of the creation operation"
-            },
-            "chainId": {
-              "type": "integer",
-              "description": "Chain ID where the transaction was executed"
-            }
+      "CreateCollectionResponse": {
+        "type": "object",
+        "required": [
+          "contractAddress",
+          "hash",
+          "chainId"
+        ],
+        "properties": {
+          "contractAddress": {
+            "type": "string",
+            "description": "The address of the newly created Collection"
+          },
+          "hash": {
+            "type": "string",
+            "description": "Transaction hash of the creation operation"
+          },
+          "chainId": {
+            "type": "integer",
+            "description": "Chain ID where the transaction was executed"
           }
         }
       },
