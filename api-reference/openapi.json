@@ -891,7 +891,7 @@
       },
       "post": {
         "summary": "Create Collection",
-        "description": "Create a new Collection contract onchain on the In•Process protocol. The collection is deployed as a smart contract via a smart account transaction.\n\n**Note:** The collection is created onchain via a smart account transaction.",
+        "description": "Create a new Collection on In•Process.",
         "operationId": "createCollection",
         "security": [],
         "requestBody": {
