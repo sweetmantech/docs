@@ -2371,11 +2371,14 @@
       },
       "get": {
         "summary": "Get Artist Wallets",
-        "description": "Get the artist wallet and social wallet associated with the authenticated user on the In\u2022Process protocol.",
+        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated account on the In\u2022Process protocol.",
         "operationId": "getArtistWallet",
         "security": [
           {
             "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
           }
         ],
         "parameters": [],
@@ -2389,7 +2392,10 @@
                 },
                 "example": {
                   "artist_wallet": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
-                  "social_wallet": "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12"
+                  "social_wallets": [
+                    "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12",
+                    "0x1234567890AbCdEf1234567890AbCdEf12345678"
+                  ]
                 }
               }
             }
@@ -6289,17 +6295,20 @@
       "GetArtistWalletResponse": {
         "type": "object",
         "required": [
-          "artist_wallet",
-          "social_wallet"
+          "social_wallets"
         ],
         "properties": {
           "artist_wallet": {
             "type": "string",
-            "description": "The artist (external) wallet address associated with the authenticated user"
+            "nullable": true,
+            "description": "The artist (external) wallet address associated with the authenticated account, or undefined if not connected"
           },
-          "social_wallet": {
-            "type": "string",
-            "description": "The social wallet address of the authenticated user"
+          "social_wallets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "All social wallet addresses associated with the authenticated account"
           }
         }
       },
