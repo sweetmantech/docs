@@ -2371,7 +2371,7 @@
       },
       "get": {
         "summary": "Get Artist Wallets",
-        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated artist on the In\u2022Process protocol.",
+        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated account on the In\u2022Process protocol.",
         "operationId": "getArtistWallet",
         "security": [
           {
@@ -6301,14 +6301,14 @@
           "artist_wallet": {
             "type": "string",
             "nullable": true,
-            "description": "The artist (external) wallet address associated with the authenticated artist, or undefined if not connected"
+            "description": "The artist (external) wallet address associated with the authenticated account, or undefined if not connected"
           },
           "social_wallets": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "All social wallet addresses associated with the authenticated artist"
+            "description": "All social wallet addresses associated with the authenticated account"
           }
         }
       },
