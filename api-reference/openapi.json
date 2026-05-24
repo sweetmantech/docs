@@ -6301,14 +6301,14 @@
           "artist_wallet": {
             "type": "string",
             "nullable": true,
-            "description": "The artist (external) wallet address associated with the authenticated user, or undefined if not connected"
+            "description": "The artist (external) wallet address associated with the authenticated artist, or undefined if not connected"
           },
           "social_wallets": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "description": "All social wallet addresses associated with the authenticated user"
+            "description": "All social wallet addresses associated with the authenticated artist"
           }
         }
       },
