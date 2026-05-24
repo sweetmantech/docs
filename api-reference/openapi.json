@@ -2371,7 +2371,7 @@
       },
       "get": {
         "summary": "Get Artist Wallets",
-        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated user on the In\u2022Process protocol.",
+        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated artist on the In\u2022Process protocol.",
         "operationId": "getArtistWallet",
         "security": [
           {
