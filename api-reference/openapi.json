@@ -2323,7 +2323,7 @@
       },
       "delete": {
         "summary": "Disconnect a Social Wallet",
-        "description": "Disconnect a social wallet and an artist wallet on the In\u2022Process protocol.",
+        "description": "Disconnects an external wallet from an In Process wallet. The API key used to disconnect will continue to work with the In Process wallet, but will no longer be authenticated with the external wallet.",
         "operationId": "disconnectSocialWallet",
         "security": [
           {
