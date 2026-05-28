@@ -84,7 +84,7 @@
       },
       "patch": {
         "summary": "Update Moment URI",
-        "description": "Update the URI (metadata) of an existing Moment on the In•Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\nOptionally provide `newCollectionAddress` to move the moment to a different In•Process 1155 contract. The new collection address must differ from the current moment collection address and must be a valid In•Process 1155 contract.\n\n**Note:** Only Moment admins can update the URI.",
+        "description": "Update the URI (metadata) of an existing Moment on the In\u2022Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\nOptionally provide `newCollectionAddress` to move the moment to a different In\u2022Process 1155 contract. The new collection address must differ from the current moment collection address and must be a valid In\u2022Process 1155 contract.\n\n**Note:** Only Moment admins can update the URI.",
         "operationId": "updateMomentURI",
         "security": [
           {
@@ -891,7 +891,7 @@
       },
       "post": {
         "summary": "Create Collection",
-        "description": "Create a new Collection on In•Process.",
+        "description": "Create a new Collection on In\u2022Process.",
         "operationId": "createCollection",
         "security": [],
         "requestBody": {
@@ -1008,16 +1008,36 @@
             }
           }
         }
-      }
-    },
-    "/collection": {
+      },
       "patch": {
         "summary": "Update Collection Metadata",
-        "description": "Update the metadata (name and URI) of an existing Collection on the In•Process protocol. This endpoint allows artists to update the collection name and metadata URI associated with their Collections.\n\n**Note:** Only Collection admins can update the metadata.",
+        "description": "Update the metadata (name and URI) of an existing Collection on the In\u2022Process protocol.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**Note:** Only Collection admins can update the metadata.",
         "operationId": "updateCollectionURI",
         "security": [
           {
             "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "network",
+            "in": "path",
+            "description": "CAIP-2 chain reference in the format `eip155:{chainId}` (e.g. `eip155:8453` for Base mainnet)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eip155:8453"
+            }
+          },
+          {
+            "name": "contract",
+            "in": "path",
+            "description": "CAIP-style asset reference in the format `erc1155:{address}` (e.g. `erc1155:0xabc...`)",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "erc1155:0x1234567890abcdef1234567890abcdef12345678"
+            }
           }
         ],
         "requestBody": {
@@ -1042,7 +1062,17 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request \u2014 invalid CAIP format, unsupported namespace, invalid address, or missing body fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized \u2014 missing or invalid API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -4435,28 +4465,10 @@
       "UpdateCollectionURIRequest": {
         "type": "object",
         "required": [
-          "collection",
           "newCollectionName",
           "newUri"
         ],
         "properties": {
-          "collection": {
-            "type": "object",
-            "required": [
-              "collectionAddress"
-            ],
-            "properties": {
-              "collectionAddress": {
-                "type": "string",
-                "description": "Contract address of the Collection"
-              },
-              "chainId": {
-                "type": "integer",
-                "description": "Chain ID (optional, default: Base 8453)",
-                "default": 8453
-              }
-            }
-          },
           "newCollectionName": {
             "type": "string",
             "description": "New name of the Collection"
@@ -5195,7 +5207,7 @@
           },
           "newCollectionAddress": {
             "type": "string",
-            "description": "Optional new collection address to move the moment to. Must differ from the current moment collection address and must be a valid In•Process 1155 contract."
+            "description": "Optional new collection address to move the moment to. Must differ from the current moment collection address and must be a valid In\u2022Process 1155 contract."
           }
         }
       },
@@ -6523,7 +6535,10 @@
       },
       "LoginWithCodeResponse": {
         "type": "object",
-        "required": ["token", "social_wallet"],
+        "required": [
+          "token",
+          "social_wallet"
+        ],
         "properties": {
           "token": {
             "type": "string",
