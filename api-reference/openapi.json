@@ -2271,9 +2271,9 @@
     },
     "/artists/wallets": {
       "post": {
-        "summary": "Connect a Social Wallet",
-        "description": "Link the authenticated social wallet to an artist (external) wallet on the In\u2022Process protocol.",
-        "operationId": "connectSocialWallet",
+        "summary": "Connect a Wallet",
+        "description": "Connect a wallet to the authenticated artist account on the In\u2022Process protocol using an EIP-191 signed message. The wallet address and client type (`farcaster` or `external`) are derived from the signed message.",
+        "operationId": "connectWallet",
         "security": [
           {
             "bearerAuth": []
@@ -2287,10 +2287,13 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConnectSocialWalletRequest"
+                "$ref": "#/components/schemas/ConnectWalletRequest"
               },
               "example": {
-                "artist_wallet": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
+                "walletProof": {
+                  "message": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264\nclient-type:external",
+                  "signature": "0xabc123...def456"
+                }
               }
             }
           }
@@ -2301,7 +2304,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConnectSocialWalletResponse"
+                  "$ref": "#/components/schemas/ConnectWalletResponse"
                 },
                 "example": {
                   "success": true
@@ -2310,7 +2313,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request \u2014 invalid message format, invalid signature, wallet already connected, or artist already has a wallet of that type",
             "content": {
               "application/json": {
                 "schema": {
@@ -2321,16 +2324,6 @@
           },
           "401": {
             "description": "Unauthorized \u2014 invalid or missing authentication",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden \u2014 `artist_wallet` is the same as the authenticated social wallet",
             "content": {
               "application/json": {
                 "schema": {
@@ -2401,37 +2394,45 @@
       },
       "get": {
         "summary": "Get Artist Wallets",
-        "description": "Get the artist wallet(external wallet) and social wallets associated with the authenticated account on the In\u2022Process protocol.",
-        "operationId": "getArtistWallet",
-        "security": [
+        "description": "Get all wallets associated with an artist on the In\u2022Process protocol. Returns each wallet's address and type.",
+        "operationId": "getArtistWallets",
+        "parameters": [
           {
-            "bearerAuth": []
-          },
-          {
-            "apiKeyAuth": []
+            "name": "artistId",
+            "in": "query",
+            "description": "The UUID of the artist whose wallets to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
-        "parameters": [],
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetArtistWalletResponse"
+                  "$ref": "#/components/schemas/GetArtistWalletsResponse"
                 },
                 "example": {
-                  "artist_wallet": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
-                  "social_wallets": [
-                    "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12",
-                    "0x1234567890AbCdEf1234567890AbCdEf12345678"
+                  "wallets": [
+                    {
+                      "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                      "type": "external"
+                    },
+                    {
+                      "address": "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12",
+                      "type": "farcaster"
+                    }
                   ]
                 }
               }
             }
           },
-          "401": {
-            "description": "Unauthorized \u2014 missing or invalid Bearer token",
+          "400": {
+            "description": "Bad request \u2014 invalid or missing `artistId` query parameter",
             "content": {
               "application/json": {
                 "schema": {
@@ -6267,20 +6268,34 @@
           }
         }
       },
-      "ConnectSocialWalletRequest": {
+      "ConnectWalletRequest": {
         "type": "object",
         "required": [
-          "artist_wallet"
+          "walletProof"
         ],
         "properties": {
-          "artist_wallet": {
-            "type": "string",
-            "description": "The artist (external) wallet address to connect. Must be a checksummed or lowercase `0x`-prefixed 40-hex-character EVM address. The social wallet is determined from the Privy Bearer token, not this field.",
-            "pattern": "^0x[a-fA-F0-9]{40}$"
+          "walletProof": {
+            "type": "object",
+            "required": [
+              "message",
+              "signature"
+            ],
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "A plain-text EIP-191 message containing the wallet address on the first line and the client type on the second line. Format: `{address}\\nclient-type:{clientType}` where `clientType` is `farcaster` or `external`.",
+                "example": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264\nclient-type:external"
+              },
+              "signature": {
+                "type": "string",
+                "description": "The EIP-191 hex signature of `message`, produced by the wallet being connected.",
+                "pattern": "^0x[a-fA-F0-9]+$"
+              }
+            }
           }
         }
       },
-      "ConnectSocialWalletResponse": {
+      "ConnectWalletResponse": {
         "type": "object",
         "required": [
           "success"
@@ -6304,23 +6319,34 @@
           }
         }
       },
-      "GetArtistWalletResponse": {
+      "GetArtistWalletsResponse": {
         "type": "object",
         "required": [
-          "social_wallets"
+          "wallets"
         ],
         "properties": {
-          "artist_wallet": {
-            "type": "string",
-            "nullable": true,
-            "description": "The artist (external) wallet address associated with the authenticated account, or undefined if not connected"
-          },
-          "social_wallets": {
+          "wallets": {
             "type": "array",
+            "description": "All wallets associated with the artist.",
             "items": {
-              "type": "string"
-            },
-            "description": "All social wallet addresses associated with the authenticated account"
+              "type": "object",
+              "required": [
+                "address",
+                "type"
+              ],
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "The wallet's `0x`-prefixed EVM address.",
+                  "pattern": "^0x[a-fA-F0-9]{40}$"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "The wallet type.",
+                  "enum": ["privy", "farcaster", "external", "smart"]
+                }
+              }
+            }
           }
         }
       },

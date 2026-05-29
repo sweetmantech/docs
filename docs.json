@@ -166,13 +166,18 @@
             "group": "Artists",
             "pages": [
               "api-reference/artists/api-keys/create",
-              "api-reference/artists/wallets/get",
-              "api-reference/artists/wallets/connect",
-              "api-reference/artists/wallets/disconnect",
               "api-reference/artists/phones/connect",
               "api-reference/artists/phones/disconnect",
               "api-reference/artists/active",
               "api-reference/artists/search"
+            ]
+          },
+          {
+            "group": "Wallets",
+            "pages": [
+              "api-reference/wallets/get",
+              "api-reference/wallets/connect",
+              "api-reference/wallets/disconnect"
             ]
           },
           {
