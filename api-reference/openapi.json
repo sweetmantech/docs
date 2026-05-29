@@ -2345,9 +2345,9 @@
         }
       },
       "delete": {
-        "summary": "Disconnect a Social Wallet",
-        "description": "Disconnects an external wallet from an In Process wallet. The API key used to disconnect will continue to work with the In Process wallet, but will no longer be authenticated with the external wallet.",
-        "operationId": "disconnectSocialWallet",
+        "summary": "Disconnect a Wallet",
+        "description": "Disconnect a specific wallet from the authenticated artist account.",
+        "operationId": "disconnectWallet",
         "security": [
           {
             "bearerAuth": []
@@ -2356,16 +2356,39 @@
             "apiKeyAuth": []
           }
         ],
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "description": "The `0x`-prefixed EVM address of the wallet to disconnect. Must be one of the authenticated artist's wallets.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            },
+            "example": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisconnectSocialWalletResponse"
+                  "$ref": "#/components/schemas/DisconnectWalletResponse"
                 },
                 "example": {
                   "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request \u2014 invalid address or wallet not found on the authenticated account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -6307,7 +6330,7 @@
           }
         }
       },
-      "DisconnectSocialWalletResponse": {
+      "DisconnectWalletResponse": {
         "type": "object",
         "required": [
           "success"
