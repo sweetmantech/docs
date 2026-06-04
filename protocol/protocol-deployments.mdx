@@ -8,6 +8,10 @@ Contract addresses for all supported networks. If you integrate **directly again
 
 Factory implementations that deploy/configure **ERC-1155 creator** collections compatible with Zora tooling.
 
+- **Ethereum (Mainnet):** Creator1155FactoryImpl `0x1037526fC2736Baf2C379B530450583eF241e35c`
+  - [View on Etherscan ↗](https://etherscan.io/address/0x1037526fC2736Baf2C379B530450583eF241e35c)
+  - [View on Thirdweb ↗](https://thirdweb.com/ethereum/0x1037526fC2736Baf2C379B530450583eF241e35c)
+
 - **Base (Mainnet):** Creator1155FactoryImpl `0x540C18B7f99b3b599c6FeB99964498931c211858`
   - [View on Etherscan ↗](https://basescan.org/address/0x540C18B7f99b3b599c6FeB99964498931c211858)
   - [View on Thirdweb ↗](https://thirdweb.com/base/0x540C18B7f99b3b599c6FeB99964498931c211858)
@@ -24,6 +28,7 @@ These deployments are stable entry points for building fixed-price ETH sales and
 
 | Network        | Chain ID | Address                                                                      |
 |----------------|----------|------------------------------------------------------------------------------|
+| Ethereum       | `1`      | [`0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a`](https://etherscan.io/address/0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a) |
 | Base           | `8453`   | [`0x2994762aA0E4C750c51f333C10d81961faEBE785`](https://basescan.org/address/0x2994762aA0E4C750c51f333C10d81961faEBE785) |
 | Base Sepolia   | `84532`  | [`0x2994762aA0E4C750c51f333C10d81961faEBE785`](https://sepolia.basescan.org/address/0x2994762aA0E4C750c51f333C10d81961faEBE785) |
 
@@ -31,6 +36,7 @@ These deployments are stable entry points for building fixed-price ETH sales and
 
 | Network        | Chain ID | Address                                                                      |
 |----------------|----------|------------------------------------------------------------------------------|
+| Ethereum       | `1`      | [`0x0676b307D53EA7ED80b20643E1Ac57A78Ce12f87`](https://etherscan.io/address/0x0676b307D53EA7ED80b20643E1Ac57A78Ce12f87) |
 | Base           | `8453`   | [`0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014`](https://basescan.org/address/0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014) |
 | Base Sepolia   | `84532`  | [`0x4538D7A07227D21597fb851A14057f00d15b4D5e`](https://sepolia.basescan.org/address/0x4538D7A07227D21597fb851A14057f00d15b4D5e) |
 
@@ -45,12 +51,14 @@ Copy into your project for lookups by chain ID:
 ```typescript
 /** Fixed-price sale strategy (In Process deployments). */
 export const FixedPriceSaleStrategyAddress = {
+  1: "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a",
   8453: "0x2994762aA0E4C750c51f333C10d81961faEBE785",
   84532: "0x2994762aA0E4C750c51f333C10d81961faEBE785",
 } as const;
 
 /** ERC-20 denominated minting minter addresses. */
 export const erc20MinterAddresses = {
+  1: "0x0676b307D53EA7ED80b20643E1Ac57A78Ce12f87",
   8453: "0xE27d9Dc88dAB82Ac3ebC49895c663C6a0CfA014",
   84532: "0x4538D7A07227D21597fb851A14057f00d15b4D5e",
 } as const;
