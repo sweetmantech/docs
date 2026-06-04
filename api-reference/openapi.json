@@ -398,6 +398,129 @@
         }
       }
     },
+    "/collectors": {
+      "get": {
+        "summary": "Get Collectors",
+        "description": "Retrieve collectors from the In•Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "getCollectors",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["day", "week", "month", "all"],
+              "default": "all"
+            },
+            "description": "Time period to aggregate stats over. Defaults to `all`."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Number of results per page. Defaults to `20`."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number (1-indexed). Defaults to `1`."
+          },
+          {
+            "name": "artist",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter stats to collectors of moments created by this artist address."
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["collected_count", "eth_spent", "usdc_spent"],
+              "default": "collected_count"
+            },
+            "description": "Field to sort results by. Defaults to `collected_count`."
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            },
+            "description": "Sort direction. Defaults to `desc`."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectorsStatsResponse"
+                },
+                "example": {
+                  "collectors": [
+                    {
+                      "collector": "0xcollector",
+                      "username": "alice",
+                      "collected_count": 5,
+                      "eth_spent": "0.01",
+                      "usdc_spent": "10"
+                    }
+                  ],
+                  "total_count": 1,
+                  "page": 1,
+                  "total_pages": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "collectors"
+        ]
+      }
+    },
     "/moment/airdrop": {
       "post": {
         "summary": "Airdrop a Moment",
@@ -6501,6 +6624,58 @@
           "key": {
             "type": "string",
             "description": "The generated API key for the artist"
+          }
+        }
+      },
+      "CollectorStats": {
+        "type": "object",
+        "required": ["collector", "collected_count", "eth_spent", "usdc_spent"],
+        "properties": {
+          "collector": {
+            "type": "string",
+            "description": "Collector wallet address"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Collector's username, if set"
+          },
+          "collected_count": {
+            "type": "integer",
+            "description": "Total number of moments collected"
+          },
+          "eth_spent": {
+            "type": "string",
+            "description": "Total ETH spent collecting moments"
+          },
+          "usdc_spent": {
+            "type": "string",
+            "description": "Total USDC spent collecting moments"
+          }
+        }
+      },
+      "CollectorsStatsResponse": {
+        "type": "object",
+        "required": ["collectors", "total_count", "page", "total_pages"],
+        "properties": {
+          "collectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectorStats"
+            },
+            "description": "List of collector stats"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of collectors matching the query"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages"
           }
         }
       },

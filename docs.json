@@ -86,7 +86,8 @@
           {
             "group": "Collecting",
             "pages": [
-              "api-reference/moment/collect"
+              "api-reference/moment/collect",
+              "api-reference/collectors/index"
             ]
           },
           {
