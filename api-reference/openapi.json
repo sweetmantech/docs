@@ -481,8 +481,9 @@
                 "example": {
                   "collectors": [
                     {
-                      "collector": "0xcollector",
+                      "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "alice",
+                      "wallets": [{ "address": "0xcollector", "type": "external" }],
                       "collected_count": 5,
                       "eth_spent": "0.01",
                       "usdc_spent": "10"
@@ -2284,17 +2285,17 @@
                   "$ref": "#/components/schemas/GetActiveArtistsResponse"
                 },
                 "example": {
-                  "data": [
+                  "artists": [
                     {
-                      "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                      "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "matt",
+                      "wallets": [{ "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264", "type": "farcaster" }],
                       "created_count": 12,
                       "airdropped_count": 3,
                       "telegram_count": 1,
                       "web_count": 8,
                       "api_count": 2,
-                      "sms_count": 1,
-                      "total_count": 100
+                      "sms_count": 1
                     }
                   ],
                   "total_count": 100,
@@ -2456,8 +2457,9 @@
                 "example": {
                   "artists": [
                     {
-                      "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                      "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "matt",
+                      "wallets": [{ "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264", "type": "farcaster" }],
                       "total_created_count": 42,
                       "total_collected_count": 130
                     }
@@ -6662,26 +6664,39 @@
       },
       "ActiveArtistStatsItem": {
         "type": "object",
-        "description": "Per-artist activity in the selected period. `total_count` repeats the total number of artists matching the filter (for pagination); it is the same on every row in `data`.",
+        "description": "Per-artist activity in the selected period.",
         "required": [
-          "address",
+          "artist_id",
           "username",
+          "wallets",
           "created_count",
           "airdropped_count",
           "telegram_count",
           "web_count",
           "api_count",
-          "sms_count",
-          "total_count"
+          "sms_count"
         ],
         "properties": {
-          "address": {
+          "artist_id": {
             "type": "string",
-            "description": "Artist wallet address."
+            "format": "uuid",
+            "description": "Artist identifier."
           },
           "username": {
             "type": "string",
             "description": "Artist username."
+          },
+          "wallets": {
+            "type": "array",
+            "description": "Wallet addresses associated with this artist.",
+            "items": {
+              "type": "object",
+              "required": ["address", "type"],
+              "properties": {
+                "address": { "type": "string" },
+                "type": { "type": "string" }
+              }
+            }
           },
           "created_count": {
             "type": "integer",
@@ -6713,23 +6728,18 @@
             "minimum": 0,
             "description": "Moments created via the `sms` channel in the period."
           },
-          "total_count": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total artists matching the query (same value on each item; use with `limit` and `page` for pagination)."
-          }
         }
       },
       "GetActiveArtistsResponse": {
         "type": "object",
         "required": [
-          "data",
+          "artists",
           "total_count",
           "page",
           "total_pages"
         ],
         "properties": {
-          "data": {
+          "artists": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ActiveArtistStatsItem"
@@ -6778,16 +6788,28 @@
       },
       "ArtistsCollectorsStatsItem": {
         "type": "object",
-        "required": ["address", "total_created_count", "total_collected_count"],
+        "required": ["artist_id", "username", "wallets", "total_created_count", "total_collected_count"],
         "properties": {
-          "address": {
+          "artist_id": {
             "type": "string",
-            "description": "Artist wallet address"
+            "format": "uuid",
+            "description": "Artist identifier."
           },
           "username": {
             "type": "string",
-            "nullable": true,
-            "description": "Artist's username, if set"
+            "description": "Artist username."
+          },
+          "wallets": {
+            "type": "array",
+            "description": "Wallet addresses associated with this artist.",
+            "items": {
+              "type": "object",
+              "required": ["address", "type"],
+              "properties": {
+                "address": { "type": "string" },
+                "type": { "type": "string" }
+              }
+            }
           },
           "total_created_count": {
             "type": "integer",
@@ -6826,16 +6848,29 @@
       },
       "CollectorStats": {
         "type": "object",
-        "required": ["collector", "collected_count", "eth_spent", "usdc_spent"],
+        "required": ["artist_id", "wallets", "collected_count", "eth_spent", "usdc_spent"],
         "properties": {
-          "collector": {
+          "artist_id": {
             "type": "string",
-            "description": "Collector wallet address"
+            "format": "uuid",
+            "description": "Artist identifier."
           },
           "username": {
             "type": "string",
             "nullable": true,
-            "description": "Collector's username, if set"
+            "description": "Collector's username, if set."
+          },
+          "wallets": {
+            "type": "array",
+            "description": "Wallet addresses associated with this collector.",
+            "items": {
+              "type": "object",
+              "required": ["address", "type"],
+              "properties": {
+                "address": { "type": "string" },
+                "type": { "type": "string" }
+              }
+            }
           },
           "collected_count": {
             "type": "integer",
