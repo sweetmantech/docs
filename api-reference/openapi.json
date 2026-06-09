@@ -2371,6 +2371,155 @@
         }
       }
     },
+    "/artists-collectors": {
+      "get": {
+        "summary": "Get Artists Collectors",
+        "description": "Returns artists who are both creators and collectors on the In•Process protocol. Supports filtering by artist and time period.",
+        "operationId": "getArtistsCollectorsStats",
+        "security": [],
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "description": "Restrict which moments are counted: approximately the last day, week, or month. `all` means no time limit.",
+            "schema": {
+              "type": "string",
+              "enum": ["day", "week", "month", "all"],
+              "default": "all"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Page size (1 to 100). Default 20.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "1-based page number. Default 1.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "artist",
+            "in": "query",
+            "required": false,
+            "description": "Filter by wallet address or username substring.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "description": "Metric to sort by.",
+            "schema": {
+              "type": "string",
+              "enum": ["total_created_count", "total_collected_count"],
+              "default": "total_created_count"
+            }
+          },
+          {
+            "name": "sort_order",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction.",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArtistsCollectorsStatsResponse"
+                },
+                "example": {
+                  "artists": [
+                    {
+                      "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                      "username": "matt",
+                      "total_created_count": 42,
+                      "total_collected_count": 130
+                    }
+                  ],
+                  "total_count": 1,
+                  "page": 1,
+                  "total_pages": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message", "errors"],
+                  "properties": {
+                    "message": { "type": "string" },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": ["field", "message"],
+                        "properties": {
+                          "field": { "type": "string" },
+                          "message": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Invalid input",
+                  "errors": [
+                    {
+                      "field": "limit",
+                      "message": "Number must be less than or equal to 100"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["message"],
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Wallet",
@@ -6624,6 +6773,54 @@
           "key": {
             "type": "string",
             "description": "The generated API key for the artist"
+          }
+        }
+      },
+      "ArtistsCollectorsStatsItem": {
+        "type": "object",
+        "required": ["address", "total_created_count", "total_collected_count"],
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Artist wallet address"
+          },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Artist's username, if set"
+          },
+          "total_created_count": {
+            "type": "integer",
+            "description": "Total number of moments created by this artist"
+          },
+          "total_collected_count": {
+            "type": "integer",
+            "description": "Total number of times this artist's moments have been collected"
+          }
+        }
+      },
+      "ArtistsCollectorsStatsResponse": {
+        "type": "object",
+        "required": ["artists", "total_count", "page", "total_pages"],
+        "properties": {
+          "artists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtistsCollectorsStatsItem"
+            },
+            "description": "List of artist collector stats"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of artists matching the query"
+          },
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages"
           }
         }
       },
