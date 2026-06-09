@@ -2371,7 +2371,7 @@
         }
       }
     },
-    "/artists-collectors": {
+    "/artists/collectors": {
       "get": {
         "summary": "Get Artists Collectors",
         "description": "Returns artists who are both creators and collectors on the In•Process protocol. Supports filtering by artist and time period.",
