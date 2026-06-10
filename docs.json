@@ -203,6 +203,12 @@
               "api-reference/arweave/upload",
               "api-reference/arweave/get-uploads"
             ]
+          },
+          {
+            "group": "Nouns",
+            "pages": [
+              "api-reference/nouns/create-proposal"
+            ]
           }
         ]
       }

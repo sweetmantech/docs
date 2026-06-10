@@ -4301,6 +4301,89 @@
           }
         }
       }
+    },
+    "/nouns": {
+      "post": {
+        "summary": "Create Nouns Proposal",
+        "description": "Build a Nouns governance proposal that mints a moment onchain via the Nouns Governor contract. The endpoint returns the raw transaction calldata ready to be submitted to the Nouns Governor, along with the proposal threshold required to submit.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
+        "operationId": "createNounsProposal",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNounsProposalRequest"
+              },
+              "example": {
+                "chainId": 1,
+                "account": "0xYourEthereumAddress",
+                "contract": {
+                  "name": "My Nouns Moment Collection",
+                  "uri": "ipfs://bafybeig..."
+                },
+                "tokens": [
+                  {
+                    "tokenMetadataURI": "ipfs://bafybeig...",
+                    "createReferral": "0x0000000000000000000000000000000000000000",
+                    "salesConfig": {
+                      "type": "ZoraTimedSaleStrategy",
+                      "pricePerToken": "0",
+                      "saleStart": "0",
+                      "saleEnd": "18446744073709551615"
+                    },
+                    "mintToCreatorCount": 1
+                  }
+                ],
+                "proposal": {
+                  "title": "Mint a Moment onchain via In•Process",
+                  "description": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response — raw transaction calldata for the Nouns Governor proposal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateNounsProposalResponse"
+                },
+                "example": {
+                  "transaction": {
+                    "to": "0x6f3e6272a167e8accb32072d08e0957f9c79223d",
+                    "data": "0x7d5e81e2...",
+                    "value": "0"
+                  },
+                  "proposalThreshold": 1
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — invalid input or missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6727,7 +6810,7 @@
             "type": "integer",
             "minimum": 0,
             "description": "Moments created via the `sms` channel in the period."
-          },
+          }
         }
       },
       "GetActiveArtistsResponse": {
@@ -7082,6 +7165,188 @@
             "type": "string",
             "description": "Arweave URI of the uploaded file.",
             "example": "ar://TV4yYVYJ7mwsDZ19h_YNQBtRbLVIr_WITsrBnHxxW30"
+          }
+        }
+      },
+      "NounsProposal": {
+        "type": "object",
+        "required": ["title", "description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Title of the Nouns governance proposal.",
+            "example": "Mint a Moment onchain via In•Process"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Full description body of the governance proposal (supports Markdown).",
+            "example": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
+          }
+        }
+      },
+      "CreateNounsProposalRequest": {
+        "type": "object",
+        "required": ["account", "contract", "tokens", "proposal"],
+        "properties": {
+          "chainId": {
+            "type": "integer",
+            "enum": [1, 11155111],
+            "default": 1,
+            "description": "Chain to target. `1` = Ethereum Mainnet, `11155111` = Sepolia testnet."
+          },
+          "account": {
+            "type": "string",
+            "description": "Ethereum address of the Nouns token holder submitting the proposal.",
+            "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+          },
+          "contract": {
+            "type": "object",
+            "description": "Target collection. Provide `address` for an existing collection, or `name` + `uri` to deploy a new one.",
+            "properties": {
+              "address": {
+                "type": "string",
+                "description": "Address of an existing collection contract.",
+                "example": "0xfd5b6abaeb35d5d14ebad9c047c2947de938791e"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name for a new collection to deploy.",
+                "example": "My Nouns Moment Collection"
+              },
+              "uri": {
+                "type": "string",
+                "description": "Metadata URI for a new collection to deploy.",
+                "example": "ipfs://bafybeig..."
+              }
+            }
+          },
+          "tokens": {
+            "type": "array",
+            "minItems": 1,
+            "description": "One or more tokens to mint as part of the proposal.",
+            "items": {
+              "type": "object",
+              "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
+              "properties": {
+                "tokenMetadataURI": {
+                  "type": "string",
+                  "description": "IPFS or Arweave URI pointing to the token metadata JSON.",
+                  "example": "ipfs://bafybeig..."
+                },
+                "createReferral": {
+                  "type": "string",
+                  "description": "Referral address for the token creator (use zero address if none).",
+                  "example": "0x0000000000000000000000000000000000000000"
+                },
+                "salesConfig": {
+                  "type": "object",
+                  "required": ["type", "pricePerToken", "saleStart", "saleEnd"],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Sale strategy type.",
+                      "example": "ZoraTimedSaleStrategy"
+                    },
+                    "pricePerToken": {
+                      "type": "string",
+                      "description": "Price per token in wei as a string.",
+                      "example": "0"
+                    },
+                    "saleStart": {
+                      "type": "string",
+                      "description": "Unix timestamp for sale start as a string. Use `\"0\"` to start immediately.",
+                      "example": "0"
+                    },
+                    "saleEnd": {
+                      "type": "string",
+                      "description": "Unix timestamp for sale end as a string. Use `\"18446744073709551615\"` for no end.",
+                      "example": "18446744073709551615"
+                    },
+                    "currency": {
+                      "type": "string",
+                      "description": "ERC-20 currency address for the sale (optional, defaults to ETH).",
+                      "example": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+                    }
+                  }
+                },
+                "mintToCreatorCount": {
+                  "type": "integer",
+                  "description": "Number of tokens to mint to the creator on creation.",
+                  "example": 1
+                },
+                "payoutRecipient": {
+                  "type": "string",
+                  "description": "Address that receives sale proceeds. Defaults to the artist's smart wallet.",
+                  "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "maxSupply": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Maximum mintable supply. Omit for unlimited supply.",
+                  "example": 100
+                }
+              }
+            }
+          },
+          "splits": {
+            "type": "array",
+            "description": "Optional revenue split recipients. Must have at least 2 entries and total exactly 100%.",
+            "items": {
+              "type": "object",
+              "required": ["address", "percentAllocation"],
+              "properties": {
+                "address": {
+                  "type": "string",
+                  "description": "Recipient wallet address.",
+                  "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "percentAllocation": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 100,
+                  "description": "Percentage of proceeds allocated to this address.",
+                  "example": 50
+                }
+              }
+            }
+          },
+          "proposal": {
+            "$ref": "#/components/schemas/NounsProposal"
+          }
+        }
+      },
+      "CreateNounsProposalResponse": {
+        "type": "object",
+        "required": ["transaction", "proposalThreshold"],
+        "properties": {
+          "transaction": {
+            "type": "object",
+            "required": ["to", "data", "value"],
+            "description": "Raw transaction to submit to the Nouns Governor `propose()` function.",
+            "properties": {
+              "to": {
+                "type": "string",
+                "description": "Address of the Nouns Governor contract.",
+                "example": "0x6f3e6272a167e8accb32072d08e0957f9c79223d"
+              },
+              "data": {
+                "type": "string",
+                "description": "ABI-encoded calldata for `propose(address[],uint256[],bytes[],string)`.",
+                "example": "0x7d5e81e2..."
+              },
+              "value": {
+                "type": "string",
+                "description": "ETH value to send with the transaction (always `\"0\"`).",
+                "example": "0"
+              }
+            }
+          },
+          "proposalThreshold": {
+            "type": "integer",
+            "description": "Minimum number of Nouns votes required to submit a proposal.",
+            "example": 1
           }
         }
       }
