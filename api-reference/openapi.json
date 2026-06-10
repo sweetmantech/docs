@@ -4305,7 +4305,7 @@
     "/nouns": {
       "post": {
         "summary": "Create Nouns Proposal",
-        "description": "Build a Nouns governance proposal that mints a moment onchain via the Nouns Governor contract. The endpoint returns the raw transaction calldata ready to be submitted to the Nouns Governor, along with the proposer's current vote count and the proposal threshold required to submit.\n\nThe caller must hold enough Nouns votes (`currentProposerVotes >= proposalThreshold`) to submit the proposal onchain.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
+        "description": "Build a Nouns governance proposal that mints a moment onchain via the Nouns Governor contract. The endpoint returns the raw transaction calldata ready to be submitted to the Nouns Governor, along with the proposal threshold required to submit.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
         "operationId": "createNounsProposal",
         "security": [],
         "requestBody": {
