@@ -4304,16 +4304,16 @@
     },
     "/nouns": {
       "post": {
-        "summary": "Create Nouns Proposal",
-        "description": "Build a Nouns governance proposal that mints a moment onchain via the Nouns Governor contract. The endpoint returns the raw transaction calldata ready to be submitted to the Nouns Governor, along with the proposal threshold required to submit.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
-        "operationId": "createNounsProposal",
+        "summary": "Get Moment Creation Proposal Action",
+        "description": "Get the onchain moment creation proposal action for a Nouns governance proposal.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
+        "operationId": "getMomentCreationProposalAction",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateNounsProposalRequest"
+                "$ref": "#/components/schemas/GetMomentCreationProposalActionRequest"
               },
               "example": {
                 "chainId": 1,
@@ -4334,30 +4334,25 @@
                     },
                     "mintToCreatorCount": 1
                   }
-                ],
-                "proposal": {
-                  "title": "Mint a Moment onchain via In•Process",
-                  "description": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
-                }
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successful response — raw transaction calldata for the Nouns Governor proposal",
+            "description": "Successful response — moment creation proposal action",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateNounsProposalResponse"
+                  "$ref": "#/components/schemas/GetMomentCreationProposalActionResponse"
                 },
                 "example": {
-                  "transaction": {
-                    "to": "0x6f3e6272a167e8accb32072d08e0957f9c79223d",
-                    "data": "0x7d5e81e2...",
+                  "action": {
+                    "target": "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a",
+                    "calldata": "0x7d5e81e2...",
                     "value": "0"
-                  },
-                  "proposalThreshold": 1
+                  }
                 }
               }
             }
@@ -7168,27 +7163,9 @@
           }
         }
       },
-      "NounsProposal": {
+      "GetMomentCreationProposalActionRequest": {
         "type": "object",
-        "required": ["title", "description"],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Title of the Nouns governance proposal.",
-            "example": "Mint a Moment onchain via In•Process"
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Full description body of the governance proposal (supports Markdown).",
-            "example": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
-          }
-        }
-      },
-      "CreateNounsProposalRequest": {
-        "type": "object",
-        "required": ["account", "contract", "tokens", "proposal"],
+        "required": ["account", "contract", "tokens"],
         "properties": {
           "chainId": {
             "type": "integer",
@@ -7198,7 +7175,7 @@
           },
           "account": {
             "type": "string",
-            "description": "Ethereum address of the Nouns token holder submitting the proposal.",
+            "description": "Ethereum address of the artist whose smart wallet receives mint/payout configuration in the batch.",
             "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
           },
           "contract": {
@@ -7225,7 +7202,7 @@
           "tokens": {
             "type": "array",
             "minItems": 1,
-            "description": "One or more tokens to mint as part of the proposal.",
+            "description": "One or more tokens to include in the moment creation proposal action.",
             "items": {
               "type": "object",
               "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
@@ -7311,42 +7288,34 @@
                 }
               }
             }
-          },
-          "proposal": {
-            "$ref": "#/components/schemas/NounsProposal"
           }
         }
       },
-      "CreateNounsProposalResponse": {
+      "GetMomentCreationProposalActionResponse": {
         "type": "object",
-        "required": ["transaction", "proposalThreshold"],
+        "required": ["action"],
         "properties": {
-          "transaction": {
+          "action": {
             "type": "object",
-            "required": ["to", "data", "value"],
-            "description": "Raw transaction to submit to the Nouns Governor `propose()` function.",
+            "required": ["target", "calldata", "value"],
+            "description": "Onchain moment creation proposal action for a Nouns governance proposal.",
             "properties": {
-              "to": {
+              "target": {
                 "type": "string",
-                "description": "Address of the Nouns Governor contract.",
-                "example": "0x6f3e6272a167e8accb32072d08e0957f9c79223d"
+                "description": "Contract address for the moment creation call.",
+                "example": "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"
               },
-              "data": {
+              "calldata": {
                 "type": "string",
-                "description": "ABI-encoded calldata for `propose(address[],uint256[],bytes[],string)`.",
+                "description": "ABI-encoded calldata for moment/collection creation (e.g. `createContract` + token setup).",
                 "example": "0x7d5e81e2..."
               },
               "value": {
                 "type": "string",
-                "description": "ETH value to send with the transaction (always `\"0\"`).",
+                "description": "ETH value for the moment creation call (always `\"0\"`).",
                 "example": "0"
               }
             }
-          },
-          "proposalThreshold": {
-            "type": "integer",
-            "description": "Minimum number of Nouns votes required to submit a proposal.",
-            "example": 1
           }
         }
       }
