@@ -4304,16 +4304,16 @@
     },
     "/nouns": {
       "post": {
-        "summary": "Build Nouns Proposal Action",
-        "description": "Build the Timelock execution payload for a Nouns governance proposal that mints a moment via the In•Process Factory. This endpoint does **not** create an onchain proposal — it returns the action (`target`, `calldata`, `value`) that the client wraps in Nouns Governor `propose(targets, values, signatures, calldatas, description)` and submits from the proposer's wallet.\n\nProposal eligibility (`getPriorVotes` vs `proposalThreshold`) and proposal title/description are handled on the client.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
-        "operationId": "buildNounsProposalAction",
+        "summary": "Get Moment Creation Proposal Action",
+        "description": "Get the onchain moment creation proposal action for a Nouns governance proposal.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
+        "operationId": "getMomentCreationProposalAction",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BuildNounsProposalActionRequest"
+                "$ref": "#/components/schemas/GetMomentCreationProposalActionRequest"
               },
               "example": {
                 "chainId": 1,
@@ -4341,11 +4341,11 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response — Factory execution action for the proposal",
+            "description": "Successful response — moment creation proposal action",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BuildNounsProposalActionResponse"
+                  "$ref": "#/components/schemas/GetMomentCreationProposalActionResponse"
                 },
                 "example": {
                   "action": {
@@ -7163,7 +7163,7 @@
           }
         }
       },
-      "BuildNounsProposalActionRequest": {
+      "GetMomentCreationProposalActionRequest": {
         "type": "object",
         "required": ["account", "contract", "tokens"],
         "properties": {
@@ -7202,7 +7202,7 @@
           "tokens": {
             "type": "array",
             "minItems": 1,
-            "description": "One or more tokens to include in the Factory batch executed if the proposal passes.",
+            "description": "One or more tokens to include in the moment creation proposal action.",
             "items": {
               "type": "object",
               "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
@@ -7291,28 +7291,28 @@
           }
         }
       },
-      "BuildNounsProposalActionResponse": {
+      "GetMomentCreationProposalActionResponse": {
         "type": "object",
         "required": ["action"],
         "properties": {
           "action": {
             "type": "object",
             "required": ["target", "calldata", "value"],
-            "description": "Timelock execution payload. If the proposal passes, the Nouns Executor calls `target` with `calldata` and `value`. The client must wrap this in Governor `propose([target], [value], [\"\"], [calldata], description)`.",
+            "description": "Onchain moment creation proposal action for a Nouns governance proposal.",
             "properties": {
               "target": {
                 "type": "string",
-                "description": "Address of the In•Process Factory contract.",
+                "description": "Contract address for the moment creation call.",
                 "example": "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"
               },
               "calldata": {
                 "type": "string",
-                "description": "ABI-encoded Factory batch calldata (e.g. `createContract` + token setup).",
+                "description": "ABI-encoded calldata for moment/collection creation (e.g. `createContract` + token setup).",
                 "example": "0x7d5e81e2..."
               },
               "value": {
                 "type": "string",
-                "description": "ETH value for the execution action (always `\"0\"`).",
+                "description": "ETH value for the moment creation call (always `\"0\"`).",
                 "example": "0"
               }
             }

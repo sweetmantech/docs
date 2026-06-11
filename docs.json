@@ -207,7 +207,7 @@
           {
             "group": "Nouns",
             "pages": [
-              "api-reference/nouns/build-proposal-action"
+              "api-reference/nouns/get-moment-creation-proposal-action"
             ]
           }
         ]
