@@ -4304,16 +4304,16 @@
     },
     "/nouns": {
       "post": {
-        "summary": "Create Nouns Proposal",
-        "description": "Build a Nouns governance proposal that mints a moment onchain via the Nouns Governor contract. The endpoint returns the raw transaction calldata ready to be submitted to the Nouns Governor, along with the proposal threshold required to submit.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
-        "operationId": "createNounsProposal",
+        "summary": "Build Nouns Proposal Action",
+        "description": "Build the Timelock execution payload for a Nouns governance proposal that mints a moment via the In•Process Factory. This endpoint does **not** create an onchain proposal — it returns the action (`target`, `calldata`, `value`) that the client wraps in Nouns Governor `propose(targets, values, signatures, calldatas, description)` and submits from the proposer's wallet.\n\nProposal eligibility (`getPriorVotes` vs `proposalThreshold`) and proposal title/description are handled on the client.\n\n**Supported chains:** Ethereum Mainnet (chainId `1`) and Sepolia testnet (chainId `11155111`).",
+        "operationId": "buildNounsProposalAction",
         "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateNounsProposalRequest"
+                "$ref": "#/components/schemas/BuildNounsProposalActionRequest"
               },
               "example": {
                 "chainId": 1,
@@ -4334,30 +4334,25 @@
                     },
                     "mintToCreatorCount": 1
                   }
-                ],
-                "proposal": {
-                  "title": "Mint a Moment onchain via In•Process",
-                  "description": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
-                }
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successful response — raw transaction calldata for the Nouns Governor proposal",
+            "description": "Successful response — Factory execution action for the proposal",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateNounsProposalResponse"
+                  "$ref": "#/components/schemas/BuildNounsProposalActionResponse"
                 },
                 "example": {
-                  "transaction": {
-                    "to": "0x6f3e6272a167e8accb32072d08e0957f9c79223d",
-                    "data": "0x7d5e81e2...",
+                  "action": {
+                    "target": "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a",
+                    "calldata": "0x7d5e81e2...",
                     "value": "0"
-                  },
-                  "proposalThreshold": 1
+                  }
                 }
               }
             }
@@ -7168,27 +7163,9 @@
           }
         }
       },
-      "NounsProposal": {
+      "BuildNounsProposalActionRequest": {
         "type": "object",
-        "required": ["title", "description"],
-        "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Title of the Nouns governance proposal.",
-            "example": "Mint a Moment onchain via In•Process"
-          },
-          "description": {
-            "type": "string",
-            "minLength": 1,
-            "description": "Full description body of the governance proposal (supports Markdown).",
-            "example": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
-          }
-        }
-      },
-      "CreateNounsProposalRequest": {
-        "type": "object",
-        "required": ["account", "contract", "tokens", "proposal"],
+        "required": ["account", "contract", "tokens"],
         "properties": {
           "chainId": {
             "type": "integer",
@@ -7198,7 +7175,7 @@
           },
           "account": {
             "type": "string",
-            "description": "Ethereum address of the Nouns token holder submitting the proposal.",
+            "description": "Ethereum address of the artist whose smart wallet receives mint/payout configuration in the batch.",
             "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
           },
           "contract": {
@@ -7225,7 +7202,7 @@
           "tokens": {
             "type": "array",
             "minItems": 1,
-            "description": "One or more tokens to mint as part of the proposal.",
+            "description": "One or more tokens to include in the Factory batch executed if the proposal passes.",
             "items": {
               "type": "object",
               "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
@@ -7311,42 +7288,34 @@
                 }
               }
             }
-          },
-          "proposal": {
-            "$ref": "#/components/schemas/NounsProposal"
           }
         }
       },
-      "CreateNounsProposalResponse": {
+      "BuildNounsProposalActionResponse": {
         "type": "object",
-        "required": ["transaction", "proposalThreshold"],
+        "required": ["action"],
         "properties": {
-          "transaction": {
+          "action": {
             "type": "object",
-            "required": ["to", "data", "value"],
-            "description": "Raw transaction to submit to the Nouns Governor `propose()` function.",
+            "required": ["target", "calldata", "value"],
+            "description": "Timelock execution payload. If the proposal passes, the Nouns Executor calls `target` with `calldata` and `value`. The client must wrap this in Governor `propose([target], [value], [\"\"], [calldata], description)`.",
             "properties": {
-              "to": {
+              "target": {
                 "type": "string",
-                "description": "Address of the Nouns Governor contract.",
-                "example": "0x6f3e6272a167e8accb32072d08e0957f9c79223d"
+                "description": "Address of the In•Process Factory contract.",
+                "example": "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"
               },
-              "data": {
+              "calldata": {
                 "type": "string",
-                "description": "ABI-encoded calldata for `propose(address[],uint256[],bytes[],string)`.",
+                "description": "ABI-encoded Factory batch calldata (e.g. `createContract` + token setup).",
                 "example": "0x7d5e81e2..."
               },
               "value": {
                 "type": "string",
-                "description": "ETH value to send with the transaction (always `\"0\"`).",
+                "description": "ETH value for the execution action (always `\"0\"`).",
                 "example": "0"
               }
             }
-          },
-          "proposalThreshold": {
-            "type": "integer",
-            "description": "Minimum number of Nouns votes required to submit a proposal.",
-            "example": 1
           }
         }
       }
