@@ -2885,15 +2885,25 @@
     "/smartwallet": {
       "get": {
         "summary": "Get Smart Wallet",
-        "description": "Get a smart wallet connected to an artist wallet on the In•Process protocol. This endpoint retrieves the smart wallet address associated with a given artist wallet address.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Get a smart wallet on the In•Process protocol. Provide either `accountId` (artist UUID) or `walletAddress` (EOA address) — at least one is required. When both are supplied, `accountId` takes precedence.",
         "operationId": "getSmartWallet",
         "security": [],
         "parameters": [
           {
-            "name": "artist_wallet",
+            "name": "accountId",
             "in": "query",
-            "description": "The artist wallet address to get a smart wallet for",
-            "required": true,
+            "description": "The UUID of the artist. When provided, resolves the artist's smart wallet via `getArtistSmartAccount`.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "walletAddress",
+            "in": "query",
+            "description": "An EOA wallet address. When provided (and `accountId` is absent), resolves the smart wallet via `getWalletSmartAccount`.",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -2914,7 +2924,7 @@
             }
           },
           "400": {
-            "description": "Bad request",
+            "description": "Bad request — neither `accountId` nor `walletAddress` was provided",
             "content": {
               "application/json": {
                 "schema": {
