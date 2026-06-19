@@ -4961,8 +4961,9 @@
         "required": [
           "uri",
           "owner",
-          "saleConfig",
-          "momentAdmins",
+          "sale",
+          "admins",
+          "soldOut",
           "protocol"
         ],
         "properties": {
@@ -4974,10 +4975,14 @@
             "type": "string",
             "description": "Current owner address of the moment"
           },
-          "saleConfig": {
+          "sale": {
             "$ref": "#/components/schemas/SalesConfig"
           },
-          "momentAdmins": {
+          "soldOut": {
+            "type": "boolean",
+            "description": "True if the token's max supply has been fully minted"
+          },
+          "admins": {
             "type": "array",
             "description": "Array of addresses with admin permissions",
             "items": {
