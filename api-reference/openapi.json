@@ -1288,18 +1288,13 @@
                       "uri": "ar://1wMmKuaz-VdxmruOQJuYS-3nfU3zlNKmPNpc79Ou-qM",
                       "creator": {
                         "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                        "hidden": false
+                        "username": "artist"
                       },
                       "admins": [
-                        {
-                          "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
-                          "hidden": false
-                        },
-                        {
-                          "address": "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33",
-                          "hidden": true
-                        }
+                        "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+                        "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33"
                       ],
+                      "hidden": [],
                       "created_at": "2025-06-07T20:41:35+00:00",
                       "protocol": "in_process"
                     }
@@ -4439,6 +4434,7 @@
           "uri",
           "creator",
           "admins",
+          "hidden",
           "created_at",
           "protocol"
         ],
@@ -4469,9 +4465,17 @@
           },
           "admins": {
             "type": "array",
-            "description": "Array of currently active admin objects. The creator appears here only if they still have admin permissions.",
+            "description": "Array of admin wallet addresses. The creator appears here only if they still have admin permissions.",
             "items": {
-              "$ref": "#/components/schemas/Admin"
+              "type": "string"
+            }
+          },
+          "hidden": {
+            "type": "array",
+            "description": "Array of artist UUIDs who have hidden this moment from their timeline",
+            "items": {
+              "type": "string",
+              "format": "uuid"
             }
           },
           "created_at": {
@@ -4493,36 +4497,17 @@
       "DefaultAdmin": {
         "type": "object",
         "required": [
-          "address",
-          "hidden"
+          "address"
         ],
-        "description": "The original admin set at collection creation (always present, preserves historical record)",
+        "description": "The original creator of the moment",
         "properties": {
           "address": {
             "type": "string",
-            "description": "Address of the original creator"
+            "description": "Wallet address of the creator"
           },
-          "hidden": {
-            "type": "boolean",
-            "description": "Whether the moment is hidden by the creator"
-          }
-        }
-      },
-      "Admin": {
-        "type": "object",
-        "required": [
-          "address",
-          "hidden"
-        ],
-        "description": "Currently active admin",
-        "properties": {
-          "address": {
+          "username": {
             "type": "string",
-            "description": "Admin artist address"
-          },
-          "hidden": {
-            "type": "boolean",
-            "description": "Whether the moment is hidden by this admin"
+            "description": "Username of the creator"
           }
         }
       },
