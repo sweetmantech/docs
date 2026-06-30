@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "In•Process API",
-    "description": "The In•Process API enables browsing and managing moments from timelines. Retrieve moments from a specific artist's timeline, browse the in•process collective timeline, or filter by collection. The API supports creating moments, managing collections, handling payments, and interacting with the In•Process protocol ecosystem.",
+    "title": "In\u2022Process API",
+    "description": "The In\u2022Process API enables browsing and managing moments from timelines. Retrieve moments from a specific artist's timeline, browse the in\u2022process collective timeline, or filter by collection. The API supports creating moments, managing collections, handling payments, and interacting with the In\u2022Process protocol ecosystem.",
     "version": "1.0.0"
   },
   "servers": [
@@ -15,7 +15,7 @@
     "/moment": {
       "get": {
         "summary": "Get Moment Info",
-        "description": "Retrieve detailed information about a Moment on the In•Process protocol, including onchain moment data, sales configuration, metadata, and moment admins.",
+        "description": "Retrieve detailed information about a Moment on the In\u2022Process protocol, including onchain moment data, sales configuration, metadata, and moment admins.",
         "operationId": "getMomentInfo",
         "security": [],
         "parameters": [
@@ -84,7 +84,7 @@
       },
       "patch": {
         "summary": "Update Moment URI",
-        "description": "Update the URI (metadata) of an existing Moment on the In•Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\nOptionally provide `newCollectionAddress` to move the moment to a different In•Process 1155 contract. The new collection address must differ from the current moment collection address and must be a valid In•Process 1155 contract.\n\n**Note:** Only Moment admins can update the URI.",
+        "description": "Update the URI (metadata) of an existing Moment on the In\u2022Process protocol. This endpoint allows artists to update the metadata URI associated with their Moments.\n\nOptionally provide `newCollectionAddress` to move the moment to a different In\u2022Process 1155 contract. The new collection address must differ from the current moment collection address and must be a valid In\u2022Process 1155 contract.\n\n**Note:** Only Moment admins can update the URI.",
         "operationId": "updateMomentURI",
         "security": [
           {
@@ -138,7 +138,7 @@
     "/moment/create": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Create a new Moment on the In•Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).\n\n> **Simulate first:** Use [POST /moment/create/simulate](/api-reference/moment/simulate) to validate inputs and estimate gas before submitting a real transaction.",
+        "description": "Create a new Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).\n\n> **Simulate first:** Use [POST /moment/create/simulate](/api-reference/moment/simulate) to validate inputs and estimate gas before submitting a real transaction.",
         "operationId": "createMoment",
         "security": [],
         "requestBody": {
@@ -247,7 +247,7 @@
     "/moment/create/simulate": {
       "post": {
         "summary": "Create a Moment",
-        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** — validates contract-level logic (no gas spent)\n2. **UserOperation preparation** — validates at AA/paymaster level (no broadcast)\n\nUses the same request body schema as `POST /moment/create`.\n\n> **Ready to create?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
+        "description": "Simulate a moment creation without submitting an onchain transaction. Useful for validating inputs and estimating gas before committing.\n\nThis endpoint performs two validation steps:\n1. **Contract simulation** \u2014 validates contract-level logic (no gas spent)\n2. **UserOperation preparation** \u2014 validates at AA/paymaster level (no broadcast)\n\nUses the same request body schema as `POST /moment/create`.\n\n> **Ready to create?** Use [POST /moment/create](/api-reference/moment/create) to broadcast the real transaction.",
         "operationId": "simulateCreateMoment",
         "security": [],
         "requestBody": {
@@ -297,7 +297,7 @@
     "/moment/create/writing": {
       "post": {
         "summary": "Create a Writing Moment",
-        "description": "Create a new Writing Moment on the In•Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).",
+        "description": "Create a new Writing Moment on the In\u2022Process protocol. No signature is required for this endpoint.\n\nThe API uses a unified `contract` object that supports both creating writing moments on existing collections and creating new collections:\n- **Use existing collection**: Provide `contract.address` to add a writing moment to a collection you've already created\n- **Create new collection**: Provide `contract.name` and `contract.uri` to create both a new collection and its first writing moment in a single request\n\nOptional: `chainId` (defaults to Base mainnet in production, Base Sepolia in preview or development).",
         "operationId": "createWritingMoment",
         "security": [],
         "requestBody": {
@@ -347,7 +347,7 @@
     "/moment/collect": {
       "post": {
         "summary": "Collect a Moment",
-        "description": "Collect a Moment on the In•Process protocol. This endpoint allows users to collect moments with an optional comment.",
+        "description": "Collect a Moment on the In\u2022Process protocol. This endpoint allows users to collect moments with an optional comment.",
         "operationId": "collectMoment",
         "security": [
           {
@@ -401,7 +401,7 @@
     "/collectors": {
       "get": {
         "summary": "Get Collectors",
-        "description": "Retrieve collectors from the In•Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Retrieve collectors from the In\u2022Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\n**This is a public endpoint and does not require authentication.**",
         "operationId": "getCollectors",
         "parameters": [
           {
@@ -410,7 +410,12 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["day", "week", "month", "all"],
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ],
               "default": "all"
             },
             "description": "Time period to aggregate stats over. Defaults to `all`."
@@ -453,7 +458,11 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["collected_count", "eth_spent", "usdc_spent"],
+              "enum": [
+                "collected_count",
+                "eth_spent",
+                "usdc_spent"
+              ],
               "default": "collected_count"
             },
             "description": "Field to sort results by. Defaults to `collected_count`."
@@ -464,7 +473,10 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             },
             "description": "Sort direction. Defaults to `desc`."
@@ -483,7 +495,12 @@
                     {
                       "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "alice",
-                      "wallets": [{ "address": "0xcollector", "type": "external" }],
+                      "wallets": [
+                        {
+                          "address": "0xcollector",
+                          "type": "external"
+                        }
+                      ],
                       "collected_count": 5,
                       "eth_spent": "0.01",
                       "usdc_spent": "10"
@@ -525,7 +542,7 @@
     "/moment/airdrop": {
       "post": {
         "summary": "Airdrop a Moment",
-        "description": "Airdrop a Moment on the In•Process protocol. This endpoint allows artists to distribute moments to multiple recipients.",
+        "description": "Airdrop a Moment on the In\u2022Process protocol. This endpoint allows artists to distribute moments to multiple recipients.",
         "operationId": "airdropMoment",
         "security": [
           {
@@ -579,7 +596,7 @@
     "/moment/permission": {
       "post": {
         "summary": "Add Admin to a Moment",
-        "description": "Add admin permissions to a Moment on the In•Process protocol. This endpoint allows artists to grant admin permissions to other addresses for managing their Moments.\n\n**Note:** Only the current Moment admin can add permissions to other addresses. The transaction is executed via a smart account using Coinbase CDP.",
+        "description": "Add admin permissions to a Moment on the In\u2022Process protocol. This endpoint allows artists to grant admin permissions to other addresses for managing their Moments.\n\n**Note:** Only the current Moment admin can add permissions to other addresses. The transaction is executed via a smart account using Coinbase CDP.",
         "operationId": "addMomentPermission",
         "security": [
           {
@@ -631,7 +648,7 @@
       },
       "delete": {
         "summary": "Remove Admin from a Moment",
-        "description": "Remove admin permissions from a Moment on the In•Process protocol. This endpoint allows artists to revoke admin permissions from addresses that were previously granted admin access to their Moments.\n\n**Note:** Only the current Moment admin can remove permissions from other addresses. The transaction is executed via a smart account using Coinbase CDP.",
+        "description": "Remove admin permissions from a Moment on the In\u2022Process protocol. This endpoint allows artists to revoke admin permissions from addresses that were previously granted admin access to their Moments.\n\n**Note:** Only the current Moment admin can remove permissions from other addresses. The transaction is executed via a smart account using Coinbase CDP.",
         "operationId": "removeMomentPermission",
         "security": [
           {
@@ -685,7 +702,7 @@
     "/moment/comments": {
       "get": {
         "summary": "Get Comments",
-        "description": "Retrieve Moment comments on the In•Process protocol. This endpoint returns comments associated with a specific moment.",
+        "description": "Retrieve Moment comments on the In\u2022Process protocol. This endpoint returns comments associated with a specific moment.",
         "operationId": "getMomentComments",
         "security": [],
         "parameters": [
@@ -765,7 +782,7 @@
     "/moment/sale": {
       "post": {
         "summary": "Set Moment Sale",
-        "description": "Update the sale configuration for a Moment on the In•Process protocol. This endpoint allows artists to update the price, sale window, token limit per address, and funds recipient for a Moment's sale.\n\n**Note:** At least one sale field must be provided. Requires authentication via API key.",
+        "description": "Update the sale configuration for a Moment on the In\u2022Process protocol. This endpoint allows artists to update the price, sale window, token limit per address, and funds recipient for a Moment's sale.\n\n**Note:** At least one sale field must be provided. Requires authentication via API key.",
         "operationId": "setMomentSale",
         "security": [
           {
@@ -829,14 +846,14 @@
     "/collections": {
       "get": {
         "summary": "Browse collections",
-        "description": "Browse collections from the In•Process protocol. This endpoint can retrieve collections from a specific artist or browse the in•process collective collections, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `artist` is provided: Returns collections from the specific artist (only collections created by that artist address).\n- When `artist` is omitted: Returns collections from the in•process collective collections.",
+        "description": "Browse collections from the In\u2022Process protocol. This endpoint can retrieve collections from a specific artist or browse the in\u2022process collective collections, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `artist` is provided: Returns collections from the specific artist (only collections created by that artist address).\n- When `artist` is omitted: Returns collections from the in\u2022process collective collections.",
         "operationId": "getCollections",
         "security": [],
         "parameters": [
           {
             "name": "artist",
             "in": "query",
-            "description": "Filter by artist address (collections created by this artist). When provided, returns the artist's collections. When omitted, returns the in•process collective collections.",
+            "description": "Filter by artist address (collections created by this artist). When provided, returns the artist's collections. When omitted, returns the in\u2022process collective collections.",
             "required": false,
             "schema": {
               "type": "string"
@@ -934,7 +951,7 @@
       },
       "post": {
         "summary": "Create Collection",
-        "description": "Create a new Collection on In•Process.",
+        "description": "Create a new Collection on In\u2022Process.",
         "operationId": "createCollection",
         "security": [],
         "requestBody": {
@@ -984,7 +1001,7 @@
     "/collections/{network}/{contract}": {
       "get": {
         "summary": "Get Collection Info",
-        "description": "Retrieve detailed information about a Collection on the In•Process protocol, including collection metadata, creator, admins, and timestamps.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Retrieve detailed information about a Collection on the In\u2022Process protocol, including collection metadata, creator, admins, and timestamps.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**This is a public endpoint and does not require authentication.**",
         "operationId": "getCollectionInfo",
         "security": [],
         "parameters": [
@@ -1021,7 +1038,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid CAIP format, unsupported namespace, or invalid address",
+            "description": "Bad request \u2014 invalid CAIP format, unsupported namespace, or invalid address",
             "content": {
               "application/json": {
                 "schema": {
@@ -1054,7 +1071,7 @@
       },
       "patch": {
         "summary": "Update Collection Metadata",
-        "description": "Update the metadata (name and URI) of an existing Collection on the In•Process protocol.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**Note:** Only Collection admins can update the metadata.",
+        "description": "Update the metadata (name and URI) of an existing Collection on the In\u2022Process protocol.\n\nUses [CAIP-2](https://chainagnostic.org/CAIPs/caip-2) for the `network` segment and a CAIP-style asset reference for the `contract` segment:\n- `network`: `eip155:{chainId}` (e.g. `eip155:8453` for Base)\n- `contract`: `erc1155:{address}` (e.g. `erc1155:0xabc...`)\n\n**Note:** Only Collection admins can update the metadata.",
         "operationId": "updateCollectionURI",
         "security": [
           {
@@ -1105,7 +1122,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid CAIP format, unsupported namespace, invalid address, or missing body fields",
+            "description": "Bad request \u2014 invalid CAIP format, unsupported namespace, invalid address, or missing body fields",
             "content": {
               "application/json": {
                 "schema": {
@@ -1115,7 +1132,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized — missing or invalid API key",
+            "description": "Unauthorized \u2014 missing or invalid API key",
             "content": {
               "application/json": {
                 "schema": {
@@ -1140,14 +1157,14 @@
     "/timeline": {
       "get": {
         "summary": "Browse moments from timelines",
-        "description": "Browse moments from timelines. This endpoint can retrieve moments from a specific artist's timeline or browse the in•process collective timeline, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `collection` is provided: Returns all moments (tokens) of the specified collection address.\n- When `artist` is provided: Returns moments from the specific artist's timeline (only moments administered by that artist address). The `type` parameter can be used to filter by admin relationship.\n- When both `artist` and `collection` are omitted: Returns moments from the in•process collective timeline (moments that are being created, indexed).",
+        "description": "Browse moments from timelines. This endpoint can retrieve moments from a specific artist's timeline or browse the in\u2022process collective timeline, depending on whether the `artist` parameter is provided. Supports pagination for efficient browsing.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- When `collection` is provided: Returns all moments (tokens) of the specified collection address.\n- When `artist` is provided: Returns moments from the specific artist's timeline (only moments administered by that artist address). The `type` parameter can be used to filter by admin relationship.\n- When both `artist` and `collection` are omitted: Returns moments from the in\u2022process collective timeline (moments that are being created, indexed).",
         "operationId": "getTimeline",
         "security": [],
         "parameters": [
           {
             "name": "artist",
             "in": "query",
-            "description": "Filter by admin address (only moments administered by this artist address). When provided, returns the artist timeline. When omitted, returns the in•process collective timeline.",
+            "description": "Filter by admin address (only moments administered by this artist address). When provided, returns the artist timeline. When omitted, returns the in\u2022process collective timeline.",
             "required": false,
             "schema": {
               "type": "string"
@@ -1296,7 +1313,15 @@
                       ],
                       "hidden": [],
                       "created_at": "2025-06-07T20:41:35+00:00",
-                      "protocol": "in_process"
+                      "protocol": "in_process",
+                      "sale": {
+                        "pricePerToken": "1000000000000000",
+                        "saleStart": 0,
+                        "saleEnd": 0,
+                        "maxTokensPerAddress": 0,
+                        "fundsRecipient": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+                        "type": "fixedPrice"
+                      }
                     }
                   ],
                   "pagination": {
@@ -1334,7 +1359,7 @@
     "/transfers": {
       "get": {
         "summary": "Get Transfers",
-        "description": "Retrieve moment transfer records from the In•Process protocol. Use the `type` parameter to filter by transfer category, or omit it to retrieve all types.\n\nEndpoint behavior:\n- If `artist` is provided: Filters transfers to moments created by this artist.\n- If `collector` is provided: Filters transfers where this address is the collector.\n- If `collection` is provided: Filters transfers to moments in this collection.\n- If `tokenId` is provided: Filters transfers to a specific token within the collection.\n- If `chainId` is provided: Filters transfers to the specified chain.\n- If `content_type` is provided: Filters transfers to moments whose content MIME type matches (e.g. `audio`, `video`, `image`).",
+        "description": "Retrieve moment transfer records from the In\u2022Process protocol. Use the `type` parameter to filter by transfer category, or omit it to retrieve all types.\n\nEndpoint behavior:\n- If `artist` is provided: Filters transfers to moments created by this artist.\n- If `collector` is provided: Filters transfers where this address is the collector.\n- If `collection` is provided: Filters transfers to moments in this collection.\n- If `tokenId` is provided: Filters transfers to a specific token within the collection.\n- If `chainId` is provided: Filters transfers to the specified chain.\n- If `content_type` is provided: Filters transfers to moments whose content MIME type matches (e.g. `audio`, `video`, `image`).",
         "operationId": "getTransfers",
         "security": [],
         "parameters": [
@@ -1515,14 +1540,14 @@
     "/transfers?type=payment": {
       "get": {
         "summary": "Get Payments",
-        "description": "Retrieve payment records from the In•Process protocol. Supports filtering by artist, collector, and chain. Supports pagination for efficient browsing.\n\nEndpoint behavior:\n- If `artist` is provided: Filters payments to moments where this address is one of the artists receiving a share of the payment.\n- If `collector` is provided: Filters payments where this address is the buyer.\n- If `chainId` is provided: Filters payments to the specified chain.",
+        "description": "Retrieve payment records from the In\u2022Process protocol. Supports filtering by artist, collector, and chain. Supports pagination for efficient browsing.\n\nEndpoint behavior:\n- If `artist` is provided: Filters payments to moments where this address is one of the artists receiving a share of the payment.\n- If `collector` is provided: Filters payments where this address is the buyer.\n- If `chainId` is provided: Filters payments to the specified chain.",
         "operationId": "getPayments",
         "security": [],
         "parameters": [
           {
             "name": "type",
             "in": "query",
-            "description": "Transfer type — always `payment` for this endpoint",
+            "description": "Transfer type \u2014 always `payment` for this endpoint",
             "required": false,
             "schema": {
               "type": "string",
@@ -1758,7 +1783,7 @@
     "/notifications": {
       "get": {
         "summary": "Browsing Notifications",
-        "description": "Retrieve notification records from the In•Process protocol. Supports filtering by artist address and viewed status.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest notification records.\n- If `artist` is provided: Filters notifications where the artist is the provided address.\n- If `viewed` is provided: Filters notifications by their viewed status (true for viewed, false for unviewed).",
+        "description": "Retrieve notification records from the In\u2022Process protocol. Supports filtering by artist address and viewed status.\n\n**This is a public endpoint and does not require authentication.**\n\nEndpoint behavior:\n- If no parameters are provided: Returns the latest notification records.\n- If `artist` is provided: Filters notifications where the artist is the provided address.\n- If `viewed` is provided: Filters notifications by their viewed status (true for viewed, false for unviewed).",
         "operationId": "getNotifications",
         "security": [],
         "parameters": [
@@ -1863,14 +1888,14 @@
     "/transfers?type=airdrop": {
       "get": {
         "summary": "Get Airdrops",
-        "description": "Retrieve airdrop records from the In•Process protocol. Supports filtering by artist, collector, and chain. Supports pagination for efficient browsing.\n\nEndpoint behavior:\n- If `artist` is provided: Filters airdrops where this address performed the airdrop.\n- If `collector` is provided: Filters airdrops where this address received the airdrop.\n- If `chainId` is provided: Filters airdrops to the specified chain.",
+        "description": "Retrieve airdrop records from the In\u2022Process protocol. Supports filtering by artist, collector, and chain. Supports pagination for efficient browsing.\n\nEndpoint behavior:\n- If `artist` is provided: Filters airdrops where this address performed the airdrop.\n- If `collector` is provided: Filters airdrops where this address received the airdrop.\n- If `chainId` is provided: Filters airdrops to the specified chain.",
         "operationId": "getAirdrops",
         "security": [],
         "parameters": [
           {
             "name": "type",
             "in": "query",
-            "description": "Transfer type — always `airdrop` for this endpoint",
+            "description": "Transfer type \u2014 always `airdrop` for this endpoint",
             "required": false,
             "schema": {
               "type": "string",
@@ -2046,7 +2071,7 @@
     "/artists/api-keys": {
       "post": {
         "summary": "Create an Artist API Key",
-        "description": "Create a new API key for artists on the In•Process protocol.\n\n**Overview:**\n\nArtists can create API keys in two ways:\n\n1. **Programmatically** - Using the API endpoint documented below\n2. **Via Web Interface** - Using the [In•Process API Keys Management Site](https://inprocess.world/manage/api-keys)\n\nThe web interface provides a user-friendly way to create, view, and manage an artist API keys without writing code.\n\n**Note:** This endpoint requires a Privy access token for authentication. Privy access tokens are obtained through the Privy authentication flow and provide secure access to artist-specific API endpoints. For more information about Privy authentication, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
+        "description": "Create a new API key for artists on the In\u2022Process protocol.\n\n**Overview:**\n\nArtists can create API keys in two ways:\n\n1. **Programmatically** - Using the API endpoint documented below\n2. **Via Web Interface** - Using the [In\u2022Process API Keys Management Site](https://inprocess.world/manage/api-keys)\n\nThe web interface provides a user-friendly way to create, view, and manage an artist API keys without writing code.\n\n**Note:** This endpoint requires a Privy access token for authentication. Privy access tokens are obtained through the Privy authentication flow and provide secure access to artist-specific API endpoints. For more information about Privy authentication, see the [Privy documentation](https://docs.privy.io/authentication/user-authentication/access-tokens#getting-the-access-token).",
         "operationId": "createArtistApiKey",
         "security": [
           {
@@ -2113,7 +2138,7 @@
     "/artists/search": {
       "get": {
         "summary": "Search Artists",
-        "description": "Search for artists by username on the In•Process protocol.",
+        "description": "Search for artists by username on the In\u2022Process protocol.",
         "operationId": "searchArtists",
         "security": [],
         "parameters": [
@@ -2160,7 +2185,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid or missing query params",
+            "description": "Bad request \u2014 invalid or missing query params",
             "content": {
               "application/json": {
                 "schema": {
@@ -2185,7 +2210,7 @@
     "/artists/active": {
       "get": {
         "summary": "Get Active Artists",
-        "description": "Paginated activity stats for artists on the In•Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).",
+        "description": "Paginated activity stats for artists on the In\u2022Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).",
         "operationId": "getActiveArtists",
         "security": [],
         "parameters": [
@@ -2284,7 +2309,12 @@
                     {
                       "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "matt",
-                      "wallets": [{ "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264", "type": "farcaster" }],
+                      "wallets": [
+                        {
+                          "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                          "type": "farcaster"
+                        }
+                      ],
                       "created_count": 12,
                       "airdropped_count": 3,
                       "telegram_count": 1,
@@ -2370,7 +2400,7 @@
     "/artists/collectors": {
       "get": {
         "summary": "Get Artists Collectors",
-        "description": "Returns artists who are both creators and collectors on the In•Process protocol. Supports filtering by artist and time period.",
+        "description": "Returns artists who are both creators and collectors on the In\u2022Process protocol. Supports filtering by artist and time period.",
         "operationId": "getArtistsCollectorsStats",
         "security": [],
         "parameters": [
@@ -2381,7 +2411,12 @@
             "description": "Restrict which moments are counted: approximately the last day, week, or month. `all` means no time limit.",
             "schema": {
               "type": "string",
-              "enum": ["day", "week", "month", "all"],
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ],
               "default": "all"
             }
           },
@@ -2425,7 +2460,10 @@
             "description": "Metric to sort by.",
             "schema": {
               "type": "string",
-              "enum": ["total_created_count", "total_collected_count"],
+              "enum": [
+                "total_created_count",
+                "total_collected_count"
+              ],
               "default": "total_created_count"
             }
           },
@@ -2436,7 +2474,10 @@
             "description": "Sort direction.",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "desc"
             }
           }
@@ -2454,7 +2495,12 @@
                     {
                       "artist_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                       "username": "matt",
-                      "wallets": [{ "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264", "type": "farcaster" }],
+                      "wallets": [
+                        {
+                          "address": "0x51027631B9DEF86e088C33368eC4E3A4BE0aD264",
+                          "type": "farcaster"
+                        }
+                      ],
                       "total_created_count": 42,
                       "total_collected_count": 130
                     }
@@ -2472,17 +2518,29 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message", "errors"],
+                  "required": [
+                    "message",
+                    "errors"
+                  ],
                   "properties": {
-                    "message": { "type": "string" },
+                    "message": {
+                      "type": "string"
+                    },
                     "errors": {
                       "type": "array",
                       "items": {
                         "type": "object",
-                        "required": ["field", "message"],
+                        "required": [
+                          "field",
+                          "message"
+                        ],
                         "properties": {
-                          "field": { "type": "string" },
-                          "message": { "type": "string" }
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
                         }
                       }
                     }
@@ -2506,9 +2564,13 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["message"],
+                  "required": [
+                    "message"
+                  ],
                   "properties": {
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -2520,7 +2582,7 @@
     "/artists/wallets": {
       "post": {
         "summary": "Connect a Wallet",
-        "description": "Connect a wallet to the authenticated artist account on the In•Process protocol using an EIP-191 signed message. The wallet address and client type (`farcaster` or `external`) are derived from the signed message.",
+        "description": "Connect a wallet to the authenticated artist account on the In\u2022Process protocol using an EIP-191 signed message. The wallet address and client type (`farcaster` or `external`) are derived from the signed message.",
         "operationId": "connectWallet",
         "security": [
           {
@@ -2561,7 +2623,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid message format, invalid signature, wallet already connected, or artist already has a wallet of that type",
+            "description": "Bad request \u2014 invalid message format, invalid signature, wallet already connected, or artist already has a wallet of that type",
             "content": {
               "application/json": {
                 "schema": {
@@ -2571,7 +2633,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized — invalid or missing authentication",
+            "description": "Unauthorized \u2014 invalid or missing authentication",
             "content": {
               "application/json": {
                 "schema": {
@@ -2632,7 +2694,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid address or wallet not found on the authenticated account",
+            "description": "Bad request \u2014 invalid address or wallet not found on the authenticated account",
             "content": {
               "application/json": {
                 "schema": {
@@ -2642,7 +2704,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized — invalid or missing authentication",
+            "description": "Unauthorized \u2014 invalid or missing authentication",
             "content": {
               "application/json": {
                 "schema": {
@@ -2665,7 +2727,7 @@
       },
       "get": {
         "summary": "Get Artist Wallets",
-        "description": "Get all wallets associated with an artist on the In•Process protocol. Returns each wallet's address and type.",
+        "description": "Get all wallets associated with an artist on the In\u2022Process protocol. Returns each wallet's address and type.",
         "operationId": "getArtistWallets",
         "parameters": [
           {
@@ -2703,7 +2765,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid or missing `artistId` query parameter",
+            "description": "Bad request \u2014 invalid or missing `artistId` query parameter",
             "content": {
               "application/json": {
                 "schema": {
@@ -2728,7 +2790,7 @@
     "/emails": {
       "get": {
         "summary": "Get Emails",
-        "description": "Retrieve email addresses for artists on the In•Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior depends on the type of API key used:\n- **Normal API key**: No parameters accepted. The artist address is inferred from the API key and returns that artist's own email.\n- **Admin API key**: `artist_address` is optional. If provided, returns the email for that specific artist. If omitted, returns a paginated list of all artist emails.",
+        "description": "Retrieve email addresses for artists on the In\u2022Process protocol.\n\n**Authentication required.**\n\nEndpoint behavior depends on the type of API key used:\n- **Normal API key**: No parameters accepted. The artist address is inferred from the API key and returns that artist's own email.\n- **Admin API key**: `artist_address` is optional. If provided, returns the email for that specific artist. If omitted, returns a paginated list of all artist emails.",
         "operationId": "getEmails",
         "security": [
           {
@@ -2880,7 +2942,7 @@
     "/smartwallet": {
       "get": {
         "summary": "Get Smart Wallet",
-        "description": "Get a smart wallet on the In•Process protocol. Provide either `accountId` (artist UUID) or `walletAddress` (EOA address) — at least one is required. When both are supplied, `accountId` takes precedence.",
+        "description": "Get a smart wallet on the In\u2022Process protocol. Provide either `accountId` (artist UUID) or `walletAddress` (EOA address) \u2014 at least one is required. When both are supplied, `accountId` takes precedence.",
         "operationId": "getSmartWallet",
         "security": [],
         "parameters": [
@@ -2919,7 +2981,7 @@
             }
           },
           "400": {
-            "description": "Bad request — neither `accountId` nor `walletAddress` was provided",
+            "description": "Bad request \u2014 neither `accountId` nor `walletAddress` was provided",
             "content": {
               "application/json": {
                 "schema": {
@@ -3123,7 +3185,7 @@
     "/phones": {
       "post": {
         "summary": "Connect a Phone Number",
-        "description": "Connect a phone number for artists on the In•Process protocol. After connection, a verification SMS message will be sent to the provided phone number.\n\n**Overview:**\n\nArtists can connect their phone number to enable SMS-based features and notifications.\n\n1. An SMS verification message is automatically sent to the provided phone number.\n   \n   For example:\n   \n   > Someone is trying to connect this phone number to the artist profile for sweetman.eth on In•Process. If this was you, please reply 'yes'. If this was not you, please ignore this message.\n\n2. If the artist replies \"yes\", the artist's phone number will be verified.\n3. With a verified phone number the artist can create new Moments via SMS.",
+        "description": "Connect a phone number for artists on the In\u2022Process protocol. After connection, a verification SMS message will be sent to the provided phone number.\n\n**Overview:**\n\nArtists can connect their phone number to enable SMS-based features and notifications.\n\n1. An SMS verification message is automatically sent to the provided phone number.\n   \n   For example:\n   \n   > Someone is trying to connect this phone number to the artist profile for sweetman.eth on In\u2022Process. If this was you, please reply 'yes'. If this was not you, please ignore this message.\n\n2. If the artist replies \"yes\", the artist's phone number will be verified.\n3. With a verified phone number the artist can create new Moments via SMS.",
         "operationId": "connectPhone",
         "security": [
           {
@@ -3185,7 +3247,7 @@
       },
       "delete": {
         "summary": "Disconnect a Phone Number",
-        "description": "Disconnect a phone number from an artist's profile on the In•Process protocol. This will remove the phone number association and disable SMS-based features for that number.\n\n**Note:** Disconnecting a phone number will remove it from the artist's profile. After disconnection, SMS-based features will no longer be available for that phone number. The phone number can be re-connected later if needed.",
+        "description": "Disconnect a phone number from an artist's profile on the In\u2022Process protocol. This will remove the phone number association and disable SMS-based features for that number.\n\n**Note:** Disconnecting a phone number will remove it from the artist's profile. After disconnection, SMS-based features will no longer be available for that phone number. The phone number can be re-connected later if needed.",
         "operationId": "disconnectPhone",
         "security": [
           {
@@ -3541,7 +3603,7 @@
     "/arweave/{path}": {
       "post": {
         "summary": "Upload to Arweave",
-        "description": "Proxy upload requests to the Arweave gateway (`https://arweave.net`). This endpoint forwards the request body as JSON to Arweave, enabling chunked media uploads through the In•Process API.\n\nThe upload flow uses two paths:\n- `tx` — Post the signed transaction header (with data emptied for chunked upload)\n- `chunk` — Post individual data chunks sequentially",
+        "description": "Proxy upload requests to the Arweave gateway (`https://arweave.net`). This endpoint forwards the request body as JSON to Arweave, enabling chunked media uploads through the In\u2022Process API.\n\nThe upload flow uses two paths:\n- `tx` \u2014 Post the signed transaction header (with data emptied for chunked upload)\n- `chunk` \u2014 Post individual data chunks sequentially",
         "operationId": "uploadToArweave",
         "security": [],
         "parameters": [
@@ -3928,7 +3990,7 @@
     "/oauth/code": {
       "post": {
         "summary": "Send Code",
-        "description": "Send a one-time verification code to the provided email address for email-based OAuth login.\n\n**Overview:**\n\nThis endpoint initiates the email login flow by sending a one-time PIN (OTP) to the account’s email address via Privy.\n\n1. Provide a valid email address in the request body.\n2. A one-time verification code will be sent to that email.\n3. Use the received code with the [Login with OTP](/api-reference/oauth/login) endpoint to complete the authentication flow.",
+        "description": "Send a one-time verification code to the provided email address for email-based OAuth login.\n\n**Overview:**\n\nThis endpoint initiates the email login flow by sending a one-time PIN (OTP) to the account\u2019s email address via Privy.\n\n1. Provide a valid email address in the request body.\n2. A one-time verification code will be sent to that email.\n3. Use the received code with the [Login with OTP](/api-reference/oauth/login) endpoint to complete the authentication flow.",
         "operationId": "sendCode",
         "security": [],
         "requestBody": {
@@ -4341,8 +4403,8 @@
                   }
                 ],
                 "proposal": {
-                  "title": "Mint a Moment onchain via In•Process",
-                  "description": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
+                  "title": "Mint a Moment onchain via In\u2022Process",
+                  "description": "This proposal mints a new moment on the In\u2022Process protocol as a Nouns community action."
                 }
               }
             }
@@ -4350,7 +4412,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful response — governor propose args for the Nouns proposal action",
+            "description": "Successful response \u2014 governor propose args for the Nouns proposal action",
             "content": {
               "application/json": {
                 "schema": {
@@ -4359,11 +4421,19 @@
                 "example": {
                   "governor": "0x6f3e6272a167e8accb32072d08e0957f9c79223d",
                   "args": [
-                    ["0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"],
-                    ["0"],
-                    [""],
-                    ["0x7d5e81e2..."],
-                    "# Mint a Moment onchain via In•Process\n\nThis proposal mints a new moment on the In•Process protocol as a Nouns community action."
+                    [
+                      "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"
+                    ],
+                    [
+                      "0"
+                    ],
+                    [
+                      ""
+                    ],
+                    [
+                      "0x7d5e81e2..."
+                    ],
+                    "# Mint a Moment onchain via In\u2022Process\n\nThis proposal mints a new moment on the In\u2022Process protocol as a Nouns community action."
                   ],
                   "value": "0"
                 }
@@ -4371,7 +4441,7 @@
             }
           },
           "400": {
-            "description": "Bad request — invalid input or missing required fields",
+            "description": "Bad request \u2014 invalid input or missing required fields",
             "content": {
               "application/json": {
                 "schema": {
@@ -4491,6 +4561,17 @@
               "catalog",
               "sound.xyz"
             ]
+          },
+          "sale": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MomentSale"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sale configuration for this moment. null when the moment has no sale record (non in_process protocol moments)."
           }
         }
       },
@@ -5570,7 +5651,7 @@
           },
           "newCollectionAddress": {
             "type": "string",
-            "description": "Optional new collection address to move the moment to. Must differ from the current moment collection address and must be a valid In•Process 1155 contract."
+            "description": "Optional new collection address to move the moment to. Must differ from the current moment collection address and must be a valid In\u2022Process 1155 contract."
           }
         }
       },
@@ -6777,17 +6858,24 @@
             "description": "Wallet addresses associated with this artist.",
             "items": {
               "type": "object",
-              "required": ["address", "type"],
+              "required": [
+                "address",
+                "type"
+              ],
               "properties": {
-                "address": { "type": "string" },
-                "type": { "type": "string" }
+                "address": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
               }
             }
           },
           "created_count": {
             "type": "integer",
             "minimum": 0,
-            "description": "Moments created in the period (In•Process protocol, Base mainnet)."
+            "description": "Moments created in the period (In\u2022Process protocol, Base mainnet)."
           },
           "airdropped_count": {
             "type": "integer",
@@ -6874,7 +6962,13 @@
       },
       "ArtistsCollectorsStatsItem": {
         "type": "object",
-        "required": ["artist_id", "username", "wallets", "total_created_count", "total_collected_count"],
+        "required": [
+          "artist_id",
+          "username",
+          "wallets",
+          "total_created_count",
+          "total_collected_count"
+        ],
         "properties": {
           "artist_id": {
             "type": "string",
@@ -6890,10 +6984,17 @@
             "description": "Wallet addresses associated with this artist.",
             "items": {
               "type": "object",
-              "required": ["address", "type"],
+              "required": [
+                "address",
+                "type"
+              ],
               "properties": {
-                "address": { "type": "string" },
-                "type": { "type": "string" }
+                "address": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -6909,7 +7010,12 @@
       },
       "ArtistsCollectorsStatsResponse": {
         "type": "object",
-        "required": ["artists", "total_count", "page", "total_pages"],
+        "required": [
+          "artists",
+          "total_count",
+          "page",
+          "total_pages"
+        ],
         "properties": {
           "artists": {
             "type": "array",
@@ -6934,7 +7040,13 @@
       },
       "CollectorStats": {
         "type": "object",
-        "required": ["artist_id", "wallets", "collected_count", "eth_spent", "usdc_spent"],
+        "required": [
+          "artist_id",
+          "wallets",
+          "collected_count",
+          "eth_spent",
+          "usdc_spent"
+        ],
         "properties": {
           "artist_id": {
             "type": "string",
@@ -6951,10 +7063,17 @@
             "description": "Wallet addresses associated with this collector.",
             "items": {
               "type": "object",
-              "required": ["address", "type"],
+              "required": [
+                "address",
+                "type"
+              ],
               "properties": {
-                "address": { "type": "string" },
-                "type": { "type": "string" }
+                "address": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -6974,7 +7093,12 @@
       },
       "CollectorsStatsResponse": {
         "type": "object",
-        "required": ["collectors", "total_count", "page", "total_pages"],
+        "required": [
+          "collectors",
+          "total_count",
+          "page",
+          "total_pages"
+        ],
         "properties": {
           "collectors": {
             "type": "array",
@@ -7173,29 +7297,40 @@
       },
       "NounsProposal": {
         "type": "object",
-        "required": ["title", "description"],
+        "required": [
+          "title",
+          "description"
+        ],
         "properties": {
           "title": {
             "type": "string",
             "minLength": 1,
             "description": "Title of the Nouns governance proposal.",
-            "example": "Mint a Moment onchain via In•Process"
+            "example": "Mint a Moment onchain via In\u2022Process"
           },
           "description": {
             "type": "string",
             "minLength": 1,
             "description": "Full description body of the governance proposal (supports Markdown).",
-            "example": "This proposal mints a new moment on the In•Process protocol as a Nouns community action."
+            "example": "This proposal mints a new moment on the In\u2022Process protocol as a Nouns community action."
           }
         }
       },
       "GetNounsProposalActionRequest": {
         "type": "object",
-        "required": ["account", "contract", "tokens", "proposal"],
+        "required": [
+          "account",
+          "contract",
+          "tokens",
+          "proposal"
+        ],
         "properties": {
           "chainId": {
             "type": "integer",
-            "enum": [1, 11155111],
+            "enum": [
+              1,
+              11155111
+            ],
             "default": 1,
             "description": "Chain to target. `1` = Ethereum Mainnet, `11155111` = Sepolia testnet."
           },
@@ -7231,7 +7366,12 @@
             "description": "One or more tokens to mint as part of the proposal.",
             "items": {
               "type": "object",
-              "required": ["tokenMetadataURI", "createReferral", "salesConfig", "mintToCreatorCount"],
+              "required": [
+                "tokenMetadataURI",
+                "createReferral",
+                "salesConfig",
+                "mintToCreatorCount"
+              ],
               "properties": {
                 "tokenMetadataURI": {
                   "type": "string",
@@ -7245,7 +7385,12 @@
                 },
                 "salesConfig": {
                   "type": "object",
-                  "required": ["type", "pricePerToken", "saleStart", "saleEnd"],
+                  "required": [
+                    "type",
+                    "pricePerToken",
+                    "saleStart",
+                    "saleEnd"
+                  ],
                   "properties": {
                     "type": {
                       "type": "string",
@@ -7298,7 +7443,10 @@
             "description": "Optional revenue split recipients. Must have at least 2 entries and total exactly 100%.",
             "items": {
               "type": "object",
-              "required": ["address", "percentAllocation"],
+              "required": [
+                "address",
+                "percentAllocation"
+              ],
               "properties": {
                 "address": {
                   "type": "string",
@@ -7322,7 +7470,11 @@
       },
       "GetNounsProposalActionResponse": {
         "type": "object",
-        "required": ["governor", "args", "value"],
+        "required": [
+          "governor",
+          "args",
+          "value"
+        ],
         "properties": {
           "governor": {
             "type": "string",
@@ -7334,17 +7486,66 @@
             "description": "Arguments for `propose(targets, values, signatures, calldatas, description)`.",
             "items": {},
             "example": [
-              ["0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"],
-              ["0"],
-              [""],
-              ["0x7d5e81e2..."],
-              "# Mint a Moment onchain via In•Process\n\nThis proposal mints a new moment on the In•Process protocol as a Nouns community action."
+              [
+                "0xe0d3febE1c17DDA1086e89B638Ab54955FE2eF8a"
+              ],
+              [
+                "0"
+              ],
+              [
+                ""
+              ],
+              [
+                "0x7d5e81e2..."
+              ],
+              "# Mint a Moment onchain via In\u2022Process\n\nThis proposal mints a new moment on the In\u2022Process protocol as a Nouns community action."
             ]
           },
           "value": {
             "type": "string",
             "description": "ETH value to send with the governor transaction (always `\"0\"`).",
             "example": "0"
+          }
+        }
+      },
+      "MomentSale": {
+        "type": "object",
+        "required": [
+          "pricePerToken",
+          "saleStart",
+          "saleEnd",
+          "maxTokensPerAddress",
+          "fundsRecipient",
+          "type"
+        ],
+        "properties": {
+          "pricePerToken": {
+            "type": "string",
+            "description": "Price per token in wei as a decimal integer string (e.g., \"0\" for free, \"1000000000000000\" for 0.001 ETH)"
+          },
+          "saleStart": {
+            "type": "integer",
+            "description": "Unix timestamp for when the sale starts (0 = no start restriction)"
+          },
+          "saleEnd": {
+            "type": "integer",
+            "description": "Unix timestamp for when the sale ends (0 = no end restriction)"
+          },
+          "maxTokensPerAddress": {
+            "type": "integer",
+            "description": "Maximum number of tokens a single address can mint (0 = unlimited)"
+          },
+          "fundsRecipient": {
+            "type": "string",
+            "description": "Address that receives the sale proceeds"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "fixedPrice",
+              "erc20Mint"
+            ],
+            "description": "Sale type: fixedPrice for ETH sales, erc20Mint for ERC20 token sales"
           }
         }
       }
