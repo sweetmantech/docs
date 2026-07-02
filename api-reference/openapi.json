@@ -1314,6 +1314,7 @@
                       "hidden": [],
                       "created_at": "2025-06-07T20:41:35+00:00",
                       "protocol": "in_process",
+                      "comments": 7,
                       "sale": {
                         "pricePerToken": "1000000000000000",
                         "saleStart": 0,
@@ -4561,6 +4562,11 @@
               "catalog",
               "sound.xyz"
             ]
+          },
+          "comments": {
+            "type": "integer",
+            "description": "Total number of mint comments on this moment",
+            "minimum": 0
           },
           "sale": {
             "oneOf": [
