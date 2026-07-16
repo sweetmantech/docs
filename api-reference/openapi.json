@@ -1307,6 +1307,9 @@
                         "address": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
                         "username": "artist"
                       },
+                      "collection": {
+                        "name": "Moments"
+                      },
                       "admins": [
                         "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
                         "0xAF1452d289E22FbD0DEA9d5097353c72a90FAC33"
@@ -4504,6 +4507,7 @@
           "id",
           "uri",
           "creator",
+          "collection",
           "admins",
           "hidden",
           "created_at",
@@ -4533,6 +4537,9 @@
           },
           "creator": {
             "$ref": "#/components/schemas/DefaultAdmin"
+          },
+          "collection": {
+            "$ref": "#/components/schemas/MomentCollection"
           },
           "admins": {
             "type": "array",
@@ -4578,6 +4585,19 @@
               }
             ],
             "description": "Sale configuration for this moment. null when the moment has no sale record (non in_process protocol moments)."
+          }
+        }
+      },
+      "MomentCollection": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "description": "The collection the moment belongs to",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Collection name"
           }
         }
       },
