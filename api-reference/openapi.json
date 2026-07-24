@@ -702,7 +702,7 @@
     "/moment/comments": {
       "get": {
         "summary": "Get Comments",
-        "description": "Retrieve Moment comments on the In\u2022Process protocol. This endpoint returns comments associated with a specific moment.",
+        "description": "Retrieve comments for a Moment. Omit `replyToId` for top-level comments with nested reply previews; set `replyToId` to page direct replies.",
         "operationId": "getMomentComments",
         "security": [],
         "parameters": [
@@ -743,6 +743,16 @@
               "type": "number",
               "default": 0
             }
+          },
+          {
+            "name": "replyToId",
+            "in": "query",
+            "description": "When set, return direct replies to this protocol `commentId` (paginated). When omitted, return top-level comments with nested reply previews.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "0xab6776473e27a7c8f9ee24553dfae47a10eb525142f6161de6346ecf48e77b60"
+            }
           }
         ],
         "responses": {
@@ -752,6 +762,47 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CommentsResponse"
+                },
+                "example": {
+                  "comments": [
+                    {
+                      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+                      "sender": "0xabc0000000000000000000000000000000000001",
+                      "username": "alice",
+                      "comment": "Love this track",
+                      "timestamp": 1753315200000,
+                      "commentId": "0xab6776473e27a7c8f9ee24553dfae47a10eb525142f6161de6346ecf48e77b60",
+                      "replyToId": null,
+                      "nonce": "0",
+                      "replyCount": 2,
+                      "replies": [
+                        {
+                          "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                          "sender": "0xdef0000000000000000000000000000000000002",
+                          "username": "bob",
+                          "comment": "Same here",
+                          "timestamp": 1753315300000,
+                          "commentId": "0xbb6776473e27a7c8f9ee24553dfae47a10eb525142f6161de6346ecf48e77b61",
+                          "replyToId": "0xab6776473e27a7c8f9ee24553dfae47a10eb525142f6161de6346ecf48e77b60",
+                          "nonce": "1",
+                          "replyCount": 0,
+                          "replies": []
+                        }
+                      ]
+                    },
+                    {
+                      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                      "sender": "0x1110000000000000000000000000000000000003",
+                      "username": "carol",
+                      "comment": "Minted with a note",
+                      "timestamp": 1753315100000,
+                      "commentId": null,
+                      "replyToId": null,
+                      "nonce": null,
+                      "replyCount": 0,
+                      "replies": []
+                    }
+                  ]
                 }
               }
             }
@@ -5534,6 +5585,71 @@
           }
         }
       },
+      "MomentComment": {
+        "type": "object",
+        "required": [
+          "id",
+          "sender",
+          "username",
+          "comment",
+          "timestamp",
+          "commentId",
+          "replyToId",
+          "nonce",
+          "replyCount",
+          "replies"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Supabase UUID of the comment row"
+          },
+          "sender": {
+            "type": "string",
+            "description": "Address of the comment sender"
+          },
+          "username": {
+            "type": "string",
+            "description": "Username of the comment sender"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment text"
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "Unix timestamp in milliseconds of when the comment was made"
+          },
+          "commentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Onchain comments-protocol id. Null for mint-time comments from collect, which cannot be replied to onchain."
+          },
+          "replyToId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Parent `commentId` when this comment is a reply. Null for top-level comments."
+          },
+          "nonce": {
+            "type": "string",
+            "nullable": true,
+            "description": "Protocol nonce used to build an onchain reply target. Null for mint-time comments."
+          },
+          "replyCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of direct child replies. Meaningful on top-level comments; preview children and reply-mode items return 0 in v1."
+          },
+          "replies": {
+            "type": "array",
+            "description": "Nested reply preview (max 3, oldest first) on top-level responses. Empty for reply-mode results and for items inside a preview.",
+            "items": {
+              "$ref": "#/components/schemas/MomentComment"
+            }
+          }
+        }
+      },
       "CommentsResponse": {
         "type": "object",
         "required": [
@@ -5542,39 +5658,9 @@
         "properties": {
           "comments": {
             "type": "array",
-            "description": "Array of comments",
+            "description": "Top-level comments (default) or direct replies when replyToId is set",
             "items": {
-              "type": "object",
-              "required": [
-                "id",
-                "sender",
-                "username",
-                "comment",
-                "timestamp"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "format": "uuid",
-                  "description": "UUID of the comment"
-                },
-                "sender": {
-                  "type": "string",
-                  "description": "Address of the comment sender"
-                },
-                "username": {
-                  "type": "string",
-                  "description": "Username of the comment sender"
-                },
-                "comment": {
-                  "type": "string",
-                  "description": "Comment text"
-                },
-                "timestamp": {
-                  "type": "number",
-                  "description": "Unix timestamp of when the comment was made"
-                }
-              }
+              "$ref": "#/components/schemas/MomentComment"
             }
           }
         }
