@@ -830,6 +830,110 @@
         }
       }
     },
+    "/moment/comments/{network}/{contract}": {
+      "post": {
+        "summary": "Create Comment or Reply",
+        "description": "Create a top-level comment or a reply for an In•Process moment. The route uses CAIP-style path params where `network` is `eip155:{chainId}` and `contract` is `erc1155:{collectionAddress}`. If `replyTo` is omitted, the request creates a top-level comment. If `replyTo` is present, its `contractAddress` and `tokenId` must match the target moment.",
+        "operationId": "createMomentComment",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "network",
+            "in": "path",
+            "description": "CAIP network identifier. Must be `eip155:{chainId}`.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eip155:8453"
+            }
+          },
+          {
+            "name": "contract",
+            "in": "path",
+            "description": "CAIP contract identifier. Must be `erc1155:{collectionAddress}`.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "erc1155:0x1111111111111111111111111111111111111111"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentRequest"
+              },
+              "example": {
+                "tokenId": "1",
+                "text": "Love this track",
+                "replyTo": {
+                  "commenter": "0xabc0000000000000000000000000000000000001",
+                  "contractAddress": "0x1111111111111111111111111111111111111111",
+                  "tokenId": "1",
+                  "nonce": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                "referrer": "0xdef0000000000000000000000000000000000002"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionResponse"
+                },
+                "example": {
+                  "hash": "0xaabbccddaabbccddaabbccddaabbccddaabbccddaabbccddaabbccddaabbccdd",
+                  "chainId": 8453
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request — invalid CAIP params, invalid body, or mismatched `replyTo` target moment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — invalid or missing authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment/sale": {
       "post": {
         "summary": "Set Moment Sale",
@@ -5662,6 +5766,62 @@
             "items": {
               "$ref": "#/components/schemas/MomentComment"
             }
+          }
+        }
+      },
+      "CommentIdentifier": {
+        "type": "object",
+        "required": [
+          "commenter",
+          "contractAddress",
+          "tokenId",
+          "nonce"
+        ],
+        "properties": {
+          "commenter": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Address recorded as the original commenter for the parent comment"
+          },
+          "contractAddress": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Collection contract address for the parent comment. Must match the target route contract."
+          },
+          "tokenId": {
+            "type": "string",
+            "description": "Token ID of the parent comment target. Must match the request tokenId."
+          },
+          "nonce": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{64}$",
+            "description": "Comments protocol nonce used to identify the parent comment"
+          }
+        }
+      },
+      "CreateCommentRequest": {
+        "type": "object",
+        "required": [
+          "tokenId",
+          "text"
+        ],
+        "properties": {
+          "tokenId": {
+            "type": "string",
+            "description": "Moment token ID. Numeric values are accepted by the API and normalized to strings."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Comment body"
+          },
+          "replyTo": {
+            "$ref": "#/components/schemas/CommentIdentifier"
+          },
+          "referrer": {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Optional referral address passed to the comments contract"
           }
         }
       },
