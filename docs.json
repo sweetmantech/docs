@@ -99,8 +99,8 @@
           {
             "group": "Comments",
             "pages": [
-              "api-reference/moment/create-comment",
-              "api-reference/moment/comments"
+              "api-reference/comments/create",
+              "api-reference/comments/get"
             ]
           },
           {

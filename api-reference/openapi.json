@@ -699,11 +699,11 @@
         }
       }
     },
-    "/moment/comments": {
+    "/comments": {
       "get": {
         "summary": "Get Comments",
         "description": "Retrieve comments for a Moment. Omit `replyToId` for top-level comments with nested reply previews; set `replyToId` to page direct replies.",
-        "operationId": "getMomentComments",
+        "operationId": "getComments",
         "security": [],
         "parameters": [
           {
@@ -830,11 +830,11 @@
         }
       }
     },
-    "/moment/comments/{network}/{contract}": {
+    "/comments/{network}/{contract}": {
       "post": {
         "summary": "Create Comment or Reply",
         "description": "Create a top-level comment or a reply for an In•Process moment. The route uses CAIP-style path params where `network` is `eip155:{chainId}` and `contract` is `erc1155:{collectionAddress}`. If `replyTo` is omitted, the request creates a top-level comment. If `replyTo` is present, its `contractAddress` and `tokenId` must match the target moment.",
-        "operationId": "createMomentComment",
+        "operationId": "createComment",
         "security": [
           {
             "bearerAuth": []
