@@ -15,7 +15,7 @@
     "/stats/collecting": {
       "get": {
         "summary": "Get Collecting Stats",
-        "description": "Returns collecting stats for a single artist wallet: how many paid moments they collected and how much they spent in ETH and USDC on the In\u2022Process protocol (Base, `in_process` collections).\n\nIf the artist has no paid collects (or no matching stats row), the response is zeros.",
+        "description": "Returns collecting spend stats for a single artist wallet: how much they spent in ETH and USDC.\n\nIf the artist has no matching spends, the response is zeros.",
         "operationId": "getCollectingStats",
         "security": [],
         "parameters": [
@@ -39,7 +39,6 @@
                   "$ref": "#/components/schemas/CollectingStats"
                 },
                 "example": {
-                  "collected_count": 12,
                   "eth_spent": "1.5",
                   "usdc_spent": "320.25"
                 }
@@ -7406,15 +7405,10 @@
       "CollectingStats": {
         "type": "object",
         "required": [
-          "collected_count",
           "eth_spent",
           "usdc_spent"
         ],
         "properties": {
-          "collected_count": {
-            "type": "integer",
-            "description": "Number of paid moments this artist collected."
-          },
           "eth_spent": {
             "type": "string",
             "description": "Total ETH spent collecting moments (human-readable decimal string)."
