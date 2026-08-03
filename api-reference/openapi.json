@@ -12,6 +12,99 @@
     }
   ],
   "paths": {
+    "/stats/collecting": {
+      "get": {
+        "summary": "Get Collecting Stats",
+        "description": "Returns collecting stats for a single artist wallet: how many paid moments they collected and how much they spent in ETH and USDC on the In\u2022Process protocol (Base, `in_process` collections).\n\nIf the artist has no paid collects (or no matching stats row), the response is zeros.",
+        "operationId": "getCollectingStats",
+        "security": [],
+        "parameters": [
+          {
+            "name": "artist",
+            "in": "query",
+            "required": true,
+            "description": "Artist wallet address (`0x` + 40 hex). Case-insensitive; normalized to lowercase.",
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectingStats"
+                },
+                "example": {
+                  "collected_count": 12,
+                  "eth_spent": "1.5",
+                  "usdc_spent": "320.25"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message",
+                    "errors"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Invalid input",
+                  "errors": [
+                    {
+                      "field": "artist",
+                      "message": "Required"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment": {
       "get": {
         "summary": "Get Moment Info",
@@ -7307,6 +7400,28 @@
           "total_pages": {
             "type": "integer",
             "description": "Total number of pages"
+          }
+        }
+      },
+      "CollectingStats": {
+        "type": "object",
+        "required": [
+          "collected_count",
+          "eth_spent",
+          "usdc_spent"
+        ],
+        "properties": {
+          "collected_count": {
+            "type": "integer",
+            "description": "Number of paid moments this artist collected."
+          },
+          "eth_spent": {
+            "type": "string",
+            "description": "Total ETH spent collecting moments (human-readable decimal string)."
+          },
+          "usdc_spent": {
+            "type": "string",
+            "description": "Total USDC spent collecting moments (human-readable decimal string)."
           }
         }
       },

@@ -171,7 +171,8 @@
               "api-reference/artists/phones/disconnect",
               "api-reference/artists/active",
               "api-reference/artists/search",
-              "api-reference/artists/collectors"
+              "api-reference/artists/collectors",
+              "api-reference/artists/stats-collecting"
             ]
           },
           {
