@@ -15,7 +15,7 @@
     "/stats/collecting": {
       "get": {
         "summary": "Get Collecting Stats",
-        "description": "Returns collecting stats for a single artist wallet: how many paid moments they collected and how much they spent in ETH and USDC on the In\u2022Process protocol (Base, `in_process` collections).\n\nIf the artist has no paid collects (or no matching stats row), the response is zeros.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Returns collecting stats for a single artist wallet: how many paid moments they collected and how much they spent in ETH and USDC on the In\u2022Process protocol (Base, `in_process` collections).\n\nIf the artist has no paid collects (or no matching stats row), the response is zeros.",
         "operationId": "getCollectingStats",
         "security": [],
         "parameters": [
