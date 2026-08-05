@@ -116,6 +116,7 @@
               "api-reference/collections/browse",
               "api-reference/collections/info",
               "api-reference/collections/create",
+              "api-reference/collections/create-default",
               "api-reference/collections/update-uri"
             ]
           },
