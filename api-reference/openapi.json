@@ -1246,7 +1246,7 @@
       }
     },
     "/collections/default": {
-      "post": {
+      "get": {
         "summary": "Create Process Collection",
         "description": "Create the shared **Process** collection for the authenticated artist.",
         "operationId": "createDefaultCollection",
@@ -1260,34 +1260,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Process collection created, or already exists for this artist",
+            "description": "Process collection created, or the existing Process collection for this artist",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/CreateCollectionResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/ProcessCollectionAlreadyCreated"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/RpcCollection"
                 },
-                "examples": {
-                  "created": {
-                    "summary": "Newly created",
-                    "value": {
-                      "contractAddress": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
-                      "hash": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-                      "chainId": 8453
-                    }
-                  },
-                  "alreadyCreated": {
-                    "summary": "Already created",
-                    "value": {
-                      "message": "Process collection already created"
-                    }
-                  }
+                "example": {
+                  "id": "11111111-1111-1111-1111-111111111111",
+                  "address": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+                  "name": "Process",
+                  "chain_id": 8453,
+                  "created_at": "2025-06-07T20:41:35+00:00",
+                  "uri": "ar://FrDLosTVZP54g8xvLkGG0aWDGrKV46dDAz5umTJkiyA",
+                  "protocol": "in_process",
+                  "creator": "0x4b4324bcC6dB9380ABBbbD20B24A16C11FB5B38A",
+                  "creator_username": "artist name 1",
+                  "admins": []
                 }
               }
             }
@@ -5145,16 +5134,73 @@
           }
         }
       },
-      "ProcessCollectionAlreadyCreated": {
+      "RpcCollection": {
         "type": "object",
+        "description": "A collection row as returned by GET /collections",
         "required": [
-          "message"
+          "id",
+          "address",
+          "name",
+          "chain_id",
+          "created_at",
+          "uri",
+          "protocol",
+          "creator",
+          "admins"
         ],
         "properties": {
-          "message": {
+          "id": {
             "type": "string",
-            "description": "Informational message when the Process collection already exists for this artist",
-            "example": "Process collection already created"
+            "description": "Collection ID"
+          },
+          "address": {
+            "type": "string",
+            "description": "Contract address of the collection"
+          },
+          "name": {
+            "type": "string",
+            "description": "Collection name"
+          },
+          "chain_id": {
+            "type": "integer",
+            "description": "Chain ID where the collection exists"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO timestamp when the collection was created"
+          },
+          "uri": {
+            "type": "string",
+            "description": "Metadata URI"
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Protocol the collection belongs to"
+          },
+          "creator": {
+            "type": "string",
+            "description": "Creator wallet address"
+          },
+          "creator_username": {
+            "type": "string",
+            "nullable": true,
+            "description": "Creator username when available"
+          },
+          "admins": {
+            "type": "array",
+            "description": "Collection admins",
+            "items": {
+              "type": "object",
+              "properties": {
+                "artist_address": {
+                  "type": "string"
+                },
+                "token_id": {
+                  "type": "number"
+                }
+              }
+            }
           }
         }
       },
