@@ -1245,6 +1245,76 @@
         }
       }
     },
+    "/collections/default": {
+      "post": {
+        "summary": "Create Process Collection",
+        "description": "Create the shared **Process** collection for the authenticated artist.",
+        "operationId": "createDefaultCollection",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Process collection created, or already exists for this artist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/CreateCollectionResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ProcessCollectionAlreadyCreated"
+                    }
+                  ]
+                },
+                "examples": {
+                  "created": {
+                    "summary": "Newly created",
+                    "value": {
+                      "contractAddress": "0x06a701Ae65582B92Af48cDff45a8B20DcA3714cA",
+                      "hash": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+                      "chainId": 8453
+                    }
+                  },
+                  "alreadyCreated": {
+                    "summary": "Already created",
+                    "value": {
+                      "message": "Process collection already created"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/collections/{network}/{contract}": {
       "get": {
         "summary": "Get Collection Info",
@@ -5072,6 +5142,19 @@
           "chainId": {
             "type": "integer",
             "description": "Chain ID where the transaction was executed"
+          }
+        }
+      },
+      "ProcessCollectionAlreadyCreated": {
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Informational message when the Process collection already exists for this artist",
+            "example": "Process collection already created"
           }
         }
       },
