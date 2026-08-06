@@ -104,6 +104,99 @@
         }
       }
     },
+    "/stats/timeline": {
+      "get": {
+        "summary": "Get Timeline Stats",
+        "description": "Returns timeline stats for a single artist wallet: how many moments appear on their timeline (`created_count`) and how much ETH/USDC they archived as a fee recipient (`eth_archived`, `usdc_archived`).",
+        "operationId": "getTimelineStats",
+        "security": [],
+        "parameters": [
+          {
+            "name": "artist",
+            "in": "query",
+            "required": true,
+            "description": "Artist wallet address (`0x` + 40 hex). Case-insensitive; normalized to lowercase.",
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelineStats"
+                },
+                "example": {
+                  "created_count": 12,
+                  "eth_archived": "0.1",
+                  "usdc_archived": "25"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message",
+                    "errors"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Invalid input",
+                  "errors": [
+                    {
+                      "field": "artist",
+                      "message": "Required"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment": {
       "get": {
         "summary": "Get Moment Info",
@@ -7545,6 +7638,29 @@
           "usdc_spent": {
             "type": "string",
             "description": "Total USDC spent collecting moments (human-readable decimal string)."
+          }
+        }
+      },
+      "TimelineStats": {
+        "type": "object",
+        "required": [
+          "created_count",
+          "eth_archived",
+          "usdc_archived"
+        ],
+        "properties": {
+          "created_count": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Number of moments on the artist's timeline (creator moments plus mutual admin moments)."
+          },
+          "eth_archived": {
+            "type": "string",
+            "description": "Total ETH archived for the artist as a fee recipient (human-readable decimal string)."
+          },
+          "usdc_archived": {
+            "type": "string",
+            "description": "Total USDC archived for the artist as a fee recipient (human-readable decimal string)."
           }
         }
       },
