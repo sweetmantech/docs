@@ -1675,6 +1675,22 @@
             }
           },
           {
+            "name": "protocol",
+            "in": "query",
+            "description": "Filter moments by collection protocol. When omitted, returns moments from all protocols.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "in_process",
+                "catalog",
+                "sound.xyz",
+                "zora_media",
+                "zora"
+              ]
+            }
+          },
+          {
             "name": "curated",
             "in": "query",
             "description": "If true, returns only curated moments (default: false).",
