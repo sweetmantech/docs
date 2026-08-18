@@ -1119,7 +1119,7 @@
         }
       }
     },
-    "/moment/sale": {
+    "/sale": {
       "post": {
         "summary": "Set Moment Sale",
         "description": "Update the sale configuration for a Moment on the In\u2022Process protocol. This endpoint allows artists to update the price, sale window, token limit per address, and funds recipient for a Moment's sale.\n\n**Note:** At least one sale field must be provided. Requires authentication via API key.",
