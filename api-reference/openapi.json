@@ -2147,7 +2147,7 @@
     },
     "/splits": {
       "get": {
-        "summary": "Distribute Funds",
+        "summary": "Distribute Split",
         "description": "Distribute funds from a split contract.",
         "operationId": "distributeFunds",
         "security": [],
