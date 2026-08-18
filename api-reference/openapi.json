@@ -727,7 +727,7 @@
     "/moment/airdrop": {
       "post": {
         "summary": "Airdrop a Moment",
-        "description": "Airdrop a Moment on the In\u2022Process protocol. This endpoint allows artists to distribute moments to multiple recipients.",
+        "description": "Airdrop a Moment on the In\u2022Process protocol. This endpoint allows artists to distribute moments to multiple recipients.\n\nEach recipient may be a wallet address (`0x` + 40 hex) or an email address.",
         "operationId": "airdropMoment",
         "security": [
           {
@@ -5959,6 +5959,22 @@
           }
         }
       },
+      "AirdropRecipientInput": {
+        "oneOf": [
+          {
+            "type": "string",
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "description": "Wallet address of the recipient",
+            "example": "0x70997970c51812dc3a010c7d01b50e0d17dc79c8"
+          },
+          {
+            "type": "string",
+            "format": "email",
+            "description": "Email address of the recipient",
+            "example": "collector@example.com"
+          }
+        ]
+      },
       "AirdropMomentRequest": {
         "type": "object",
         "required": [
@@ -5968,10 +5984,10 @@
         "properties": {
           "recipients": {
             "type": "array",
-            "description": "Array of wallet addresses to receive the airdrop",
+            "minItems": 1,
+            "description": "Recipients to receive the airdrop. Each entry may be a wallet address or an email address.",
             "items": {
-              "type": "string",
-              "description": "Wallet address of the recipient"
+              "$ref": "#/components/schemas/AirdropRecipientInput"
             }
           },
           "moment": {
