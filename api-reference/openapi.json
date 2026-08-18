@@ -2145,22 +2145,43 @@
         }
       }
     },
-    "/distribute": {
-      "post": {
+    "/splits": {
+      "get": {
         "summary": "Distribute Funds",
-        "description": "Distribute funds from a split contract. This endpoint allows you to trigger the distribution of tokens (native or ERC20) from a split contract to its recipients according to their configured allocations.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Distribute funds from a split contract.",
         "operationId": "distributeFunds",
         "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DistributeRequest"
-              }
+        "parameters": [
+          {
+            "name": "splitAddress",
+            "in": "query",
+            "required": true,
+            "description": "The address of the split contract to distribute from",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tokenAddress",
+            "in": "query",
+            "required": false,
+            "description": "The address of the token to distribute (optional, defaults to zero address for native token)",
+            "schema": {
+              "type": "string",
+              "default": "0x0000000000000000000000000000000000000000"
+            }
+          },
+          {
+            "name": "chainId",
+            "in": "query",
+            "required": false,
+            "description": "Chain ID where the split contract exists (default: Base, 8453)",
+            "schema": {
+              "type": "integer",
+              "default": 8453
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Successful response",
@@ -2172,6 +2193,62 @@
                 "example": {
                   "status": "success",
                   "hash": "0xTransactionHash"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Split",
+        "description": "Create a split contract for revenue sharing. Requires authentication via API key.",
+        "operationId": "createSplit",
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSplitsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSplitsResponse"
+                },
+                "example": {
+                  "splitAddress": "0x1234567890123456789012345678901234567890",
+                  "chainId": 8453
                 }
               }
             }
@@ -6616,25 +6693,37 @@
           }
         }
       },
-      "DistributeRequest": {
+      "CreateSplitsRequest": {
         "type": "object",
         "required": [
-          "splitAddress"
+          "splits"
+        ],
+        "properties": {
+          "splits": {
+            "type": "array",
+            "description": "Revenue split recipients. Must have at least 2 recipients and sum to 100%.",
+            "items": {
+              "$ref": "#/components/schemas/Split"
+            },
+            "minItems": 2
+          }
+        }
+      },
+      "CreateSplitsResponse": {
+        "type": "object",
+        "required": [
+          "splitAddress",
+          "chainId"
         ],
         "properties": {
           "splitAddress": {
             "type": "string",
-            "description": "The address of the split contract to distribute from"
-          },
-          "tokenAddress": {
-            "type": "string",
-            "description": "The address of the token to distribute (optional, defaults to zero address for native token)",
-            "default": "0x0000000000000000000000000000000000000000"
+            "description": "Address of the created or existing split contract"
           },
           "chainId": {
             "type": "integer",
-            "description": "Chain ID where the split contract exists (default: Base, 8453)",
-            "default": 8453
+            "description": "Chain ID where the split exists (Base in production, Base Sepolia in preview or development)",
+            "example": 8453
           }
         }
       },
