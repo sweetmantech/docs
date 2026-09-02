@@ -175,7 +175,8 @@
               "api-reference/artists/search",
               "api-reference/artists/collectors",
               "api-reference/artists/stats-collecting",
-              "api-reference/artists/stats-timeline"
+              "api-reference/artists/stats-timeline",
+              "api-reference/artists/stats-analytics"
             ]
           },
           {
