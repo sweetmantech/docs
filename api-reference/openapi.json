@@ -197,6 +197,134 @@
         }
       }
     },
+    "/stats/analytics": {
+      "get": {
+        "summary": "Get Analytics Stats",
+        "description": "Returns platform-wide analytics KPI counts: moments created, airdropped, and collected; active artists; collectors; and artists who both created and collected.\n\nFor `day`, `week`, and `month`, each metric includes `value`, `prev`, and `delta_pct`. For `all`, only `value` is set.\n\n**This is a public endpoint and does not require authentication.**",
+        "operationId": "getAnalyticsStats",
+        "security": [],
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "description": "Time period to aggregate over. Defaults to `week`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "all"
+              ],
+              "default": "week"
+            }
+          },
+          {
+            "name": "artist",
+            "in": "query",
+            "required": false,
+            "description": "Optional filter by wallet (`0x` + 40 hex, case-insensitive) or username substring.",
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyticsStats"
+                },
+                "example": {
+                  "period": "week",
+                  "moments_created": {
+                    "value": 54,
+                    "prev": 46,
+                    "delta_pct": 17.4
+                  },
+                  "moments_airdropped": {
+                    "value": 18,
+                    "prev": 17,
+                    "delta_pct": 5.9
+                  },
+                  "moments_collected": {
+                    "value": 32,
+                    "prev": 30,
+                    "delta_pct": 6.7
+                  },
+                  "active_artists": {
+                    "value": 17,
+                    "prev": 14,
+                    "delta_pct": 21.4
+                  },
+                  "collectors": {
+                    "value": 21,
+                    "prev": 23,
+                    "delta_pct": -8.7
+                  },
+                  "artists_collectors": {
+                    "value": 3,
+                    "prev": 2,
+                    "delta_pct": 50
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "message",
+                    "errors"
+                  ],
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "field",
+                          "message"
+                        ],
+                        "properties": {
+                          "field": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/moment": {
       "get": {
         "summary": "Get Moment Info",
@@ -7782,6 +7910,77 @@
           "usdc_archived": {
             "type": "string",
             "description": "Total USDC archived for the artist as a fee recipient (human-readable decimal string)."
+          }
+        }
+      },
+      "AnalyticsStatMetric": {
+        "type": "object",
+        "required": [
+          "value",
+          "prev",
+          "delta_pct"
+        ],
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Count for the requested period."
+          },
+          "prev": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Count for the previous period. `null` when `period` is `all`."
+          },
+          "delta_pct": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Percent change vs `prev`. `null` when `period` is `all`."
+          }
+        }
+      },
+      "AnalyticsStats": {
+        "type": "object",
+        "required": [
+          "period",
+          "moments_created",
+          "moments_airdropped",
+          "moments_collected",
+          "active_artists",
+          "collectors",
+          "artists_collectors"
+        ],
+        "properties": {
+          "period": {
+            "type": "string",
+            "enum": [
+              "day",
+              "week",
+              "month",
+              "all"
+            ]
+          },
+          "moments_created": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
+          },
+          "moments_airdropped": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
+          },
+          "moments_collected": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
+          },
+          "active_artists": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
+          },
+          "collectors": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
+          },
+          "artists_collectors": {
+            "$ref": "#/components/schemas/AnalyticsStatMetric"
           }
         }
       },
