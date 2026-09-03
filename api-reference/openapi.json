@@ -819,9 +819,7 @@
                       "usdc_spent": "10"
                     }
                   ],
-                  "total_count": 1,
-                  "page": 1,
-                  "total_pages": 1
+                  "page": 1
                 }
               }
             }
@@ -2947,9 +2945,7 @@
                       "sms_count": 1
                     }
                   ],
-                  "total_count": 100,
-                  "page": 1,
-                  "total_pages": 5
+                  "page": 1
                 }
               }
             }
@@ -3129,9 +3125,7 @@
                       "total_collected_count": 130
                     }
                   ],
-                  "total_count": 1,
-                  "page": 1,
-                  "total_pages": 1
+                  "page": 1
                 }
               }
             }
@@ -7743,9 +7737,7 @@
         "type": "object",
         "required": [
           "artists",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "artists": {
@@ -7754,20 +7746,10 @@
               "$ref": "#/components/schemas/ActiveArtistStatsItem"
             }
           },
-          "total_count": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total artists matching the request (for pagination)."
-          },
           "page": {
             "type": "integer",
             "minimum": 1,
             "description": "Current page number."
-          },
-          "total_pages": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total pages at the current `limit`."
           }
         }
       },
@@ -7847,9 +7829,7 @@
         "type": "object",
         "required": [
           "artists",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "artists": {
@@ -7859,17 +7839,9 @@
             },
             "description": "List of artist collector stats"
           },
-          "total_count": {
-            "type": "integer",
-            "description": "Total number of artists matching the query"
-          },
           "page": {
             "type": "integer",
             "description": "Current page number"
-          },
-          "total_pages": {
-            "type": "integer",
-            "description": "Total number of pages"
           }
         }
       },
@@ -8041,9 +8013,7 @@
         "type": "object",
         "required": [
           "collectors",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "collectors": {
@@ -8053,17 +8023,9 @@
             },
             "description": "List of collector stats"
           },
-          "total_count": {
-            "type": "integer",
-            "description": "Total number of collectors matching the query"
-          },
           "page": {
             "type": "integer",
             "description": "Current page number"
-          },
-          "total_pages": {
-            "type": "integer",
-            "description": "Total number of pages"
           }
         }
       },
