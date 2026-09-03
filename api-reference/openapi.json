@@ -714,7 +714,7 @@
     "/collectors": {
       "get": {
         "summary": "Get Collectors",
-        "description": "Retrieve collectors from the In\u2022Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide collector counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Retrieve collectors from the In\u2022Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\n**This is a public endpoint and does not require authentication.**",
         "operationId": "getCollectors",
         "parameters": [
           {
@@ -2832,7 +2832,7 @@
     "/artists/active": {
       "get": {
         "summary": "Get Active Artists",
-        "description": "Paginated activity stats for artists on the In\u2022Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide active-artist counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.",
+        "description": "Paginated activity stats for artists on the In\u2022Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).",
         "operationId": "getActiveArtists",
         "security": [],
         "parameters": [
@@ -3020,7 +3020,7 @@
     "/artists/collectors": {
       "get": {
         "summary": "Get Artists Collectors",
-        "description": "Returns artists who are both creators and collectors on the In\u2022Process protocol. Supports filtering by artist and time period.\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide artists-and-collectors counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.",
+        "description": "Returns artists who are both creators and collectors on the In\u2022Process protocol. Supports filtering by artist and time period.",
         "operationId": "getArtistsCollectorsStats",
         "security": [],
         "parameters": [
