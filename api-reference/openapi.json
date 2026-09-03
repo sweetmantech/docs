@@ -714,7 +714,7 @@
     "/collectors": {
       "get": {
         "summary": "Get Collectors",
-        "description": "Retrieve collectors from the In\u2022Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\n**This is a public endpoint and does not require authentication.**",
+        "description": "Retrieve collectors from the In\u2022Process protocol. Returns a ranked list of collectors with their total collected count and spending. Supports filtering by artist and time period.\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide collector counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.\n\n**This is a public endpoint and does not require authentication.**",
         "operationId": "getCollectors",
         "parameters": [
           {
@@ -819,9 +819,7 @@
                       "usdc_spent": "10"
                     }
                   ],
-                  "total_count": 1,
-                  "page": 1,
-                  "total_pages": 1
+                  "page": 1
                 }
               }
             }
@@ -2834,7 +2832,7 @@
     "/artists/active": {
       "get": {
         "summary": "Get Active Artists",
-        "description": "Paginated activity stats for artists on the In\u2022Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).",
+        "description": "Paginated activity stats for artists on the In\u2022Process protocol: moments created, airdrops, and moment counts by creation channel (`telegram`, `web`, `api`, `sms`).\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide active-artist counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.",
         "operationId": "getActiveArtists",
         "security": [],
         "parameters": [
@@ -2947,9 +2945,7 @@
                       "sms_count": 1
                     }
                   ],
-                  "total_count": 100,
-                  "page": 1,
-                  "total_pages": 5
+                  "page": 1
                 }
               }
             }
@@ -3024,7 +3020,7 @@
     "/artists/collectors": {
       "get": {
         "summary": "Get Artists Collectors",
-        "description": "Returns artists who are both creators and collectors on the In\u2022Process protocol. Supports filtering by artist and time period.",
+        "description": "Returns artists who are both creators and collectors on the In\u2022Process protocol. Supports filtering by artist and time period.\n\nResponses include the current `page` only; use `GET /stats/analytics` for platform-wide artists-and-collectors counts. Clients can infer whether another page exists when the number of rows returned equals `limit`.",
         "operationId": "getArtistsCollectorsStats",
         "security": [],
         "parameters": [
@@ -3129,9 +3125,7 @@
                       "total_collected_count": 130
                     }
                   ],
-                  "total_count": 1,
-                  "page": 1,
-                  "total_pages": 1
+                  "page": 1
                 }
               }
             }
@@ -7743,9 +7737,7 @@
         "type": "object",
         "required": [
           "artists",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "artists": {
@@ -7754,20 +7746,10 @@
               "$ref": "#/components/schemas/ActiveArtistStatsItem"
             }
           },
-          "total_count": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total artists matching the request (for pagination)."
-          },
           "page": {
             "type": "integer",
             "minimum": 1,
             "description": "Current page number."
-          },
-          "total_pages": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Total pages at the current `limit`."
           }
         }
       },
@@ -7847,9 +7829,7 @@
         "type": "object",
         "required": [
           "artists",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "artists": {
@@ -7859,17 +7839,9 @@
             },
             "description": "List of artist collector stats"
           },
-          "total_count": {
-            "type": "integer",
-            "description": "Total number of artists matching the query"
-          },
           "page": {
             "type": "integer",
             "description": "Current page number"
-          },
-          "total_pages": {
-            "type": "integer",
-            "description": "Total number of pages"
           }
         }
       },
@@ -8041,9 +8013,7 @@
         "type": "object",
         "required": [
           "collectors",
-          "total_count",
-          "page",
-          "total_pages"
+          "page"
         ],
         "properties": {
           "collectors": {
@@ -8053,17 +8023,9 @@
             },
             "description": "List of collector stats"
           },
-          "total_count": {
-            "type": "integer",
-            "description": "Total number of collectors matching the query"
-          },
           "page": {
             "type": "integer",
             "description": "Current page number"
-          },
-          "total_pages": {
-            "type": "integer",
-            "description": "Total number of pages"
           }
         }
       },
